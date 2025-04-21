@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 NOT FOUND | ELRIEL</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/glitch.css">
+  <script src="/js/glitch.js" defer></script>
+  <style>
+    body {
+      background-color: #000010;
+    }
+    
+    .notfound-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      padding: 2rem;
+    }
+    
+    .notfound-code {
+      font-family: var(--header-font);
+      font-size: 8rem;
+      color: var(--terminal-blue);
+      margin-bottom: 1rem;
+      letter-spacing: 0.5rem;
+    }
+    
+    .notfound-message {
+      font-size: 1.5rem;
+      color: var(--terminal-text);
+      margin-bottom: 2rem;
+      max-width: 600px;
+    }
+    
+    .notfound-details {
+      font-family: var(--terminal-font);
+      background-color: rgba(0, 0, 20, 0.7);
+      padding: 1.5rem;
+      border: 1px solid var(--terminal-blue);
+      width: 100%;
+      max-width: 800px;
+      text-align: left;
+      margin-bottom: 2rem;
+      overflow: auto;
+      height: 300px;
+    }
+    
+    .notfound-line {
+      margin-bottom: 0.5rem;
+      color: var(--terminal-dim);
+    }
+    
+    .notfound-line.highlight {
+      color: var(--terminal-blue);
+    }
+    
+    .home-link {
+      display: inline-block;
+      padding: 0.8rem 2rem;
+      background-color: rgba(0, 0, 255, 0.2);
+      border: 1px solid var(--terminal-blue);
+      color: var(--terminal-text);
+      text-decoration: none;
+      font-family: var(--terminal-font);
+      transition: all 0.3s ease;
+    }
+    
+    .home-link:hover {
+      background-color: rgba(0, 0, 255, 0.4);
+    }
+    
+    .hidden-hint {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      font-size: 0.7rem;
+      color: rgba(0, 0, 255, 0.3);
+      cursor: default;
+    }
+    
+    .hidden-hint:hover {
+      color: var(--terminal-blue);
+    }
+  </style>
+</head>
+<body class="terminal glitch-active">
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  
+  <div class="notfound-container">
+    <div class="notfound-code glitch" data-text="404">404</div>
+    <div class="notfound-message">FILE NOT FOUND. THE REQUESTED PATH DOES NOT EXIST IN THE NETWORK ARCHIVE.</div>
+    
+    <div class="notfound-details">
+      <div class="notfound-line">ACCESSING NETWORK LOGS...</div>
+      <div class="notfound-line">SEARCHING FOR REQUESTED PATH...</div>
+      <div class="notfound-line">PATH NOT FOUND IN INDEX...</div>
+      <div class="notfound-line highlight">POSSIBLE DATA FRAGMENTATION</div>
+      <div class="notfound-line">...</div>
+      <div class="notfound-line">...</div>
+      <div class="notfound-line">TRYING ALTERNATE PATHWAYS...</div>
+      <div class="notfound-line">...</div>
+      <div class="notfound-line">...</div>
+      <div class="notfound-line highlight">THE PATH IS OBSCURED</div>
+      <div class="notfound-line">...</div>
+      <div class="notfound-line">...</div>
+      <div class="notfound-line">CONSIDER ALTERNATE ROUTES</div>
+      <div class="notfound-line">...</div>
+      <div class="notfound-line highlight">LOOK FOR GLITCHES IN THE SYSTEM</div>
+      <div class="notfound-line">...</div>
+      <div class="notfound-line">...</div>
+      <div class="notfound-line">WHISPERS MAY HOLD CLUES</div>
+      <div class="notfound-line">...</div>
+      <div class="notfound-line highlight">THE NUMBPILL CELL IS A START</div>
+    </div>
+    
+    <a href="/" class="home-link">RETURN TO TERMINAL</a>
+    
+    <div class="hidden-hint" onclick="revealHint()">HINT: TERMINAL COMMANDS CAN UNLOCK HIDDEN PATHS</div>
+  </div>
+  
+  <script>
+    // Reveal hint function (ARG element)
+    function revealHint() {
+      const hintMessage = document.createElement('div');
+      hintMessage.className = 'corrupt-text';
+      hintMessage.textContent = 'TRY TYPING "HELP" OR "VOID" IN THE TERMINAL';
+      hintMessage.setAttribute('data-text', 'TRY TYPING "HELP" OR "VOID" IN THE TERMINAL');
+      hintMessage.style.position = 'fixed';
+      hintMessage.style.bottom = '40px';
+      hintMessage.style.left = '10px';
+      hintMessage.style.color = 'var(--terminal-blue)';
+      
+      document.body.appendChild(hintMessage);
+      
+      // Remove after 5 seconds
+      setTimeout(() => {
+        hintMessage.remove();
+      }, 5000);
+    }
+    
+    // Add random glitches to the details
+    function addRandomGlitch() {
+      const detailLines = document.querySelectorAll('.notfound-line');
+      const randomIndex = Math.floor(Math.random() * detailLines.length);
+      const line = detailLines[randomIndex];
+      
+      // Skip highlighted lines
+      if (line.classList.contains('highlight')) {
+        return;
+      }
+      
+      const originalText = line.textContent;
+      const glitchChars = '!@#$%^&*()_+-=[]{}|;:,.<>?/\\`~░▒▓█▄▀■□▪▫▬▲►▼◄◊○●◘◙☺☻♥♦♣♠♂♀♪♫☼►◄▲▼§¶';
+      
+      // Generate glitched text
+      let glitchedText = '';
+      for (let i = 0; i < originalText.length; i++) {
+        if (Math.random() < 0.1) {
+          glitchedText += glitchChars.charAt(Math.floor(Math.random() * glitchChars.length));
+        } else {
+          glitchedText += originalText.charAt(i);
+        }
+      }
+      
+      // Apply glitched text
+      line.textContent = glitchedText;
+      
+      // Restore original text after a short delay
+      setTimeout(() => {
+        line.textContent = originalText;
+      }, 500);
+    }
+    
+    // Apply random glitches periodically
+    setInterval(addRandomGlitch, 1000);
+  </script>
+</body>
+</html>

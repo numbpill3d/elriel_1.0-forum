@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REGISTER | ELRIEL</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/glitch.css">
+  <script src="/js/glitch.js" defer></script>
+  <style>
+    .auth-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    
+    .auth-panel {
+      background-color: var(--panel-bg);
+      border: var(--panel-border);
+      border-radius: 4px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+    
+    .auth-panel h2 {
+      font-family: var(--header-font);
+      color: var(--terminal-green);
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: var(--terminal-dim-green);
+      font-size: 0.9rem;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 0.8rem;
+      background-color: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--terminal-dim-green);
+      color: var(--terminal-bright);
+      font-family: var(--terminal-font);
+      font-size: 1rem;
+      outline: none;
+    }
+    
+    .form-group input:focus {
+      border-color: var(--terminal-green);
+      box-shadow: 0 0 5px var(--glow-color);
+    }
+    
+    .auth-button {
+      display: block;
+      width: 100%;
+      padding: 1rem;
+      background-color: var(--terminal-green);
+      border: none;
+      color: var(--terminal-bg);
+      font-family: var(--header-font);
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    
+    .auth-button:hover {
+      background-color: var(--terminal-dim-green);
+    }
+    
+    .switch-auth {
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+    }
+    
+    .switch-auth a {
+      color: var(--terminal-blue);
+      text-decoration: none;
+    }
+    
+    .switch-auth a:hover {
+      text-decoration: underline;
+    }
+    
+    .error-message {
+      color: var(--terminal-red);
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body class="terminal">
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  
+  <div class="auth-container">
+    <div class="auth-panel">
+      <h2>REGISTER TERMINAL</h2>
+      
+      <form id="register-form">
+        <div class="form-group">
+          <label for="username">USERNAME:</label>
+          <input type="text" id="username" name="username" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="email">EMAIL:</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">PASSWORD:</label>
+          <input type="password" id="password" name="password" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="confirm-password">CONFIRM PASSWORD:</label>
+          <input type="password" id="confirm-password" name="confirmPassword" required>
+        </div>
+        
+        <button type="submit" class="auth-button">REGISTER IDENTITY</button>
+      </form>
+      
+      <div class="switch-auth">
+        ALREADY REGISTERED? <a href="/auth/login">ACCESS TERMINAL</a>
+      </div>
+      
+      <div id="error-message" class="error-message"></div>
+    </div>
+  </div>
+  
+  <script>
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const username = document.getElementById('username').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirm-password').value;
+      const errorMessageEl = document.getElementById('error-message');
+      
+      if (password !== confirmPassword) {
+        errorMessageEl.textContent = 'Passwords do not match.';
+        return;
+      }
+      
+      try {
+        const response = await fetch('/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, email, password, confirmPassword })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          window.location.href = '/profile'; // Redirect to profile on success
+        } else {
+          errorMessageEl.textContent = data.message || 'Registration failed. Unknown error.';
+        }
+      } catch (error) {
+        console.error('Registration error:', error);
+        errorMessageEl.textContent = 'System error. Could not connect to registration server.';
+      }
+    });
+  </script>
+</body>
+</html>

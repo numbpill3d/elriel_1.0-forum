@@ -1,0 +1,404 @@
+/* Elriel - Profile CSS Styles */
+/* Styles for user profile pages */
+
+.profile-panel .panel-header h2 {
+  font-size: 1.5rem;
+}
+
+.profile-content {
+  padding: 1rem;
+}
+
+.profile-header {
+  position: relative;
+  height: 200px; /* Adjust as needed */
+  margin-bottom: 2rem;
+  overflow: hidden;
+  border: 1px solid rgba(0, 255, 0, 0.2);
+}
+
+.profile-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(50%) contrast(150%); /* Corrupted look */
+}
+
+.profile-avatar {
+  position: absolute;
+  bottom: -30px;
+  left: 20px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.8);
+  border: 3px solid var(--terminal-green);
+  z-index: 10;
+  overflow: hidden;
+}
+
+.default-avatar {
+  width: 100%;
+  height: 100%;
+  background-image: url('/images/default-avatar.png'); /* Placeholder */
+  background-size: cover;
+  background-position: center;
+}
+
+.profile-info {
+  position: absolute;
+  bottom: 10px;
+  left: 140px;
+  z-index: 10;
+  color: var(--terminal-bright);
+}
+
+.profile-info h3 {
+  font-family: var(--header-font);
+  font-size: 2rem;
+  margin: 0 0 0.5rem 0;
+  color: var(--terminal-green);
+}
+
+.profile-district {
+  font-size: 0.9rem;
+  color: var(--terminal-dim-green);
+}
+
+.profile-details {
+  margin-top: 3rem;
+}
+
+.profile-section {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px dashed rgba(0, 255, 0, 0.1);
+}
+
+.section-title {
+  font-family: var(--header-font);
+  color: var(--terminal-dim-green);
+  font-size: 1.1rem;
+  margin-bottom: 0.8rem;
+}
+
+.section-content {
+  font-family: var(--terminal-font);
+  color: var(--terminal-text);
+  line-height: 1.6;
+}
+
+#profile-glyph svg {
+  width: 100px;
+  height: 100px;
+  display: block;
+  margin: 0 auto;
+}
+
+#profile-custom-css {
+  display: block; /* Ensure the style tag is rendered */
+}
+
+#profile-custom-html {
+  border: 1px dashed rgba(0, 255, 0, 0.1);
+  padding: 1rem;
+  margin-top: 1rem;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.user-posts-panel {
+  margin-top: 2rem;
+}
+
+.user-posts-content {
+  padding: 1rem;
+}
+
+.user-post-item {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-post-item:last-child {
+  border-bottom: none;
+}
+
+.post-title a {
+  font-family: var(--header-font);
+  font-size: 1.3rem;
+  color: var(--terminal-green);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.post-title a:hover {
+  color: var(--terminal-bright);
+}
+
+.post-meta {
+  font-size: 0.8rem;
+  color: var(--terminal-dim);
+  margin-top: 0.5rem;
+}
+
+.post-encrypted {
+  color: var(--terminal-red);
+  margin-left: 1rem;
+}
+
+/* Profile Edit Page Styles */
+.profile-edit-panel .panel-header h2 {
+  font-size: 1.5rem;
+}
+
+.profile-edit-content {
+  padding: 1rem;
+}
+
+.edit-form .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.edit-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--terminal-dim-green);
+  font-size: 0.9rem;
+}
+
+.edit-form input[type="text"],
+.edit-form textarea,
+.edit-form select {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--terminal-dim-green);
+  color: var(--terminal-bright);
+  font-family: var(--terminal-font);
+  font-size: 1rem;
+  outline: none;
+}
+
+.edit-form input[type="text"]:focus,
+.edit-form textarea:focus,
+.edit-form select:focus {
+  border-color: var(--terminal-green);
+  box-shadow: 0 0 5px var(--glow-color);
+}
+
+.edit-form textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.edit-form input[type="file"] {
+  display: block;
+  margin-top: 0.5rem;
+  color: var(--terminal-text);
+  font-family: var(--terminal-font);
+}
+
+.edit-form button {
+  display: inline-block;
+  padding: 0.8rem 2rem;
+  background-color: var(--terminal-green);
+  border: none;
+  color: var(--terminal-bg);
+  font-family: var(--header-font);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 1rem;
+}
+
+.edit-form button:hover {
+  background-color: var(--terminal-dim-green);
+}
+
+.current-background-preview {
+  margin-top: 1rem;
+  max-width: 200px;
+  height: auto;
+  border: 1px solid var(--terminal-dim-green);
+}
+
+.current-glyph-preview {
+  margin-top: 1rem;
+  width: 80px;
+  height: 80px;
+  border: 1px solid var(--terminal-dim-green);
+  padding: 5px;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.current-glyph-preview svg {
+  width: 100%;
+  height: 100%;
+}
+
+.glyph-selection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 1rem;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 10px;
+  border: 1px dashed rgba(0, 255, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.glyph-item {
+  width: 60px;
+  height: 60px;
+  border: 1px solid var(--terminal-dim);
+  padding: 3px;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.glyph-item:hover, .glyph-item.selected {
+  border-color: var(--terminal-green);
+}
+
+.glyph-item svg {
+  width: 100%;
+  height: 100%;
+}
+
+.glyph-item.selected {
+  box-shadow: 0 0 5px var(--glow-color);
+}
+
+/* Profile View Page Styles */
+.profile-view-panel .panel-header h2 {
+  font-size: 1.5rem;
+}
+
+.profile-view-content {
+  padding: 1rem;
+}
+
+.profile-view-header {
+  position: relative;
+  height: 200px; /* Adjust as needed */
+  margin-bottom: 2rem;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 255, 0.2); /* Blue border for viewing */
+}
+
+.profile-view-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(50%) contrast(150%); /* Corrupted look */
+}
+
+.profile-view-avatar {
+  position: absolute;
+  bottom: -30px;
+  left: 20px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.8);
+  border: 3px solid var(--terminal-blue); /* Blue border for viewing */
+  z-index: 10;
+  overflow: hidden;
+}
+
+.profile-view-info {
+  position: absolute;
+  bottom: 10px;
+  left: 140px;
+  z-index: 10;
+  color: var(--terminal-bright);
+}
+
+.profile-view-info h3 {
+  font-family: var(--header-font);
+  font-size: 2rem;
+  margin: 0 0 0.5rem 0;
+  color: var(--terminal-blue); /* Blue color for viewing */
+}
+
+.profile-view-district {
+  font-size: 0.9rem;
+  color: var(--terminal-dim);
+}
+
+.profile-view-details {
+  margin-top: 3rem;
+}
+
+.profile-view-section {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px dashed rgba(0, 0, 255, 0.1); /* Blue dashed border */
+}
+
+.profile-view-section .section-title {
+  color: var(--terminal-blue); /* Blue title */
+}
+
+.profile-view-section .section-content {
+  color: var(--terminal-text);
+}
+
+#profile-view-glyph svg {
+  width: 100px;
+  height: 100px;
+  display: block;
+  margin: 0 auto;
+}
+
+#profile-view-custom-css {
+  display: block; /* Ensure the style tag is rendered */
+}
+
+#profile-view-custom-html {
+  border: 1px dashed rgba(0, 0, 255, 0.1); /* Blue dashed border */
+  padding: 1rem;
+  margin-top: 1rem;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.user-view-posts-panel {
+  margin-top: 2rem;
+}
+
+.user-view-posts-content {
+  padding: 1rem;
+}
+
+.user-view-post-item {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-view-post-item:last-child {
+  border-bottom: none;
+}
+
+.user-view-post-item .post-title a {
+  color: var(--terminal-blue); /* Blue link */
+}
+
+.user-view-post-item .post-meta {
+  color: var(--terminal-dim);
+}
+
+.user-view-post-item .post-encrypted {
+  color: var(--terminal-red);
+}

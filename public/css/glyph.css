@@ -1,0 +1,194 @@
+/* Elriel - Glyph CSS Styles */
+/* Styles for the Glyph Crucible and glyph viewing */
+
+.crucible-panel .panel-header h2 {
+  font-size: 1.5rem;
+}
+
+.crucible-content {
+  padding: 1rem;
+}
+
+.crucible-controls {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  align-items: flex-end;
+}
+
+.crucible-controls .form-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.crucible-controls label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--terminal-dim-green);
+  font-size: 0.9rem;
+}
+
+.crucible-controls input[type="text"],
+.crucible-controls select {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--terminal-dim-green);
+  color: var(--terminal-bright);
+  font-family: var(--terminal-font);
+  font-size: 1rem;
+  outline: none;
+}
+
+.crucible-controls input[type="text"]:focus,
+.crucible-controls select:focus {
+  border-color: var(--terminal-green);
+  box-shadow: 0 0 5px var(--glow-color);
+}
+
+.crucible-controls button {
+  padding: 0.8rem 2rem;
+  background-color: var(--terminal-green);
+  border: none;
+  color: var(--terminal-bg);
+  font-family: var(--header-font);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.crucible-controls button:hover {
+  background-color: var(--terminal-dim-green);
+}
+
+.generated-glyph-area {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.generated-glyph-svg {
+  width: 300px;
+  height: 300px;
+  margin: 0 auto 1.5rem auto;
+  border: 1px solid var(--terminal-green);
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--terminal-dim);
+}
+
+.generated-glyph-svg svg {
+  width: 100%;
+  height: 100%;
+}
+
+.glyph-actions button {
+  padding: 0.5rem 1rem;
+  background-color: rgba(0, 255, 0, 0.2);
+  border: 1px solid var(--terminal-green);
+  color: var(--terminal-text);
+  font-family: var(--terminal-font);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 0 0.5rem;
+}
+
+.glyph-actions button:hover {
+  background-color: rgba(0, 255, 0, 0.4);
+}
+
+.user-glyphs-panel {
+  margin-top: 2rem;
+}
+
+.user-glyphs-content {
+  padding: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.user-glyph-item {
+  width: 100px;
+  height: 100px;
+  border: 1px solid var(--terminal-dim);
+  padding: 5px;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.user-glyph-item:hover {
+  border-color: var(--terminal-green);
+}
+
+.user-glyph-item svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Glyph View Page Styles */
+.glyph-view-panel .panel-header h2 {
+  font-size: 1.5rem;
+}
+
+.glyph-view-content {
+  padding: 1rem;
+  text-align: center;
+}
+
+.view-glyph-svg {
+  width: 400px;
+  height: 400px;
+  margin: 0 auto 2rem auto;
+  border: 1px solid var(--terminal-blue); /* Blue border for viewing */
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.view-glyph-svg svg {
+  width: 100%;
+  height: 100%;
+}
+
+.glyph-details {
+  margin-bottom: 2rem;
+}
+
+.glyph-details .section-title {
+  color: var(--terminal-blue); /* Blue title */
+}
+
+.glyph-details .section-content {
+  color: var(--terminal-text);
+}
+
+.glyph-view-actions button {
+  padding: 0.8rem 2rem;
+  background-color: rgba(0, 0, 255, 0.2); /* Blue background for viewing */
+  border: 1px solid var(--terminal-blue); /* Blue border for viewing */
+  color: var(--terminal-text);
+  font-family: var(--terminal-font);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 0 0.5rem;
+}
+
+.glyph-view-actions button:hover {
+  background-color: rgba(0, 0, 255, 0.4);
+}
+
+.delete-glyph-button {
+  background-color: rgba(255, 0, 0, 0.2);
+  border-color: var(--terminal-red);
+  color: var(--terminal-red);
+}
+
+.delete-glyph-button:hover {
+  background-color: rgba(255, 0, 0, 0.4);
+}

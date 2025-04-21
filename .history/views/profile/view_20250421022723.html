@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PROFILE | ELRIEL</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/glitch.css">
+  <link rel="stylesheet" href="/css/profile.css">
+  <script src="/js/glitch.js" defer></script>
+</head>
+<body class="terminal">
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">TERMINAL ACCESS v1.0</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">PROFILE</h3>
+          <ul class="nav-links">
+            <li><a href="/profile">DASHBOARD</a></li>
+            <!-- Edit profile link only for owner -->
+            <li id="edit-profile-link" style="display: none;"><a href="/profile/edit">EDIT PROFILE</a></li>
+            <li><a href="/feed/new">CREATE POST</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <section class="profile-view-panel">
+          <div class="panel-header">
+            <h2>USER PROFILE: <span id="profile-view-username"></span></h2>
+            <div class="status-indicator" id="profile-view-status"></div>
+          </div>
+          <div class="profile-view-content">
+            <div class="profile-view-header">
+              <div class="profile-view-background" id="profile-view-background">
+                <!-- Background image will be injected here -->
+              </div>
+              <div class="profile-view-avatar">
+                <!-- Placeholder for avatar -->
+                <div class="default-avatar"></div>
+              </div>
+              <div class="profile-view-info">
+                <h3 id="profile-view-username-large"></h3>
+                <div class="profile-view-district" id="profile-view-district"></div>
+              </div>
+            </div>
+            
+            <div class="profile-view-details">
+              <div class="profile-view-section">
+                <div class="section-title">STATUS:</div>
+                <div class="section-content" id="profile-view-status-text"></div>
+              </div>
+              
+              <div class="profile-view-section">
+                <div class="section-title">PROFILE SIGIL:</div>
+                <div class="section-content" id="profile-view-glyph">
+                  <!-- Profile glyph will be injected here -->
+                </div>
+              </div>
+              
+              <div class="profile-view-section">
+                <div class="section-title">CUSTOM CODE:</div>
+                <div class="section-content">
+                  <style id="profile-view-custom-css"></style>
+                  <div id="profile-view-custom-html"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="user-view-posts-panel">
+          <div class="panel-header">
+            <h2>RECENT POSTS</h2>
+            <div class="status-indicator">ARCHIVE</div>
+          </div>
+          <div class="user-view-posts-content" id="user-view-posts-content">
+            <!-- User posts will be injected here -->
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="main-footer">
+      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+      <div class="footer-glyphs">
+        <span class="glyph">⌘</span>
+        <span class="glyph">⍟</span>
+        <span class="glyph">⎔</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Inject data from server
+    const data = __DATA__;
+    const profile = data.profile;
+    const user = data.user;
+    const glyph = data.glyph;
+    const posts = data.posts;
+    const isOwner = data.isOwner;
+    
+    // Update user status in header
+    const userStatusEl = document.getElementById('user-status');
+    if (user) {
+      userStatusEl.innerHTML = `
+        <div class="logged-in">
+          <span class="username">${user.username}</span>
+          <div class="user-links">
+            <a href="/profile">PROFILE</a>
+            <a href="/auth/logout">LOGOUT</a>
+          </div>
+        </div>
+      `;
+    } else {
+      userStatusEl.innerHTML = `
+        <div class="logged-out">
+          <a href="/auth/login" class="login-btn">LOGIN</a>
+          <a href="/auth/register" class="register-btn">REGISTER</a>
+        </div>
+      `;
+    }
+    
+    // Show edit profile link if owner
+    if (isOwner) {
+      document.getElementById('edit-profile-link').style.display = 'list-item';
+    }
+    
+    // Update profile details
+    document.getElementById('profile-view-username').textContent = profile.username;
+    document.getElementById('profile-view-username-large').textContent = profile.username;
+    document.getElementById('profile-view-status').textContent = profile.status;
+    document.getElementById('profile-view-status-text').textContent = profile.status;
+    document.getElementById('profile-view-district').textContent = `DISTRICT: ${profile.district_name || 'UNKNOWN'}`;
+    
+    // Set background image
+    const profileBackgroundEl = document.getElementById('profile-view-background');
+    if (profile.background_image) {
+      profileBackgroundEl.style.backgroundImage = `url(${profile.background_image})`;
+      profileBackgroundEl.classList.add('glitch-image');
+      profileBackgroundEl.setAttribute('data-image', profile.background_image);
+    }
+    
+    // Set profile glyph
+    const profileGlyphEl = document.getElementById('profile-view-glyph');
+    if (glyph && glyph.svg_data) {
+      profileGlyphEl.innerHTML = glyph.svg_data;
+    } else {
+      profileGlyphEl.innerHTML = '<span>NO SIGIL SET</span>';
+    }
+    
+    // Inject custom CSS and HTML
+    document.getElementById('profile-view-custom-css').textContent = profile.custom_css || '';
+    document.getElementById('profile-view-custom-html').innerHTML = profile.custom_html || '<span>NO CUSTOM CODE</span>';
+    
+    // Display user posts
+    const userPostsContentEl = document.getElementById('user-view-posts-content');
+    if (posts.length > 0) {
+      posts.forEach(post => {
+        const postEl = document.createElement('div');
+        postEl.className = 'user-view-post-item';
+        postEl.innerHTML = `
+          <div class="post-title"><a href="/feed/post/${post.id}">${post.title}</a></div>
+          <div class="post-meta">
+            <span class="post-date">${new Date(post.created_at).toLocaleString()}</span>
+            ${post.is_encrypted ? '<span class="post-encrypted">ENCRYPTED</span>' : ''}
+          </div>
+        `;
+        userPostsContentEl.appendChild(postEl);
+      });
+    } else {
+      userPostsContentEl.innerHTML = '<span>NO POSTS FOUND IN ARCHIVE.</span>';
+    }
+    
+    // Toggle glitch effects
+    document.getElementById('toggle-glitch').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.body.classList.toggle('glitch-active');
+    });
+  </script>
+</body>
+</html>
