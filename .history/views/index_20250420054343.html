@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ELRIEL | Terminal Access</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/glitch.css">
+  <script src="/js/glitch.js" defer></script>
+  <script src="/js/terminal.js" defer></script>
+</head>
+<body class="terminal">
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">TERMINAL ACCESS v1.0</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/" class="active">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">DISTRICTS</h3>
+          <ul class="nav-links">
+            <li><a href="/terminal/numbpill" class="district">NUMBPILL CELL</a></li>
+            <li><a href="#" class="district locked">LOCKED DISTRICT</a></li>
+            <li><a href="#" class="district locked">LOCKED DISTRICT</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <section class="welcome-panel">
+          <div class="panel-header">
+            <h2>TERMINAL ACCESS</h2>
+            <div class="status-indicator">ONLINE</div>
+          </div>
+          <div class="terminal-output">
+            <div class="line">INITIALIZING ELRIEL NETWORK CONNECTION...</div>
+            <div class="line">ESTABLISHING SECURE CHANNEL...</div>
+            <div class="line">TERMINAL ACCESS GRANTED.</div>
+            <div class="line">&nbsp;</div>
+            <div class="line blink">WELCOME TO ELRIEL. THIS TERMINAL HAS BEEN COMPROMISED.</div>
+            <div class="line">&nbsp;</div>
+            <div class="line">THE NETWORK AWAITS YOUR CONTRIBUTION.</div>
+            <div class="line">PROCEED WITH CAUTION.</div>
+            <div class="line">&nbsp;</div>
+            <div class="line">TYPE 'HELP' FOR AVAILABLE COMMANDS.</div>
+            <div class="line">&nbsp;</div>
+            <div class="command-line">
+              <span class="prompt">></span>
+              <input type="text" id="terminal-input" autocomplete="off" autofocus>
+            </div>
+          </div>
+        </section>
+
+        <section class="announcement-panel">
+          <div class="panel-header">
+            <h2>SYSTEM ALERT</h2>
+            <div class="status-indicator alert">URGENT</div>
+          </div>
+          <div class="announcement-content" id="announcement">
+            <!-- Announcement will be injected here -->
+          </div>
+        </section>
+
+        <section class="featured-panel">
+          <div class="panel-header">
+            <h2>RECENT ACTIVITY</h2>
+            <div class="status-indicator">LIVE</div>
+          </div>
+          <div class="featured-content">
+            <div class="activity-feed" id="activity-feed">
+              <!-- This will be populated with JavaScript -->
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="main-footer">
+      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+      <div class="footer-glyphs">
+        <span class="glyph">⌘</span>
+        <span class="glyph">⍟</span>
+        <span class="glyph">⎔</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Inject data from server
+    const data = __DATA__;
+    
+    // Update user status
+    const userStatusEl = document.getElementById('user-status');
+    if (data.user) {
+      userStatusEl.innerHTML = `
+        <div class="logged-in">
+          <span class="username">${data.user.username}</span>
+          <div class="user-links">
+            <a href="/profile">PROFILE</a>
+            <a href="/auth/logout">LOGOUT</a>
+          </div>
+        </div>
+      `;
+    } else {
+      userStatusEl.innerHTML = `
+        <div class="logged-out">
+          <a href="/auth/login" class="login-btn">LOGIN</a>
+          <a href="/auth/register" class="register-btn">REGISTER</a>
+        </div>
+      `;
+    }
+    
+    // Update announcement
+    const announcementEl = document.getElementById('announcement');
+    if (data.announcement) {
+      announcementEl.innerHTML = `
+        <h3 class="announcement-title">${data.announcement.title}</h3>
+        <div class="announcement-body">${data.announcement.content}</div>
+        <div class="announcement-timestamp">TIMESTAMP: ${new Date(data.announcement.created_at).toLocaleString()}</div>
+      `;
+    }
+    
+    // Simulate activity feed
+    const activityFeed = document.getElementById('activity-feed');
+    const activities = [
+      'User [REDACTED] joined the Numbpill Cell',
+      'New whisper detected in sector 7',
+      'Glyph Crucible activity increased by 27%',
+      'System scan complete: 3 anomalies detected',
+      'User terminal_ghost uploaded a new post',
+      'District access protocols updated'
+    ];
+    
+    activities.forEach(activity => {
+      const el = document.createElement('div');
+      el.className = 'activity-item';
+      el.innerHTML = `
+        <span class="activity-time">${new Date(Date.now() - Math.random() * 3600000).toLocaleTimeString()}</span>
+        <span class="activity-text">${activity}</span>
+      `;
+      activityFeed.appendChild(el);
+    });
+    
+    // Terminal input handling
+    const terminalInput = document.getElementById('terminal-input');
+    const terminalOutput = document.querySelector('.terminal-output');
+    
+    terminalInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        const command = this.value.trim().toLowerCase();
+        const commandLine = document.createElement('div');
+        commandLine.className = 'line';
+        commandLine.innerHTML = `<span class="prompt">></span> ${this.value}`;
+        
+        // Insert before the command input
+        terminalOutput.insertBefore(commandLine, document.querySelector('.command-line'));
+        
+        // Process command
+        processCommand(command);
+        
+        // Clear input
+        this.value = '';
+      }
+    });
+    
+    function processCommand(command) {
+      let response;
+      
+      switch(command) {
+        case 'help':
+          response = [
+            'AVAILABLE COMMANDS:',
+            '  help - Display this help message',
+            '  status - Display system status',
+            '  about - About Elriel Network',
+            '  navigate [destination] - Navigate to a destination',
+            '  clear - Clear terminal output',
+            '  glitch - Toggle glitch effects',
+            '  void - ???'
+          ];
+          break;
+        case 'status':
+          response = [
+            'ELRIEL NETWORK STATUS:',
+            '  Network: ONLINE',
+            '  Users Connected: ' + (Math.floor(Math.random() * 100) + 50),
+            '  Glyphs Generated: ' + (Math.floor(Math.random() * 10000) + 5000),
+            '  Whispers Active: ' + (Math.floor(Math.random() * 500) + 100),
+            '  System Integrity: COMPROMISED'
+          ];
+          break;
+        case 'about':
+          response = [
+            'ELRIEL NETWORK',
+            '  A digital wasteland of glitched terminals and corrupted data.',
+            '  This network was never meant to be found.',
+            '  Proceed with caution. Your contributions will be assimilated.'
+          ];
+          break;
+        case 'clear':
+          // Clear all lines except the last one (command input)
+          const lines = document.querySelectorAll('.terminal-output .line:not(.command-line)');
+          lines.forEach(line => line.remove());
+          return;
+        case 'glitch':
+          document.body.classList.toggle('glitch-active');
+          response = ['Glitch effects toggled.'];
+          break;
+        case 'void':
+          response = [
+            'VOID PROTOCOL INITIATED',
+            'ACCESSING RESTRICTED AREA...',
+            'REDIRECTING...'
+          ];
+          setTimeout(() => {
+            window.location.href = '/terminal/void';
+          }, 2000);
+          break;
+        default:
+          if (command.startsWith('navigate ')) {
+            const destination = command.substring(9);
+            switch(destination) {
+              case 'bleedstream':
+                response = ['Navigating to Bleedstream...'];
+                setTimeout(() => { window.location.href = '/feed/bleedstream'; }, 1000);
+                break;
+              case 'crucible':
+              case 'glyph':
+              case 'glyph crucible':
+                response = ['Navigating to Glyph Crucible...'];
+                setTimeout(() => { window.location.href = '/glyph/crucible'; }, 1000);
+                break;
+              case 'whisper':
+              case 'whisperboard':
+                response = ['Navigating to Whisperboard...'];
+                setTimeout(() => { window.location.href = '/whisper/board'; }, 1000);
+                break;
+              case 'profile':
+                if (data.user) {
+                  response = ['Navigating to Profile...'];
+                  setTimeout(() => { window.location.href = '/profile'; }, 1000);
+                } else {
+                  response = ['Access denied. Authentication required.'];
+                }
+                break;
+              case 'numbpill':
+              case 'numbpill cell':
+                response = ['Navigating to Numbpill Cell...'];
+                setTimeout(() => { window.location.href = '/terminal/numbpill'; }, 1000);
+                break;
+              default:
+                response = [`Unknown destination: ${destination}`];
+            }
+          } else {
+            response = [`Unknown command: ${command}. Type 'help' for available commands.`];
+          }
+      }
+      
+      // Add response lines
+      if (response) {
+        response.forEach(line => {
+          const lineEl = document.createElement('div');
+          lineEl.className = 'line';
+          lineEl.textContent = line;
+          terminalOutput.insertBefore(lineEl, document.querySelector('.command-line'));
+        });
+      }
+      
+      // Scroll to bottom
+      terminalOutput.scrollTop = terminalOutput.scrollHeight;
+    }
+    
+    // Toggle glitch effects
+    document.getElementById('toggle-glitch').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.body.classList.toggle('glitch-active');
+    });
+  </script>
+</body>
+</html>

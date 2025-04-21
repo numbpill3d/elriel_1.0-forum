@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SYSTEM ERROR | ELRIEL</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/glitch.css">
+  <script src="/js/glitch.js" defer></script>
+  <style>
+    body {
+      background-color: #100000;
+    }
+    
+    .error-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      padding: 2rem;
+    }
+    
+    .error-code {
+      font-family: var(--header-font);
+      font-size: 8rem;
+      color: var(--terminal-red);
+      margin-bottom: 1rem;
+      letter-spacing: 0.5rem;
+    }
+    
+    .error-message {
+      font-size: 1.5rem;
+      color: var(--terminal-text);
+      margin-bottom: 2rem;
+      max-width: 600px;
+    }
+    
+    .error-details {
+      font-family: var(--terminal-font);
+      background-color: rgba(20, 0, 0, 0.7);
+      padding: 1.5rem;
+      border: 1px solid var(--terminal-red);
+      width: 100%;
+      max-width: 800px;
+      text-align: left;
+      margin-bottom: 2rem;
+      overflow: auto;
+      height: 300px;
+    }
+    
+    .error-line {
+      margin-bottom: 0.5rem;
+      color: var(--terminal-dim);
+    }
+    
+    .error-line.highlight {
+      color: var(--terminal-red);
+    }
+    
+    .home-link {
+      display: inline-block;
+      padding: 0.8rem 2rem;
+      background-color: rgba(255, 0, 0, 0.2);
+      border: 1px solid var(--terminal-red);
+      color: var(--terminal-text);
+      text-decoration: none;
+      font-family: var(--terminal-font);
+      transition: all 0.3s ease;
+    }
+    
+    .home-link:hover {
+      background-color: rgba(255, 0, 0, 0.4);
+    }
+    
+    .hidden-message {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      font-size: 0.7rem;
+      color: rgba(255, 0, 0, 0.3);
+      cursor: default;
+    }
+    
+    .hidden-message:hover {
+      color: var(--terminal-red);
+    }
+  </style>
+</head>
+<body class="terminal glitch-active">
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  
+  <div class="error-container">
+    <div class="error-code glitch" data-text="ERROR">ERROR</div>
+    <div class="error-message">SYSTEM MALFUNCTION DETECTED. TERMINAL ACCESS COMPROMISED.</div>
+    
+    <div class="error-details">
+      <div class="error-line">INITIALIZING ERROR DIAGNOSTIC...</div>
+      <div class="error-line">SCANNING MEMORY SECTORS...</div>
+      <div class="error-line">CORRUPTION DETECTED IN SECTOR 7G...</div>
+      <div class="error-line highlight">CRITICAL SYSTEM FAILURE</div>
+      <div class="error-line">ATTEMPTING TO RECOVER DATA...</div>
+      <div class="error-line">...</div>
+      <div class="error-line">...</div>
+      <div class="error-line">RECOVERY FAILED</div>
+      <div class="error-line">...</div>
+      <div class="error-line highlight">UNAUTHORIZED ACCESS ATTEMPT LOGGED</div>
+      <div class="error-line">IP ADDRESS: [REDACTED]</div>
+      <div class="error-line">TIMESTAMP: <span id="timestamp"></span></div>
+      <div class="error-line">...</div>
+      <div class="error-line">SECURITY PROTOCOLS ENGAGED</div>
+      <div class="error-line">...</div>
+      <div class="error-line">REDIRECTING TO SAFE TERMINAL...</div>
+      <div class="error-line">...</div>
+      <div class="error-line highlight">THE VOID WATCHES</div>
+      <div class="error-line">...</div>
+      <div class="error-line">...</div>
+      <div class="error-line">NUMBPILL CELL INTEGRITY: 78%</div>
+      <div class="error-line">...</div>
+      <div class="error-line">GLYPH CRUCIBLE STABILITY: COMPROMISED</div>
+      <div class="error-line">...</div>
+      <div class="error-line highlight">WHISPERS DETECTED IN BACKGROUND RADIATION</div>
+    </div>
+    
+    <a href="/" class="home-link">RETURN TO TERMINAL</a>
+    
+    <div class="hidden-message" onclick="revealSecret()">45 4C 52 49 45 4C</div>
+  </div>
+  
+  <script>
+    // Set current timestamp
+    document.getElementById('timestamp').textContent = new Date().toISOString();
+    
+    // Reveal secret function (ARG element)
+    function revealSecret() {
+      const secretCode = '766F6964';
+      const decoded = hexToText(secretCode);
+      
+      // Create a glitched message
+      const message = document.createElement('div');
+      message.className = 'corrupt-text';
+      message.textContent = `ACCESS CODE: ${decoded}`;
+      message.setAttribute('data-text', `ACCESS CODE: ${decoded}`);
+      message.style.position = 'fixed';
+      message.style.bottom = '40px';
+      message.style.right = '10px';
+      message.style.color = 'var(--terminal-red)';
+      
+      document.body.appendChild(message);
+      
+      // Remove after 5 seconds
+      setTimeout(() => {
+        message.remove();
+      }, 5000);
+    }
+    
+    // Helper function to convert hex to text
+    function hexToText(hex) {
+      let text = '';
+      for (let i = 0; i < hex.length; i += 2) {
+        text += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+      }
+      return text;
+    }
+    
+    // Add random glitches to the error details
+    function addRandomGlitch() {
+      const errorLines = document.querySelectorAll('.error-line');
+      const randomIndex = Math.floor(Math.random() * errorLines.length);
+      const line = errorLines[randomIndex];
+      
+      // Skip highlighted lines
+      if (line.classList.contains('highlight')) {
+        return;
+      }
+      
+      const originalText = line.textContent;
+      const glitchChars = '!@#$%^&*()_+-=[]{}|;:,.<>?/\\`~░▒▓█▄▀■□▪▫▬▲►▼◄◊○●◘◙☺☻♥♦♣♠♂♀♪♫☼►◄▲▼§¶';
+      
+      // Generate glitched text
+      let glitchedText = '';
+      for (let i = 0; i < originalText.length; i++) {
+        if (Math.random() < 0.1) {
+          glitchedText += glitchChars.charAt(Math.floor(Math.random() * glitchChars.length));
+        } else {
+          glitchedText += originalText.charAt(i);
+        }
+      }
+      
+      // Apply glitched text
+      line.textContent = glitchedText;
+      
+      // Restore original text after a short delay
+      setTimeout(() => {
+        line.textContent = originalText;
+      }, 500);
+    }
+    
+    // Apply random glitches periodically
+    setInterval(addRandomGlitch, 1000);
+  </script>
+</body>
+</html>
