@@ -1,0 +1,251 @@
+/* Windows 98 Profile CSS for Elriel */
+
+/* Profile Content */
+.profile-content {
+  padding: 8px;
+}
+
+.profile-header {
+  position: relative;
+  margin-bottom: 16px;
+  border: inset 2px #808080;
+  background-color: white;
+}
+
+.profile-background {
+  height: 150px;
+  background-color: #008080;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  border-bottom: 1px solid var(--win98-border-dark);
+}
+
+.profile-avatar {
+  position: absolute;
+  bottom: -30px;
+  left: 20px;
+  width: 64px;
+  height: 64px;
+  background-color: var(--win98-bg);
+  border-width: 2px;
+  border-style: solid;
+  border-color: var(--win98-border-light) var(--win98-border-darker) var(--win98-border-darker) var(--win98-border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.default-avatar {
+  width: 48px;
+  height: 48px;
+  background-color: var(--win98-text);
+  border-radius: 50%;
+}
+
+.profile-info {
+  background-color: var(--win98-bg);
+  padding: 8px 16px 8px 100px;
+  min-height: 40px;
+}
+
+.profile-info h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: bold;
+  font-family: 'MS Sans Serif', sans-serif;
+}
+
+.profile-district {
+  font-size: 11px;
+  color: var(--win98-text);
+  margin-top: 4px;
+}
+
+.profile-details {
+  margin-top: 16px;
+}
+
+.profile-section {
+  margin-bottom: 16px;
+  border: 1px solid var(--win98-border-dark);
+  background-color: white;
+}
+
+.section-title {
+  font-size: 11px;
+  font-weight: bold;
+  color: var(--win98-text);
+  padding: 4px 8px;
+  background-color: var(--win98-bg);
+  border-bottom: 1px solid var(--win98-border-dark);
+}
+
+.section-content {
+  padding: 8px;
+  min-height: 40px;
+  font-size: 11px;
+}
+
+/* Profile Glyph/Sigil */
+#profile-glyph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#profile-glyph svg {
+  max-width: 100%;
+  max-height: 150px;
+}
+
+/* User Posts */
+.user-posts-content {
+  padding: 8px;
+}
+
+.user-post-item {
+  padding: 8px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--win98-border-dark);
+  font-size: 11px;
+}
+
+.post-title {
+  margin-bottom: 4px;
+}
+
+.post-title a {
+  color: var(--win98-link);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.post-title a:hover {
+  text-decoration: underline;
+}
+
+.post-meta {
+  font-size: 10px;
+  color: var(--win98-border-dark);
+  display: flex;
+  justify-content: space-between;
+}
+
+.post-encrypted {
+  color: #ff0000;
+  font-weight: bold;
+}
+
+/* Custom Code Section */
+#profile-custom-html {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* Windows 98 Style Edit Controls */
+.edit-profile-form {
+  padding: 8px;
+}
+
+.form-row {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-row label {
+  font-size: 11px;
+  margin-bottom: 4px;
+  font-weight: bold;
+}
+
+.form-row input[type="text"],
+.form-row input[type="url"],
+.form-row textarea,
+.form-row select {
+  padding: 4px;
+  font-size: 11px;
+  background-color: white;
+  border-width: 2px;
+  border-style: solid;
+  border-color: var(--win98-border-darker) var(--win98-border-light) var(--win98-border-light) var(--win98-border-darker);
+  font-family: 'MS Sans Serif', sans-serif;
+}
+
+.form-row textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.form-buttons button {
+  margin-left: 8px;
+}
+
+/* Edit Profile Specific */
+.profile-custom-editor {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 16px;
+  margin-top: 16px;
+}
+
+.editor-pane,
+.preview-pane {
+  border: 1px solid var(--win98-border-dark);
+}
+
+.editor-pane-title,
+.preview-pane-title {
+  font-size: 11px;
+  font-weight: bold;
+  padding: 4px 8px;
+  background-color: var(--win98-bg);
+  border-bottom: 1px solid var(--win98-border-dark);
+}
+
+.editor-textarea {
+  width: 100%;
+  min-height: 200px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  padding: 8px;
+  border: none;
+  background-color: white;
+  resize: vertical;
+}
+
+.preview-content {
+  padding: 8px;
+  min-height: 200px;
+  background-color: white;
+  overflow: auto;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .profile-custom-editor {
+    grid-template-columns: 1fr;
+  }
+  
+  .profile-avatar {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .default-avatar {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .profile-info {
+    padding-left: 70px;
+  }
+}

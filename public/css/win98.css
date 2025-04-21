@@ -1,0 +1,575 @@
+/* Windows 98 Style CSS for Elriel */
+/* Inspired by web 1.0 aesthetics and classic Windows 98 UI */
+
+/* MS Sans Serif font */
+@font-face {
+  font-family: 'MS Sans Serif';
+  src: url('https://unpkg.com/98.css@0.1.17/dist/ms_sans_serif.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'MS Sans Serif';
+  src: url('https://unpkg.com/98.css@0.1.17/dist/ms_sans_serif_bold.woff2') format('woff2');
+  font-weight: bold;
+  font-style: normal;
+}
+
+/* Import cursor styles */
+@import url('/css/win98-cursors.css');
+
+/* Terminal font as backup */
+@import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap');
+
+/* CSS Variables */
+:root {
+  --win98-bg: #c0c0c0;
+  --win98-border-light: #ffffff;
+  --win98-border-dark: #808080;
+  --win98-border-darker: #404040;
+  --win98-text: #000000;
+  --win98-title-bg: #000080;
+  --win98-title-text: #ffffff;
+  --win98-button-face: #c0c0c0;
+  --win98-window-bg: #ffffff;
+  --win98-link: #0000ff;
+  --win98-link-visited: #800080;
+  --terminal-green: #00ff00;
+  --terminal-red: #ff0033;
+  --terminal-dim: #666666;
+  --win98-disabled: #808080;
+}
+
+/* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'MS Sans Serif', 'VT323', monospace;
+  background-color: var(--win98-bg);
+  color: var(--win98-text);
+  line-height: 1.4;
+  position: relative;
+  overflow-y: auto;
+  cursor: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAB3RJTUUH5AQDEwUgvZDpXwAABIxJREFUWMO1lltsVFUUhr99zpmZdmY6M20pFTEIGjXE+mIbEwwYMIIXjGJiJIGgD6Coj8b4ZjTRxCe58YYajYnRGBI0higCGjHeaIwGYyTB1Gu1EWmZdii9zWU/HOgUe85W6NquJGuvs/da3/rXv/beR1SVJu3eiAHA3tVdAIK2q+oMoDQbXcGqbQC+IUwC7fGZvLG8M9uxZtXOXOBPYCIIAbJMx6/ZB2KlJYuMMZPAE8A6VZ2Vn31/PKrqGGNuBp4HUsD14tgdIpJJJt9yvbcb3YQQVPXKMDCiKoL+VTmKiGmKQyIizdQBSACQACABQAKAjBL4WkRKqjoe7AXNuRIYBqqq2p2PYc8Bzf8NAlVdA7wJXATGVXUG8Aawznt/5UoA8CSwDZhM2yBrgTSw5X8FUNXNwJOZuXd3d99qjCmLSBvwk6qeVdVvgBJQ9N5LDkCrgZdUdbmIZL33xXQ6PSUiN6nqJuBBEfkdeAP4ArgchuFsPwxCYDWwQVVnq+p7wFvAs977Ke/9g6r6E/AWwqfJVG56YP94JQxLIYQHgJeBs6r6KvBuPB5PGWNuAZ4TkZXAG8aYZ+PxeNF7L9Za672vNjQ07K5Wq41RFIXGmGb4B8BB4KE6fVdTaOvWNoBDYRh+76rV9+Ox2IOVSuUP7/29qVRquYisBe4WkadSqdScIAjOMJ28bFVVFRExsVhsLtACPKOqZ4DPgdm19aJrgK97eidFpDOZTCbL5fI2Y8xSVV0KfCoiR4BvgW+89x+KSAgU6nRcFzqRD6aMMatFZJeqzgVeUtW1/0xLiYikUqnOfD7/q6ouEJE4sBH4QtWexPtlKP8BpJIe5qN6iUQiFovFVlljDqrqMeC4qj6qqrG6KYB0Ot1ZKBRGwjDcB4zFYrG7ReQIyE9qzLcYOTIe8GOzdxPAjClgYWPjvPbW1lu3bdt2b6lU2iEicUABUVURMZlMJje9JqrbgBMisgfYH4bhQhE5dPLk4HAwMnJGRHrCRGK+qu4XkZ9V9VgURfuBAxRLJ3+aFbuhvg6iMJQDwGsi8gPwJbAD2B1F0cJYLDYvl8vlS6VS0XufByaMMSNhGO4FvlbVflU9paojIjKqqnkROSgi54HvVHUrMAisMLa8zEQhjSOjbTfEYo8Ap9L1+llUKpWDqnooFottAJar6jpgN/CRiHwEFFC1qno1x94H7gO2AztV9QCwR1WHEJkMEo0z0YlzADtFZLyeA1FjuVyuqOpOEdmsqpuAPPCxiOwBfgcuqOqkiEyJyAXv/QXgDLAfOKiqu4HfgEEJgh2O4mhNp9lRKufHHdP3BBHTAogBh1W1T1VfALrS6fScRCKRTSQSOZBsNNqYiCc6XBy3JDKZp3EuH9TYWQMOlEv5c97777OZzEXgKHDIAcPGmEVA2hjTEIbhlM/l+nKTEzdHlcrbXsIrIBUkdtbE4n2lUv78FQA1/kNEpnuMInAJZNSB7K2W868AaFRpBUKXaLiY8/7IdKn/HTONufmKxjvMAAAAAElFTkSuQmCC'), auto;
+}
+
+/* Screen Effects */
+.noise-overlay {
+  display: none; /* Removing noise overlay for Windows 98 style */
+}
+
+.scan-lines {
+  display: none; /* Removing scan lines for Windows 98 style */
+}
+
+/* Container */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 4px;
+  background-color: var(--win98-bg);
+}
+
+/* Windows 98 Button Style */
+.win98-btn {
+  display: inline-block;
+  padding: 4px 8px;
+  background-color: var(--win98-button-face);
+  color: var(--win98-text);
+  border-width: 2px;
+  border-style: solid;
+  border-color: var(--win98-border-light) var(--win98-border-darker) var(--win98-border-darker) var(--win98-border-light);
+  box-shadow: 1px 1px 0px var(--win98-border-dark);
+  font-family: 'MS Sans Serif', sans-serif;
+  font-size: 11px;
+  text-decoration: none;
+  margin-right: 4px;
+  min-width: 75px;
+  text-align: center;
+}
+
+.win98-btn:active {
+  border-color: var(--win98-border-darker) var(--win98-border-light) var(--win98-border-light) var(--win98-border-darker);
+  box-shadow: 1px 1px 0px rgba(0,0,0,0.1) inset;
+}
+
+.win98-btn:focus {
+  outline: 1px dotted black;
+  outline-offset: -4px;
+}
+
+/* Windows 98 Window Style */
+.win98-window {
+  background-color: var(--win98-bg);
+  border-width: 2px;
+  border-style: solid;
+  border-color: var(--win98-border-light) var(--win98-border-darker) var(--win98-border-darker) var(--win98-border-light);
+  box-shadow: 1px 1px 0px var(--win98-border-dark);
+  margin-bottom: 16px;
+}
+
+.win98-titlebar {
+  background-color: var(--win98-title-bg);
+  color: var(--win98-title-text);
+  padding: 2px 3px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.win98-titlebar-text {
+  display: inline-block;
+}
+
+.win98-window-controls {
+  display: flex;
+}
+
+.win98-window-control {
+  width: 16px;
+  height: 14px;
+  margin-left: 2px;
+  background-color: var(--win98-button-face);
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--win98-border-light) var(--win98-border-darker) var(--win98-border-darker) var(--win98-border-light);
+  font-size: 9px;
+  line-height: 12px;
+  text-align: center;
+  color: black;
+}
+
+.win98-window-content {
+  padding: 8px;
+  background-color: var(--win98-window-bg);
+  border-top: 1px solid var(--win98-border-dark);
+  font-size: 11px;
+}
+
+/* Header */
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  margin-bottom: 4px;
+}
+
+.logo {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo h1 {
+  font-family: 'MS Sans Serif', sans-serif;
+  font-size: 24px;
+  color: var(--win98-text);
+  margin: 0;
+  letter-spacing: 2px;
+  font-weight: bold;
+}
+
+.logo-subtitle {
+  font-size: 11px;
+  color: var(--win98-text);
+  letter-spacing: 1px;
+}
+
+.user-panel {
+  text-align: right;
+}
+
+.logged-in, .logged-out {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.username {
+  color: var(--win98-text);
+  font-weight: bold;
+  margin-bottom: 4px;
+  font-size: 11px;
+}
+
+.user-links a {
+  margin-left: 8px;
+  font-size: 11px;
+  color: var(--win98-link);
+  text-decoration: none;
+}
+
+.user-links a:hover {
+  text-decoration: underline;
+}
+
+.login-btn, .register-btn {
+  display: inline-block;
+  padding: 4px 8px;
+  margin-left: 4px;
+  color: var(--win98-text);
+  text-decoration: none;
+  font-size: 11px;
+}
+
+/* Content Layout */
+.content-wrapper {
+  display: flex;
+  min-height: calc(100vh - 150px);
+}
+
+/* Sidebar */
+.sidebar {
+  width: 200px;
+  background-color: var(--win98-bg);
+  padding: 4px;
+  margin-right: 4px;
+  border-width: 2px;
+  border-style: solid;
+  border-color: var(--win98-border-light) var(--win98-border-darker) var(--win98-border-darker) var(--win98-border-light);
+}
+
+.nav-section {
+  margin-bottom: 16px;
+}
+
+.nav-title {
+  color: var(--win98-title-bg);
+  font-size: 11px;
+  font-weight: bold;
+  margin-bottom: 4px;
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--win98-border-dark);
+}
+
+.nav-links {
+  list-style: none;
+}
+
+.nav-links li {
+  margin-bottom: 2px;
+}
+
+.nav-links a {
+  display: block;
+  padding: 3px 5px;
+  color: var(--win98-text);
+  text-decoration: none;
+  transition: background-color 0.1s;
+  font-size: 11px;
+}
+
+.nav-links a:hover, .nav-links a.active {
+  background-color: var(--win98-title-bg);
+  color: var(--win98-title-text);
+}
+
+.district {
+  position: relative;
+}
+
+.district.locked::after {
+  content: "🔒";
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+}
+
+/* Main Content */
+.main-content {
+  flex: 1;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: 8px;
+}
+
+/* Terminal Output */
+.terminal-output {
+  padding: 8px;
+  height: 250px;
+  overflow-y: auto;
+  font-family: 'Share Tech Mono', monospace;
+  background-color: black;
+  color: #33ff33;
+  border: inset 2px #808080;
+}
+
+.line {
+  margin-bottom: 4px;
+  white-space: pre-wrap;
+  font-size: 12px;
+}
+
+.blink {
+  animation: blink 1s infinite;
+}
+
+.prompt {
+  color: var(--terminal-green);
+  margin-right: 4px;
+}
+
+.command-line {
+  display: flex;
+  align-items: center;
+}
+
+#terminal-input {
+  background: transparent;
+  border: none;
+  color: #33ff33;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  flex: 1;
+  outline: none;
+}
+
+/* Announcement Panel */
+.announcement-content {
+  padding: 8px;
+}
+
+.announcement-title {
+  color: var(--win98-text);
+  margin-bottom: 4px;
+  font-family: 'MS Sans Serif', sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.announcement-body {
+  margin-bottom: 8px;
+  line-height: 1.5;
+  font-size: 11px;
+}
+
+.announcement-timestamp {
+  font-size: 10px;
+  color: var(--win98-border-dark);
+  text-align: right;
+}
+
+/* Activity Feed */
+.featured-content {
+  padding: 8px;
+}
+
+.activity-item {
+  margin-bottom: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--win98-border-dark);
+  font-size: 11px;
+}
+
+.activity-time {
+  font-size: 10px;
+  color: var(--win98-border-dark);
+  margin-right: 4px;
+}
+
+/* Footer */
+.main-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-top: 1px solid var(--win98-border-dark);
+  font-size: 11px;
+  color: var(--win98-text);
+  margin-top: 8px;
+}
+
+.footer-glyphs {
+  display: flex;
+}
+
+.glyph {
+  margin-left: 8px;
+  font-size: 14px;
+  color: var(--win98-text);
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--win98-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--win98-bg);
+  border-width: 2px;
+  border-style: solid;
+  border-color: var(--win98-border-light) var(--win98-border-darker) var(--win98-border-darker) var(--win98-border-light);
+}
+
+::-webkit-scrollbar-button {
+  display: block;
+  height: 16px;
+  width: 16px;
+  background-color: var(--win98-bg);
+  border-width: 2px;
+  border-style: solid;
+  border-color: var(--win98-border-light) var(--win98-border-darker) var(--win98-border-darker) var(--win98-border-light);
+}
+
+/* Utility Classes */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Animations */
+@keyframes blink {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0.5;
+  }
+}
+
+/* Status Indicator */
+.status-indicator {
+  font-size: 10px;
+  padding: 1px 4px;
+  background-color: var(--win98-button-face);
+  color: var(--win98-text);
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--win98-border-light) var(--win98-border-darker) var(--win98-border-darker) var(--win98-border-light);
+}
+
+.status-indicator.alert {
+  background-color: var(--terminal-red);
+  color: white;
+  animation: blink 2s infinite;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .content-wrapper {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    margin-bottom: 8px;
+  }
+  
+  .main-header {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .logo {
+    margin-bottom: 8px;
+  }
+  
+  .user-panel {
+    text-align: center;
+  }
+  
+  .logged-in, .logged-out {
+    align-items: center;
+  }
+}
+
+/* Glitch effects are adapted to fit Windows 98 style */
+.glitch {
+  position: relative;
+  color: var(--win98-text);
+  letter-spacing: 0.1em;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch-active .glitch::before {
+  left: 2px;
+  text-shadow: -1px 0 red;
+  animation: glitch-anim-1 2s infinite linear alternate-reverse;
+}
+
+.glitch-active .glitch::after {
+  left: -2px;
+  text-shadow: 2px 0 blue;
+  animation: glitch-anim-2 3s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim-1 {
+  0% {
+    clip-path: inset(20% 0 80% 0);
+  }
+  20% {
+    clip-path: inset(60% 0 1% 0);
+  }
+  40% {
+    clip-path: inset(25% 0 58% 0);
+  }
+  60% {
+    clip-path: inset(94% 0 2% 0);
+  }
+  80% {
+    clip-path: inset(54% 0 30% 0);
+  }
+  100% {
+    clip-path: inset(70% 0 6% 0);
+  }
+}
+
+@keyframes glitch-anim-2 {
+  0% {
+    clip-path: inset(33% 0 44% 0);
+  }
+  20% {
+    clip-path: inset(2% 0 90% 0);
+  }
+  40% {
+    clip-path: inset(80% 0 5% 0);
+  }
+  60% {
+    clip-path: inset(18% 0 75% 0);
+  }
+  80% {
+    clip-path: inset(40% 0 30% 0);
+  }
+  100% {
+    clip-path: inset(10% 0 85% 0);
+  }
+}

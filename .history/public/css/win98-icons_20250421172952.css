@@ -1,0 +1,19 @@
+/* Windows 98 Icons CSS for Elriel */
+
+.win98-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-repeat: no-repeat;
+  background-position: center;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+/* Computer Icon */
+.win98-icon-computer {
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAABmJLR0QA/wD/AP+gvaeTAAAAB3RJTUUH5QYVFhc0PPzNpQAAAnRJREFUOMuFkktIVFEcxn////3MdWacq4wP0kzN1EbLHlBRi4qgFkFBEVTLoBa1qUVBQdGDKKJlbc2iRRQUFLQpIpAKe9GDsrJCzXzNjOOMjo7jnHvPPS1izDGtvvWP7+P3HfgkIQSrIX/zBUGg05e7ZpdS0iFRNkopWUIIBFKoaKR+Y2vH+UfIV33+pgsUCzbnY49IWaapBBMIbQMCqekomk6kYRO7Wu9Sfvv1LICcnF9WBQnmE0ihKDrjaHoIPRRG0UOEQiF0XS/lfD6PbdulXChYpFJJ5mZiXI7tRrxy+8vW9iNGsVjAMPSl5ioVCSRCOFiWRTqdJpPJ4roeWqHIXPw9l8e3I562dw/NzaeSYdUXq2lbRShK7aqUiFpBQ9dBUVGEhb8wTdq2Ge3rIZ8pom3rGEymUklNc1d04zhOdQ0qBAE+bhW8iJ8nHtQpSA6p9BBXnvkMvPcxZmZm4jcufuGLri81NwwDP/Dpev+K6XyM8XADn/QM1bW1HDnUxs7NjWzb0jw4k80lwvHYHT+XNfB9H9d1CYKAxsYoF848Y2x0mOCnTU1dDVNjEzx5nSJRn8TIRuDq3S+rkijLMvl8HqEPsGv9FJ8nPpHLZahUKuQLZRLRCOlslpnZeWQ/hn5w/1hVgmmamKaJZQVI+TGU9WuIRCI/x5ckYWkwTZPC/AdELAGH2salc8JxnNKiWJZFzrZJXnvF4+evudG7Bc/z8DyvCnAch1yuiG31Ex4eQOzfs2XRgF/L1D6VmQU4dX0t8tW+vpWTWE3nD0z+0xVW0/8Bdjg8pUKhw5cAAAAASUVORK5CYII=');
+}
+
+/* Folder Icon */
+.win98-icon-folder {
