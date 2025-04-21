@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ABOUT | ELRIEL</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/glitch.css">
+  <script src="/js/glitch.js" defer></script>
+  <style>
+    .about-container {
+      padding: 2rem;
+    }
+    
+    .about-panel {
+      background-color: var(--panel-bg);
+      border: var(--panel-border);
+      border-radius: 4px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .about-panel .panel-header {
+      background-color: rgba(0, 0, 0, 0.3);
+      border-bottom: var(--panel-border);
+      padding: 0.8rem 1rem;
+      margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .about-panel .panel-header h2 {
+      font-family: var(--header-font);
+      color: var(--terminal-green);
+      font-size: 1.5rem;
+      margin: 0;
+    }
+    
+    .about-content {
+      font-family: var(--terminal-font);
+      color: var(--terminal-text);
+      line-height: 1.8;
+    }
+    
+    .about-content h3 {
+      font-family: var(--header-font);
+      color: var(--terminal-dim-green);
+      font-size: 1.2rem;
+      margin-top: 1.5rem;
+      margin-bottom: 0.8rem;
+      border-bottom: 1px dashed rgba(0, 255, 0, 0.1);
+      padding-bottom: 0.3rem;
+    }
+    
+    .about-content p {
+      margin-bottom: 1rem;
+    }
+    
+    .about-content a {
+      color: var(--terminal-blue);
+      text-decoration: none;
+    }
+    
+    .about-content a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body class="terminal">
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  <div class="container about-container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">TERMINAL ACCESS v1.0</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">PROFILE</h3>
+          <ul class="nav-links">
+            <li><a href="/profile">DASHBOARD</a></li>
+            <li><a href="/profile/edit">EDIT PROFILE</a></li>
+            <li><a href="/feed/new">CREATE POST</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about" class="active">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <section class="about-panel">
+          <div class="panel-header">
+            <h2>ABOUT ELRIEL</h2>
+            <div class="status-indicator">INFO</div>
+          </div>
+          <div class="about-content">
+            <p>
+              ELRIEL IS A HAUNTED TERMINAL-BASED SOCIAL NETWORK.
+              PART ARCHIVE, PART SHRINE, PART MACHINE.
+              IT WAS NEVER MEANT TO BE FOUND.
+            </p>
+            
+            <p>
+              INSPIRED BY THE MYSTIQUE OF LOST NETWORKS, ALTERNATE REALITY GAMES, AND OCCULT AESTHETICS.
+              EXPLORE THE BLEEDSTREAM, GENERATE YOUR OWN SIGILS IN THE GLYPH CRUCIBLE,
+              AND TRANSMIT ANONYMOUS WHISPERS TO THE BOARD.
+            </p>
+            
+            <h3>TECHNOLOGY MANIFEST:</h3>
+            <ul>
+              <li>BACKEND: NODE.JS + EXPRESS</li>
+              <li>DATABASE: SQLITE</li>
+              <li>FRONTEND: VANILLA HTML/CSS/JS</li>
+              <li>DEPLOYMENT TARGETS: RENDER, RAILWAY, GLITCH (FREE-TIER COMPATIBLE)</li>
+            </ul>
+            
+            <h3>CONTRIBUTIONS:</h3>
+            <p>
+              ELRIEL IS AN ONGOING EXPERIMENT. CONTRIBUTIONS ARE WELCOME.
+              FIND THE SOURCE CODE ON <a href="#" target="_blank">GITHUB (LINK PENDING)</a>.
+            </p>
+            
+            <h3>WARNING:</h3>
+            <p>
+              THE NETWORK IS UNSTABLE. DATA CORRUPTION AND UNEXPECTED GLITCHES MAY OCCUR.
+              PROCEED WITH CAUTION.
+            </p>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="main-footer">
+      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+      <div class="footer-glyphs">
+        <span class="glyph">⌘</span>
+        <span class="glyph">⍟</span>
+        <span class="glyph">⎔</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Inject data from server (assuming user data is available globally or fetched)
+    const data = __DATA__;
+    const user = data.user;
+    
+    // Update user status in header
+    const userStatusEl = document.getElementById('user-status');
+    if (user) {
+      userStatusEl.innerHTML = `
+        <div class="logged-in">
+          <span class="username">${user.username}</span>
+          <div class="user-links">
+            <a href="/profile">PROFILE</a>
+            <a href="/auth/logout">LOGOUT</a>
+          </div>
+        </div>
+      `;
+    } else {
+      userStatusEl.innerHTML = `
+        <div class="logged-out">
+          <a href="/auth/login" class="login-btn">LOGIN</a>
+          <a href="/auth/register" class="register-btn">REGISTER</a>
+        </div>
+      `;
+    }
+    
+    // Toggle glitch effects
+    document.getElementById('toggle-glitch').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.body.classList.toggle('glitch-active');
+    });
+  </script>
+</body>
+</html>

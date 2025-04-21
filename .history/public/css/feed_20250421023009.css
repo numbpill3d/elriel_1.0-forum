@@ -1,0 +1,390 @@
+/* Elriel - Feed CSS Styles */
+/* Styles for the Bleedstream and post pages */
+
+.bleedstream-panel .panel-header h2,
+.post-panel .panel-header h2 {
+  font-size: 1.5rem;
+}
+
+.bleedstream-content,
+.post-content-area {
+  padding: 1rem;
+}
+
+.feed-controls {
+  margin-bottom: 2rem;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+  padding-bottom: 1rem;
+}
+
+.feed-controls .form-group {
+  margin-bottom: 0;
+}
+
+.feed-controls label {
+  display: inline-block;
+  margin-right: 1rem;
+  color: var(--terminal-dim-green);
+  font-size: 0.9rem;
+}
+
+.feed-controls select {
+  padding: 0.5rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--terminal-dim-green);
+  color: var(--terminal-bright);
+  font-family: var(--terminal-font);
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.feed-controls select:focus {
+  border-color: var(--terminal-green);
+  box-shadow: 0 0 5px var(--glow-color);
+}
+
+.post-list {
+  /* Styles for the list of posts */
+}
+
+.post-item {
+  background-color: rgba(0, 20, 0, 0.5);
+  border: 1px solid rgba(0, 255, 0, 0.2);
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.post-glyph {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  border: 1px solid var(--terminal-dim);
+  padding: 3px;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.post-glyph svg {
+  width: 100%;
+  height: 100%;
+}
+
+.post-content {
+  flex-grow: 1;
+}
+
+.post-title {
+  font-family: var(--header-font);
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+}
+
+.post-title a {
+  color: var(--terminal-green);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.post-title a:hover {
+  color: var(--terminal-bright);
+}
+
+.post-meta {
+  font-size: 0.8rem;
+  color: var(--terminal-dim);
+  margin-bottom: 0.5rem;
+}
+
+.post-author a {
+  color: var(--terminal-dim);
+  text-decoration: none;
+}
+
+.post-author a:hover {
+  text-decoration: underline;
+}
+
+.post-date {
+  margin-left: 1rem;
+}
+
+.post-encrypted {
+  color: var(--terminal-red);
+  margin-left: 1rem;
+}
+
+.post-tags {
+  font-size: 0.8rem;
+  color: var(--terminal-dim-green);
+}
+
+.post-tag {
+  margin-right: 0.5rem;
+  border: 1px solid var(--terminal-dim-green);
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+}
+
+/* New Post Page Styles */
+.new-post-panel .panel-header h2 {
+  font-size: 1.5rem;
+}
+
+.new-post-content {
+  padding: 1rem;
+}
+
+.new-post-form .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.new-post-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--terminal-dim-green);
+  font-size: 0.9rem;
+}
+
+.new-post-form input[type="text"],
+.new-post-form textarea {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--terminal-dim-green);
+  color: var(--terminal-bright);
+  font-family: var(--terminal-font);
+  font-size: 1rem;
+  outline: none;
+}
+
+.new-post-form input[type="text"]:focus,
+.new-post-form textarea:focus {
+  border-color: var(--terminal-green);
+  box-shadow: 0 0 5px var(--glow-color);
+}
+
+.new-post-form textarea {
+  min-height: 200px;
+  resize: vertical;
+}
+
+.new-post-form button {
+  display: inline-block;
+  padding: 0.8rem 2rem;
+  background-color: var(--terminal-green);
+  border: none;
+  color: var(--terminal-bg);
+  font-family: var(--header-font);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 1rem;
+}
+
+.new-post-form button:hover {
+  background-color: var(--terminal-dim-green);
+}
+
+.glyph-selection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 1rem;
+  max-height: 150px;
+  overflow-y: auto;
+  padding: 10px;
+  border: 1px dashed rgba(0, 255, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.glyph-item {
+  width: 60px;
+  height: 60px;
+  border: 1px solid var(--terminal-dim);
+  padding: 3px;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.glyph-item:hover, .glyph-item.selected {
+  border-color: var(--terminal-green);
+}
+
+.glyph-item svg {
+  width: 100%;
+  height: 100%;
+}
+
+.glyph-item.selected {
+  box-shadow: 0 0 5px var(--glow-color);
+}
+
+/* View Post Page Styles */
+.view-post-panel .panel-header h2 {
+  font-size: 1.5rem;
+}
+
+.view-post-content {
+  padding: 1rem;
+}
+
+.view-post-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.view-post-title {
+  font-family: var(--header-font);
+  font-size: 2rem;
+  color: var(--terminal-green);
+  margin-bottom: 0.5rem;
+}
+
+.view-post-meta {
+  font-size: 0.9rem;
+  color: var(--terminal-dim);
+  margin-bottom: 1rem;
+}
+
+.view-post-author a {
+  color: var(--terminal-dim);
+  text-decoration: none;
+}
+
+.view-post-author a:hover {
+  text-decoration: underline;
+}
+
+.view-post-date {
+  margin-left: 1rem;
+}
+
+.view-post-encrypted {
+  color: var(--terminal-red);
+  margin-left: 1rem;
+}
+
+.view-post-glyph {
+  width: 100px;
+  height: 100px;
+  border: 1px solid var(--terminal-dim);
+  padding: 5px;
+  background-color: rgba(0, 0, 0, 0.5);
+  margin-bottom: 1rem;
+}
+
+.view-post-glyph svg {
+  width: 100%;
+  height: 100%;
+}
+
+.view-post-body {
+  font-family: var(--terminal-font);
+  color: var(--terminal-text);
+  line-height: 1.8;
+  white-space: pre-wrap; /* Preserve line breaks */
+}
+
+.view-post-tags {
+  font-size: 0.9rem;
+  color: var(--terminal-dim-green);
+  margin-top: 1.5rem;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+  padding-top: 1rem;
+}
+
+.view-post-tag {
+  margin-right: 0.5rem;
+  border: 1px solid var(--terminal-dim-green);
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+}
+
+.view-post-actions {
+  margin-top: 2rem;
+  text-align: right;
+}
+
+.view-post-actions button {
+  padding: 0.5rem 1rem;
+  background-color: rgba(255, 0, 0, 0.2);
+  border: 1px solid var(--terminal-red);
+  color: var(--terminal-red);
+  font-family: var(--terminal-font);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.view-post-actions button:hover {
+  background-color: rgba(255, 0, 0, 0.4);
+}
+
+/* Encrypted Post Page Styles */
+.encrypted-post-panel .panel-header h2 {
+  font-size: 1.5rem;
+}
+
+.encrypted-post-content {
+  padding: 2rem;
+  text-align: center;
+}
+
+.encrypted-post-content .section-title {
+  color: var(--terminal-red);
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.encrypted-post-content .section-content {
+  color: var(--terminal-text);
+  margin-bottom: 2rem;
+}
+
+.encrypted-post-form .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.encrypted-post-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--terminal-dim-green);
+  font-size: 0.9rem;
+}
+
+.encrypted-post-form input[type="text"] {
+  width: 100%;
+  max-width: 300px;
+  padding: 0.8rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--terminal-dim-green);
+  color: var(--terminal-bright);
+  font-family: var(--terminal-font);
+  font-size: 1rem;
+  outline: none;
+  text-align: center;
+}
+
+.encrypted-post-form input[type="text"]:focus {
+  border-color: var(--terminal-green);
+  box-shadow: 0 0 5px var(--glow-color);
+}
+
+.encrypted-post-form button {
+  padding: 0.8rem 2rem;
+  background-color: var(--terminal-green);
+  border: none;
+  color: var(--terminal-bg);
+  font-family: var(--header-font);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 1rem;
+}
+
+.encrypted-post-form button:hover {
+  background-color: var(--terminal-dim-green);
+}

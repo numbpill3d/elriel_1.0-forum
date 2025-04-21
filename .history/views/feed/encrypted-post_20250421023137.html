@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ENCRYPTED POST | ELRIEL</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/glitch.css">
+  <link rel="stylesheet" href="/css/feed.css">
+  <script src="/js/glitch.js" defer></script>
+</head>
+<body class="terminal">
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">TERMINAL ACCESS v1.0</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">PROFILE</h3>
+          <ul class="nav-links">
+            <li><a href="/profile">DASHBOARD</a></li>
+            <li><a href="/profile/edit">EDIT PROFILE</a></li>
+            <li><a href="/feed/new">CREATE POST</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <section class="encrypted-post-panel">
+          <div class="panel-header">
+            <h2>ENCRYPTED TRANSMISSION</h2>
+            <div class="status-indicator alert">SECURED</div>
+          </div>
+          <div class="encrypted-post-content">
+            <div class="section-title">THIS TRANSMISSION IS ENCRYPTED.</div>
+            <div class="section-content">A DECRYPTION KEY IS REQUIRED TO ACCESS ITS CONTENTS.</div>
+            
+            <form id="decrypt-form">
+              <div class="form-group">
+                <label for="encryption-key">DECRYPTION KEY:</label>
+                <input type="text" id="encryption-key" name="key" required>
+              </div>
+              <button type="submit">DECRYPT TRANSMISSION</button>
+            </form>
+            
+            <div id="error-message" style="color: var(--terminal-red); margin-top: 1rem;"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="main-footer">
+      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+      <div class="footer-glyphs">
+        <span class="glyph">⌘</span>
+        <span class="glyph">⍟</span>
+        <span class="glyph">⎔</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Inject data from server (only post ID is available here)
+    const postId = '__POST_ID__';
+    
+    // Update user status in header (assuming user data is available globally or fetched)
+    // This part might need adjustment based on how user session is handled on this specific page
+    const userStatusEl = document.getElementById('user-status');
+    // Placeholder for user status update - ideally, user data would be passed from the server
+    userStatusEl.innerHTML = `
+      <div class="logged-out">
+        <a href="/auth/login" class="login-btn">LOGIN</a>
+        <a href="/auth/register" class="register-btn">REGISTER</a>
+      </div>
+    `;
+    
+    // Handle decryption form submission
+    document.getElementById('decrypt-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const encryptionKey = document.getElementById('encryption-key').value;
+      const errorMessageEl = document.getElementById('error-message');
+      errorMessageEl.textContent = '';
+      
+      try {
+        const response = await fetch(`/feed/check-key/${postId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ key: encryptionKey })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          window.location.href = data.redirectUrl; // Redirect to the decrypted post
+        } else {
+          errorMessageEl.textContent = data.message || 'Decryption failed. Unknown error.';
+        }
+      } catch (error) {
+        console.error('Decryption error:', error);
+        errorMessageEl.textContent = 'System error. Could not connect to decryption server.';
+      }
+    });
+    
+    // Toggle glitch effects
+    document.getElementById('toggle-glitch').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.body.classList.toggle('glitch-active');
+    });
+  </script>
+</body>
+</html>

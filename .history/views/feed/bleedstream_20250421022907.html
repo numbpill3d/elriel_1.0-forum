@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BLEEDSTREAM | ELRIEL</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/glitch.css">
+  <link rel="stylesheet" href="/css/feed.css">
+  <script src="/js/glitch.js" defer></script>
+</head>
+<body class="terminal">
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">TERMINAL ACCESS v1.0</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream" class="active">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">PROFILE</h3>
+          <ul class="nav-links">
+            <li><a href="/profile">DASHBOARD</a></li>
+            <li><a href="/profile/edit">EDIT PROFILE</a></li>
+            <li><a href="/feed/new">CREATE POST</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <section class="bleedstream-panel">
+          <div class="panel-header">
+            <h2>BLEEDSTREAM</h2>
+            <div class="status-indicator">LIVE FEED</div>
+          </div>
+          <div class="bleedstream-content">
+            <div class="feed-controls">
+              <div class="form-group">
+                <label for="tag-filter">FILTER BY TAG:</label>
+                <select id="tag-filter">
+                  <option value="">ALL TAGS</option>
+                  <!-- Tags will be injected here -->
+                </select>
+              </div>
+            </div>
+            
+            <div class="post-list" id="post-list">
+              <!-- Posts will be injected here -->
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="main-footer">
+      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+      <div class="footer-glyphs">
+        <span class="glyph">⌘</span>
+        <span class="glyph">⍟</span>
+        <span class="glyph">⎔</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Inject data from server
+    const data = __DATA__;
+    const user = data.user;
+    const posts = data.posts;
+    const tags = data.tags;
+    const currentTag = data.currentTag;
+    
+    // Update user status in header
+    const userStatusEl = document.getElementById('user-status');
+    if (user) {
+      userStatusEl.innerHTML = `
+        <div class="logged-in">
+          <span class="username">${user.username}</span>
+          <div class="user-links">
+            <a href="/profile">PROFILE</a>
+            <a href="/auth/logout">LOGOUT</a>
+          </div>
+        </div>
+      `;
+    } else {
+      userStatusEl.innerHTML = `
+        <div class="logged-out">
+          <a href="/auth/login" class="login-btn">LOGIN</a>
+          <a href="/auth/register" class="register-btn">REGISTER</a>
+        </div>
+      `;
+    }
+    
+    // Populate tag filter dropdown
+    const tagFilterSelect = document.getElementById('tag-filter');
+    tags.forEach(tag => {
+      const option = document.createElement('option');
+      option.value = tag;
+      option.textContent = tag.toUpperCase();
+      tagFilterSelect.appendChild(option);
+    });
+    
+    // Set current tag filter
+    if (currentTag) {
+      tagFilterSelect.value = currentTag;
+    }
+    
+    // Handle tag filter change
+    tagFilterSelect.addEventListener('change', (e) => {
+      const selectedTag = e.target.value;
+      if (selectedTag) {
+        window.location.href = `/feed/bleedstream?tag=${selectedTag}`;
+      } else {
+        window.location.href = '/feed/bleedstream';
+      }
+    });
+    
+    // Display posts
+    const postListEl = document.getElementById('post-list');
+    if (posts.length > 0) {
+      posts.forEach(post => {
+        const postEl = document.createElement('div');
+        postEl.className = 'post-item';
+        
+        let glyphHtml = '';
+        if (post.glyph_svg) {
+          glyphHtml = `<div class="post-glyph">${post.glyph_svg}</div>`;
+        }
+        
+        let tagsHtml = '';
+        if (post.tags) {
+          tagsHtml = post.tags.split(',').map(tag => `<span class="post-tag">${tag.trim().toUpperCase()}</span>`).join('');
+        }
+        
+        postEl.innerHTML = `
+          ${glyphHtml}
+          <div class="post-content">
+            <div class="post-title"><a href="/feed/post/${post.id}">${post.title}</a></div>
+            <div class="post-meta">
+              <span class="post-author">BY: <a href="/profile/user/${post.username}">${post.username}</a></span>
+              <span class="post-date">${new Date(post.created_at).toLocaleString()}</span>
+              ${post.is_encrypted ? '<span class="post-encrypted">ENCRYPTED</span>' : ''}
+            </div>
+            <div class="post-tags">${tagsHtml}</div>
+          </div>
+        `;
+        postListEl.appendChild(postEl);
+      });
+    } else {
+      postListEl.innerHTML = '<span>NO POSTS FOUND IN THE BLEEDSTREAM.</span>';
+    }
+    
+    // Toggle glitch effects
+    document.getElementById('toggle-glitch').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.body.classList.toggle('glitch-active');
+    });
+  </script>
+</body>
+</html>

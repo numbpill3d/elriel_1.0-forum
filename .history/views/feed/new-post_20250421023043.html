@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEW POST | ELRIEL</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/glitch.css">
+  <link rel="stylesheet" href="/css/feed.css">
+  <script src="/js/glitch.js" defer></script>
+</head>
+<body class="terminal">
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">TERMINAL ACCESS v1.0</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">PROFILE</h3>
+          <ul class="nav-links">
+            <li><a href="/profile">DASHBOARD</a></li>
+            <li><a href="/profile/edit">EDIT PROFILE</a></li>
+            <li><a href="/feed/new" class="active">CREATE POST</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <section class="new-post-panel">
+          <div class="panel-header">
+            <h2>CREATE NEW POST</h2>
+            <div class="status-indicator">TRANSMIT</div>
+          </div>
+          <div class="new-post-content">
+            <form id="new-post-form">
+              <div class="form-group">
+                <label for="title">TITLE:</label>
+                <input type="text" id="title" name="title" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="content">CONTENT:</label>
+                <textarea id="content" name="content" required></textarea>
+              </div>
+              
+              <div class="form-group">
+                <label for="tags">TAGS (COMMA SEPARATED):</label>
+                <input type="text" id="tags" name="tags">
+              </div>
+              
+              <div class="form-group">
+                <label>ATTACH SIGIL (OPTIONAL):</label>
+                <div class="glyph-selection" id="glyph-selection">
+                  <!-- User's glyphs will be injected here -->
+                </div>
+                <input type="hidden" id="selected-glyph-id" name="glyphId">
+              </div>
+              
+              <div class="form-group">
+                <input type="checkbox" id="is-encrypted" name="isEncrypted" value="1">
+                <label for="is-encrypted">ENCRYPT POST?</label>
+              </div>
+              
+              <button type="submit">TRANSMIT TO BLEEDSTREAM</button>
+            </form>
+            
+            <div id="message" style="color: var(--terminal-green); margin-top: 1rem;"></div>
+            <div id="error-message" style="color: var(--terminal-red); margin-top: 1rem;"></div>
+            <div id="encryption-key-message" style="color: var(--terminal-blue); margin-top: 1rem;"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="main-footer">
+      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+      <div class="footer-glyphs">
+        <span class="glyph">⌘</span>
+        <span class="glyph">⍟</span>
+        <span class="glyph">⎔</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Inject data from server
+    const data = __DATA__;
+    const user = data.user;
+    const glyphs = data.glyphs;
+    
+    // Update user status in header
+    const userStatusEl = document.getElementById('user-status');
+    if (user) {
+      userStatusEl.innerHTML = `
+        <div class="logged-in">
+          <span class="username">${user.username}</span>
+          <div class="user-links">
+            <a href="/profile">PROFILE</a>
+            <a href="/auth/logout">LOGOUT</a>
+          </div>
+        </div>
+      `;
+    } else {
+      userStatusEl.innerHTML = `
+        <div class="logged-out">
+          <a href="/auth/login" class="login-btn">LOGIN</a>
+          <a href="/auth/register" class="register-btn">REGISTER</a>
+        </div>
+      `;
+    }
+    
+    // Display user's glyphs for selection
+    const glyphSelectionEl = document.getElementById('glyph-selection');
+    if (glyphs && glyphs.length > 0) {
+      glyphs.forEach(glyph => {
+        const glyphItem = document.createElement('div');
+        glyphItem.className = 'glyph-item';
+        glyphItem.innerHTML = glyph.svg_data;
+        glyphItem.setAttribute('data-glyph-id', glyph.id);
+        glyphItem.title = `Generated: ${new Date(glyph.created_at).toLocaleString()}`;
+        
+        // Add click event listener for selection
+        glyphItem.addEventListener('click', () => {
+          // Remove selected class from all glyphs
+          document.querySelectorAll('.glyph-item').forEach(item => item.classList.remove('selected'));
+          // Add selected class to the clicked glyph
+          glyphItem.classList.add('selected');
+          // Set the hidden input value
+          document.getElementById('selected-glyph-id').value = glyph.id;
+        });
+        
+        glyphSelectionEl.appendChild(glyphItem);
+      });
+    } else {
+      glyphSelectionEl.innerHTML = '<span>NO SAVED SIGILS. VISIT THE GLYPH CRUCIBLE TO GENERATE SOME.</span>';
+    }
+    
+    // Handle form submission
+    document.getElementById('new-post-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const title = document.getElementById('title').value;
+      const content = document.getElementById('content').value;
+      const tags = document.getElementById('tags').value;
+      const glyphId = document.getElementById('selected-glyph-id').value;
+      const isEncrypted = document.getElementById('is-encrypted').checked;
+      
+      const messageEl = document.getElementById('message');
+      const errorMessageEl = document.getElementById('error-message');
+      const encryptionKeyMessageEl = document.getElementById('encryption-key-message');
+      messageEl.textContent = '';
+      errorMessageEl.textContent = '';
+      encryptionKeyMessageEl.textContent = '';
+      
+      try {
+        const response = await fetch('/feed/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ title, content, tags, glyphId, isEncrypted })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          messageEl.textContent = data.message;
+          if (data.encryptionKey) {
+            encryptionKeyMessageEl.textContent = `ENCRYPTION KEY: ${data.encryptionKey}`;
+          }
+          // Optionally redirect after successful post
+          // setTimeout(() => {
+          //   window.location.href = '/feed/bleedstream';
+          // }, 2000);
+        } else {
+          errorMessageEl.textContent = data.message || 'Post creation failed. Unknown error.';
+        }
+      } catch (error) {
+        console.error('Post creation error:', error);
+        errorMessageEl.textContent = 'System error. Could not transmit post.';
+      }
+    });
+    
+    // Toggle glitch effects
+    document.getElementById('toggle-glitch').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.body.classList.toggle('glitch-active');
+    });
+  </script>
+</body>
+</html>

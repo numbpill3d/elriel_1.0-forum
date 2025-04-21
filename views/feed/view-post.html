@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VIEW POST | ELRIEL</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/glitch.css">
+  <link rel="stylesheet" href="/css/feed.css">
+  <script src="/js/glitch.js" defer></script>
+</head>
+<body class="terminal">
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">TERMINAL ACCESS v1.0</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">PROFILE</h3>
+          <ul class="nav-links">
+            <li><a href="/profile">DASHBOARD</a></li>
+            <li><a href="/profile/edit">EDIT PROFILE</a></li>
+            <li><a href="/feed/new">CREATE POST</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <section class="view-post-panel">
+          <div class="panel-header">
+            <h2>POST DETAILS</h2>
+            <div class="status-indicator">ARCHIVE</div>
+          </div>
+          <div class="view-post-content">
+            <div class="view-post-header">
+              <div class="view-post-title" id="post-title"></div>
+              <div class="view-post-meta">
+                <span class="view-post-author">BY: <a href="#" id="post-author-link"></a></span>
+                <span class="view-post-date" id="post-date"></span>
+                <span class="view-post-encrypted" id="post-encrypted" style="display: none;">ENCRYPTED</span>
+              </div>
+              <div class="view-post-glyph" id="post-glyph" style="display: none;">
+                <!-- Post glyph will be injected here -->
+              </div>
+            </div>
+            
+            <div class="view-post-body" id="post-body">
+              <!-- Post content will be injected here -->
+            </div>
+            
+            <div class="view-post-tags" id="post-tags">
+              <!-- Post tags will be injected here -->
+            </div>
+            
+            <div class="view-post-actions">
+              <!-- Delete button only for owner -->
+              <button id="delete-post" style="display: none;">DELETE POST</button>
+            </div>
+            
+            <div id="message" style="color: var(--terminal-green); margin-top: 1rem;"></div>
+            <div id="error-message" style="color: var(--terminal-red); margin-top: 1rem;"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="main-footer">
+      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+      <div class="footer-glyphs">
+        <span class="glyph">⌘</span>
+        <span class="glyph">⍟</span>
+        <span class="glyph">⎔</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Inject data from server
+    const data = __DATA__;
+    const post = data.post;
+    const profile = data.profile;
+    const user = data.user;
+    const isOwner = data.isOwner;
+    
+    // Update user status in header
+    const userStatusEl = document.getElementById('user-status');
+    if (user) {
+      userStatusEl.innerHTML = `
+        <div class="logged-in">
+          <span class="username">${user.username}</span>
+          <div class="user-links">
+            <a href="/profile">PROFILE</a>
+            <a href="/auth/logout">LOGOUT</a>
+          </div>
+        </div>
+      `;
+    } else {
+      userStatusEl.innerHTML = `
+        <div class="logged-out">
+          <a href="/auth/login" class="login-btn">LOGIN</a>
+          <a href="/auth/register" class="register-btn">REGISTER</a>
+        </div>
+      `;
+    }
+    
+    // Display post details
+    document.getElementById('post-title').textContent = post.title;
+    
+    const postAuthorLink = document.getElementById('post-author-link');
+    postAuthorLink.textContent = post.username;
+    postAuthorLink.href = `/profile/user/${post.username}`;
+    
+    document.getElementById('post-date').textContent = new Date(post.created_at).toLocaleString();
+    document.getElementById('post-body').textContent = post.content;
+    
+    if (post.is_encrypted) {
+      document.getElementById('post-encrypted').style.display = 'inline';
+    }
+    
+    // Display post glyph if it exists
+    const postGlyphEl = document.getElementById('post-glyph');
+    if (post.glyph_svg) {
+      postGlyphEl.innerHTML = post.glyph_svg;
+      postGlyphEl.style.display = 'block';
+    }
+    
+    // Display post tags
+    const postTagsEl = document.getElementById('post-tags');
+    if (post.tags) {
+      post.tags.split(',').forEach(tag => {
+        const tagSpan = document.createElement('span');
+        tagSpan.className = 'view-post-tag';
+        tagSpan.textContent = tag.trim().toUpperCase();
+        postTagsEl.appendChild(tagSpan);
+      });
+    } else {
+      postTagsEl.innerHTML = '<span>NO TAGS</span>';
+    }
+    
+    // Show delete button if owner
+    const deletePostBtn = document.getElementById('delete-post');
+    if (isOwner) {
+      deletePostBtn.style.display = 'inline-block';
+    }
+    
+    // Handle delete post
+    deletePostBtn.addEventListener('click', async () => {
+      if (confirm('ARE YOU SURE YOU WANT TO ERASE THIS POST FROM THE BLEEDSTREAM?')) {
+        const messageEl = document.getElementById('message');
+        const errorMessageEl = document.getElementById('error-message');
+        messageEl.textContent = '';
+        errorMessageEl.textContent = '';
+        
+        try {
+          const response = await fetch(`/feed/post/${post.id}`, {
+            method: 'DELETE'
+          });
+          
+          const data = await response.json();
+          
+          if (data.success) {
+            messageEl.textContent = data.message;
+            // Redirect to bleedstream after deletion
+            setTimeout(() => {
+              window.location.href = '/feed/bleedstream';
+            }, 1000);
+          } else {
+            errorMessageEl.textContent = data.message || 'Failed to delete post. Unknown error.';
+          }
+        } catch (error) {
+          console.error('Post delete error:', error);
+          errorMessageEl.textContent = 'System error. Could not delete post.';
+        }
+      }
+    });
+    
+    // Toggle glitch effects
+    document.getElementById('toggle-glitch').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.body.classList.toggle('glitch-active');
+    });
+  </script>
+</body>
+</html>

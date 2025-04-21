@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VIEW WHISPER | ELRIEL</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/glitch.css">
+  <link rel="stylesheet" href="/css/whisper.css">
+  <script src="/js/glitch.js" defer></script>
+</head>
+<body class="terminal">
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">TERMINAL ACCESS v1.0</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">PROFILE</h3>
+          <ul class="nav-links">
+            <li><a href="/profile">DASHBOARD</a></li>
+            <li><a href="/profile/edit">EDIT PROFILE</a></li>
+            <li><a href="/feed/new">CREATE POST</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <section class="view-whisper-panel">
+          <div class="panel-header">
+            <h2>WHISPER DETAILS</h2>
+            <div class="status-indicator">ARCHIVE</div>
+          </div>
+          <div class="view-whisper-content">
+            <div class="view-whisper-header">
+              <div class="view-whisper-glyph" id="whisper-glyph" style="display: none;">
+                <!-- Whisper glyph will be injected here -->
+              </div>
+              <div class="view-whisper-meta">
+                <span class="view-whisper-date" id="whisper-date"></span>
+                <span class="view-whisper-encrypted" id="whisper-encrypted" style="display: none;">ENCRYPTED</span>
+              </div>
+            </div>
+            
+            <div class="view-whisper-body" id="whisper-body">
+              <!-- Whisper content will be injected here -->
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="main-footer">
+      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+      <div class="footer-glyphs">
+        <span class="glyph">⌘</span>
+        <span class="glyph">⍟</span>
+        <span class="glyph">⎔</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Inject data from server
+    const data = __DATA__;
+    const whisper = data.whisper;
+    const user = data.user;
+    
+    // Update user status in header
+    const userStatusEl = document.getElementById('user-status');
+    if (user) {
+      userStatusEl.innerHTML = `
+        <div class="logged-in">
+          <span class="username">${user.username}</span>
+          <div class="user-links">
+            <a href="/profile">PROFILE</a>
+            <a href="/auth/logout">LOGOUT</a>
+          </div>
+        </div>
+      `;
+    } else {
+      userStatusEl.innerHTML = `
+        <div class="logged-out">
+          <a href="/auth/login" class="login-btn">LOGIN</a>
+          <a href="/auth/register" class="register-btn">REGISTER</a>
+        </div>
+      `;
+    }
+    
+    // Display whisper details
+    document.getElementById('whisper-body').textContent = whisper.content;
+    document.getElementById('whisper-date').textContent = new Date(whisper.created_at).toLocaleString();
+    
+    if (whisper.is_encrypted) {
+      document.getElementById('whisper-encrypted').style.display = 'inline';
+    }
+    
+    // Display whisper glyph if it exists
+    const whisperGlyphEl = document.getElementById('whisper-glyph');
+    if (whisper.glyph_svg) {
+      whisperGlyphEl.innerHTML = whisper.glyph_svg;
+      whisperGlyphEl.style.display = 'block';
+    } else {
+      // Generate a random anonymous glyph if none is attached (client-side simulation)
+      const randomSeed = whisper.id + whisper.created_at; // Use whisper data for deterministic random
+      whisperGlyphEl.innerHTML = generateAnonGlyphSVG(randomSeed);
+      whisperGlyphEl.style.display = 'block';
+    }
+    
+    // Helper function to generate SVG data for an anonymous glyph (client-side simulation)
+    function generateAnonGlyphSVG(seed) {
+      // Create a deterministic random number generator based on the seed
+      const random = seedRandom(seed);
+      
+      // Generate SVG elements
+      const width = 100;
+      const height = 100;
+      const centerX = width / 2;
+      const centerY = height / 2;
+      
+      // Start SVG
+      let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" class="anon-glyph-svg">`;
+      
+      // Add a background circle
+      svg += `<circle cx="${centerX}" cy="${centerY}" r="${centerX - 5}" fill="none" stroke="#333" stroke-width="1" />`;
+      
+      // Generate a simple symbol
+      const symbolType = Math.floor(random() * 5);
+      
+      switch (symbolType) {
+        case 0: // Cross
+          svg += `<line x1="${centerX - 20}" y1="${centerY}" x2="${centerX + 20}" y2="${centerY}" stroke="#666" stroke-width="1" />`;
+          svg += `<line x1="${centerX}" y1="${centerY - 20}" x2="${centerX}" y2="${centerY + 20}" stroke="#666" stroke-width="1" />`;
+          break;
+        case 1: // Triangle
+          svg += `<polygon points="${centerX},${centerY - 20} ${centerX - 20},${centerY + 10} ${centerX + 20},${centerY + 10}" fill="none" stroke="#666" stroke-width="1" />`;
+          break;
+        case 2: // Square
+          svg += `<rect x="${centerX - 15}" y="${centerY - 15}" width="30" height="30" fill="none" stroke="#666" stroke-width="1" />`;
+          break;
+        case 3: // Circle
+          svg += `<circle cx="${centerX}" cy="${centerY}" r="15" fill="none" stroke="#666" stroke-width="1" />`;
+          break;
+        case 4: // Star
+          const points = 5;
+          const outerRadius = 20;
+          const innerRadius = 10;
+          let starPoints = '';
+          
+          for (let i = 0; i < points * 2; i++) {
+            const radius = i % 2 === 0 ? outerRadius : innerRadius;
+            const angle = (Math.PI / points) * i;
+            const x = centerX + radius * Math.sin(angle);
+            const y = centerY - radius * Math.cos(angle);
+            starPoints += `${x},${y} `;
+          }
+          
+          svg += `<polygon points="${starPoints}" fill="none" stroke="#666" stroke-width="1" />`;
+          break;
+      }
+      
+      // Add a few random dots
+      for (let i = 0; i < 5; i++) {
+        const angle = random() * Math.PI * 2;
+        const distance = 5 + random() * 25;
+        const x = centerX + Math.cos(angle) * distance;
+        const y = centerY + Math.sin(angle) * distance;
+        svg += `<circle cx="${x}" cy="${y}" r="1" fill="#999" />`;
+      }
+      
+      // Close SVG
+      svg += '</svg>';
+      
+      return svg;
+    }
+    
+    // Deterministic random number generator based on a seed
+    function seedRandom(seed) {
+      let hash = 0;
+      for (let i = 0; i < seed.length; i++) {
+        hash = ((hash << 5) - hash) + seed.charCodeAt(i);
+        hash |= 0; // Convert to 32-bit integer
+      }
+      
+      // Simple LCG random number generator
+      let state = hash;
+      return function() {
+        state = (state * 1664525 + 1013904223) % 4294967296;
+        return state / 4294967296;
+      };
+    }
+    
+    // Toggle glitch effects
+    document.getElementById('toggle-glitch').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.body.classList.toggle('glitch-active');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,307 @@
+/* Elriel - Whisper CSS Styles */
+/* Styles for the Whisperboard and whisper pages */
+
+.whisperboard-panel .panel-header h2,
+.whisper-panel .panel-header h2 {
+  font-size: 1.5rem;
+}
+
+.whisperboard-content,
+.whisper-content-area {
+  padding: 1rem;
+}
+
+.whisper-actions {
+  margin-bottom: 2rem;
+  text-align: right;
+}
+
+.new-whisper-button {
+  display: inline-block;
+  padding: 0.8rem 2rem;
+  background-color: rgba(0, 119, 255, 0.2); /* Blue background */
+  border: 1px solid var(--terminal-blue); /* Blue border */
+  color: var(--terminal-text);
+  text-decoration: none;
+  font-family: var(--header-font);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.new-whisper-button:hover {
+  background-color: rgba(0, 119, 255, 0.4);
+}
+
+.whisper-list {
+  /* Styles for the list of whispers */
+}
+
+.whisper-item {
+  background-color: rgba(0, 0, 20, 0.5); /* Dark blue background */
+  border: 1px solid rgba(0, 0, 255, 0.2); /* Blue border */
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.whisper-glyph {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  border: 1px solid var(--terminal-dim);
+  padding: 3px;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.whisper-glyph svg {
+  width: 100%;
+  height: 100%;
+}
+
+.whisper-content {
+  flex-grow: 1;
+}
+
+.whisper-body {
+  font-family: var(--terminal-font);
+  font-size: 1rem;
+  color: var(--terminal-text);
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+
+.whisper-meta {
+  font-size: 0.8rem;
+  color: var(--terminal-dim);
+  margin-bottom: 0.5rem;
+}
+
+.whisper-date {
+  margin-right: 1rem;
+}
+
+.whisper-encrypted {
+  color: var(--terminal-red);
+}
+
+.view-whisper-link {
+  display: inline-block;
+  font-size: 0.9rem;
+  color: var(--terminal-blue);
+  text-decoration: none;
+  margin-top: 0.5rem;
+}
+
+.view-whisper-link:hover {
+  text-decoration: underline;
+}
+
+/* New Whisper Page Styles */
+.new-whisper-panel .panel-header h2 {
+  font-size: 1.5rem;
+}
+
+.new-whisper-content {
+  padding: 1rem;
+}
+
+.new-whisper-form .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.new-whisper-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--terminal-dim-green);
+  font-size: 0.9rem;
+}
+
+.new-whisper-form textarea {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--terminal-dim-green);
+  color: var(--terminal-bright);
+  font-family: var(--terminal-font);
+  font-size: 1rem;
+  outline: none;
+  min-height: 150px;
+  resize: vertical;
+}
+
+.new-whisper-form textarea:focus {
+  border-color: var(--terminal-green);
+  box-shadow: 0 0 5px var(--glow-color);
+}
+
+.new-whisper-form button {
+  display: inline-block;
+  padding: 0.8rem 2rem;
+  background-color: var(--terminal-green);
+  border: none;
+  color: var(--terminal-bg);
+  font-family: var(--header-font);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 1rem;
+}
+
+.new-whisper-form button:hover {
+  background-color: var(--terminal-dim-green);
+}
+
+.glyph-selection {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 1rem;
+  max-height: 150px;
+  overflow-y: auto;
+  padding: 10px;
+  border: 1px dashed rgba(0, 255, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.glyph-item {
+  width: 60px;
+  height: 60px;
+  border: 1px solid var(--terminal-dim);
+  padding: 3px;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.glyph-item:hover, .glyph-item.selected {
+  border-color: var(--terminal-green);
+}
+
+.glyph-item svg {
+  width: 100%;
+  height: 100%;
+}
+
+.glyph-item.selected {
+  box-shadow: 0 0 5px var(--glow-color);
+}
+
+/* View Whisper Page Styles */
+.view-whisper-panel .panel-header h2 {
+  font-size: 1.5rem;
+}
+
+.view-whisper-content {
+  padding: 1rem;
+}
+
+.view-whisper-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.view-whisper-glyph {
+  width: 100px;
+  height: 100px;
+  border: 1px solid var(--terminal-dim);
+  padding: 5px;
+  background-color: rgba(0, 0, 0, 0.5);
+  margin-bottom: 1rem;
+}
+
+.view-whisper-glyph svg {
+  width: 100%;
+  height: 100%;
+}
+
+.view-whisper-body {
+  font-family: var(--terminal-font);
+  color: var(--terminal-text);
+  line-height: 1.8;
+  white-space: pre-wrap; /* Preserve line breaks */
+}
+
+.view-whisper-meta {
+  font-size: 0.9rem;
+  color: var(--terminal-dim);
+  margin-top: 1.5rem;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+  padding-top: 1rem;
+}
+
+.view-whisper-date {
+  margin-right: 1rem;
+}
+
+.view-whisper-encrypted {
+  color: var(--terminal-red);
+}
+
+/* Encrypted Whisper Page Styles */
+.encrypted-whisper-panel .panel-header h2 {
+  font-size: 1.5rem;
+}
+
+.encrypted-whisper-content {
+  padding: 2rem;
+  text-align: center;
+}
+
+.encrypted-whisper-content .section-title {
+  color: var(--terminal-red);
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.encrypted-whisper-content .section-content {
+  color: var(--terminal-text);
+  margin-bottom: 2rem;
+}
+
+.encrypted-whisper-form .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.encrypted-whisper-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--terminal-dim-green);
+  font-size: 0.9rem;
+}
+
+.encrypted-whisper-form input[type="text"] {
+  width: 100%;
+  max-width: 300px;
+  padding: 0.8rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--terminal-dim-green);
+  color: var(--terminal-bright);
+  font-family: var(--terminal-font);
+  font-size: 1rem;
+  outline: none;
+  text-align: center;
+}
+
+.encrypted-whisper-form input[type="text"]:focus {
+  border-color: var(--terminal-green);
+  box-shadow: 0 0 5px var(--glow-color);
+}
+
+.encrypted-whisper-form button {
+  padding: 0.8rem 2rem;
+  background-color: var(--terminal-green);
+  border: none;
+  color: var(--terminal-bg);
+  font-family: var(--header-font);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 1rem;
+}
+
+.encrypted-whisper-form button:hover {
+  background-color: var(--terminal-dim-green);
+}
