@@ -4,13 +4,12 @@
   "description": "Elriel - A haunted terminal-based social network with ARG elements",
   "main": "app.js",
   "scripts": {
-    "start": "node app_production.js",
+    "start": "node app.js",
     "dev": "nodemon app.js",
     "init-db": "node db/init.js",
     "migrate-to-supabase": "node migrate-to-supabase.js",
     "migrate-standalone": "node migrate-standalone.js",
     "migrate-http": "node migrate-http.js",
-    "migrate-profiles": "node migrate-profiles.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [

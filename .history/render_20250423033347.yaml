@@ -1,0 +1,23 @@
+# Render.yaml configuration file
+services:
+  - type: web
+    name: elriel-forum
+    runtime: node
+    plan: free
+    region: oregon  # You can choose a different region
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
