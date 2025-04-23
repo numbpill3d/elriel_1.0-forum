@@ -1,0 +1,54 @@
+/* Elriel - Cursor Visibility Fix */
+/* This file ensures cursors are visible throughout the application */
+
+:root {
+  --cursor-color: #00ff00; /* Bright green cursor */
+}
+
+/* Default cursor styles */
+html, body, div, span, h1, h2, h3, h4, h5, h6, p {
+  cursor: default !important;
+}
+
+/* Text input cursor */
+input, textarea, [contenteditable="true"] {
+  cursor: text !important;
+  caret-color: var(--cursor-color) !important;
+}
+
+/* Pointer cursor for interactive elements */
+a, button, select, 
+.nav-links a, 
+.post-title a, 
+.activity-link,
+.win98-button,
+.clickable {
+  cursor: pointer !important;
+}
+
+/* Make sure the cursor is clearly visible when hovering over links */
+a:hover {
+  text-decoration: underline;
+}
+
+/* Resize cursors */
+.win98-window {
+  resize: both;
+  overflow: auto;
+}
+
+.win98-window:hover {
+  cursor: move !important;
+}
+
+.win98-window.resizing {
+  cursor: nwse-resize !important;
+}
+
+/* Ensure cursor is visible in dark themes */
+input::selection, 
+textarea::selection, 
+[contenteditable="true"]::selection {
+  background-color: rgba(0, 255, 0, 0.3) !important;
+  color: white !important;
+}
