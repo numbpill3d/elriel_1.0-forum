@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="/css/glitch.css">
   <link rel="stylesheet" href="/css/profile.css">
   <link rel="stylesheet" href="/css/win98.css">
-  <script src="/js/glitch.js" defer></script>
+  <script src="/js/glitch.js" defer></link>
   <script src="/js/win98.js" defer></script>
 </head>
 <body class="terminal">
@@ -290,7 +290,7 @@
       switch(templateName) {
         case 'cyberpunk':
           themeStyleEl.textContent = `
-            body { 
+            body {
               --terminal-green: #00ffff;
               --terminal-dim-green: #00aaaa;
               --glow-color: rgba(0, 255, 255, 0.5);
@@ -488,26 +488,6 @@
         default:
           themeStyleEl.textContent = ''; // Default theme (no custom styles)
       }
-    }
-    
-    // Function to load profile windows
-    function loadProfileWindows() {
-      // Create window manager
-      window.windowManager = new Win98WindowManager('profile-windows');
-      
-      // Get saved windows from API (in a real implementation)
-      // For now, we'll load any windows saved to localStorage for testing
-      
-      // Add server-side logic to load windows data:
-      // 1. For testing, you'd send an AJAX request to get the windows data
-      // 2. Define getProfileWindows to return the windows data array
-      
-      // This would normally be populated from the server:
-      window.getProfileWindows = function() {
-        // In a real implementation, this would be populated from profile.windows
-        // For testing, we use localStorage
-        return JSON.parse(localStorage.getItem('win98windows') || '[]');
-      };
     }
     
     // Toggle glitch effects
