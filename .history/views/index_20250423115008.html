@@ -11,7 +11,6 @@
   <script src="/js/error-logger.js" defer></script>
   <script src="/js/glitch.js?v=1" defer></script>
   <script src="/js/terminal.js?v=1" defer></script>
-  <script src="/js/navigation-debug.js" defer></script>
 </head>
 <body>
   <div class="noise-overlay"></div>
@@ -284,12 +283,12 @@
                 console.log("Terminal command navigating to bleedstream");
                 setTimeout(() => {
                   console.log("Navigation timeout triggered");
-                  window.location.href = '/bleedstream.html';
+                  window.location.href = '/feed/bleedstream';
                   // Force reload if stuck
                   setTimeout(() => {
                     if (window.location.pathname === '/') {
                       console.log("Force reloading the page");
-                      window.location.replace('/bleedstream.html');
+                      window.location.replace('/feed/bleedstream');
                     }
                   }, 500);
                 }, 1000);
@@ -301,13 +300,13 @@
                 console.log("Terminal command navigating to glyph crucible");
                 setTimeout(() => {
                   console.log("Navigation timeout triggered for glyph");
-                  window.location.href = '/glyph-crucible.html';
+                  window.location.href = '/glyph/crucible';
                 }, 1000);
                 break;
               case 'whisper':
               case 'whisperboard':
                 response = ['Navigating to Whisperboard...'];
-                setTimeout(() => { window.location.href = '/whisperboard.html'; }, 1000);
+                setTimeout(() => { window.location.href = '/whisper/board'; }, 1000);
                 break;
               case 'profile':
                 if (data.user) {
@@ -320,7 +319,7 @@
               case 'numbpill':
               case 'numbpill cell':
                 response = ['Navigating to Numbpill Cell...'];
-                setTimeout(() => { window.location.href = '/numbpill.html'; }, 1000);
+                setTimeout(() => { window.location.href = '/terminal/numbpill'; }, 1000);
                 break;
               default:
                 response = [`Unknown destination: ${destination}`];
