@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
           'REDIRECTING...'
         ];
         setTimeout(() => {
-          window.location.href = '/secrets/void';
+          window.location.href = '/terminal/void';
         }, 2000);
         break;
       default:
@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'numbpill':
             case 'numbpill cell':
               response = ['Navigating to Numbpill Cell...'];
-              setTimeout(() => { window.location.href = '/secrets/numbpill'; }, 1000);
+              setTimeout(() => { window.location.href = '/numbpill.html'; }, 1000);
               break;
             default:
               response = [`Unknown destination: ${destination}`];

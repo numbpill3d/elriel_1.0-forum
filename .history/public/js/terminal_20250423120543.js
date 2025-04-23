@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
           'REDIRECTING...'
         ];
         setTimeout(() => {
-          window.location.href = '/secrets/void';
+          window.location.href = '/terminal/void';
         }, 2000);
         break;
       default:
@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'bleedstream':
               response = ['Navigating to Bleedstream...'];
               setTimeout(() => {
-                window.location.href = '/feed/bleedstream';
+                window.location.href = '/bleedstream.html';
               }, 1000);
               break;
             case 'crucible':
@@ -160,13 +160,13 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'glyph crucible':
               response = ['Navigating to Glyph Crucible...'];
               setTimeout(() => {
-                window.location.href = '/glyph/crucible';
+                window.location.href = '/glyph-crucible.html';
               }, 1000);
               break;
             case 'whisper':
             case 'whisperboard':
               response = ['Navigating to Whisperboard...'];
-              setTimeout(() => { window.location.href = '/whisper/board'; }, 1000);
+              setTimeout(() => { window.location.href = '/whisperboard.html'; }, 1000);
               break;
             case 'profile':
               response = ['Navigating to Profile...'];
@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'numbpill':
             case 'numbpill cell':
               response = ['Navigating to Numbpill Cell...'];
-              setTimeout(() => { window.location.href = '/secrets/numbpill'; }, 1000);
+              setTimeout(() => { window.location.href = '/numbpill.html'; }, 1000);
               break;
             default:
               response = [`Unknown destination: ${destination}`];
