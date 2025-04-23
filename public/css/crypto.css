@@ -1,0 +1,515 @@
+/* Elriel - Crypto CSS Styles */
+/* Styles for encryption and decryption interfaces */
+
+.crypto-panel .panel-header h2 {
+  font-size: 1.5rem;
+}
+
+.crypto-content {
+  padding: 1rem;
+}
+
+/* Tab Navigation */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--terminal-dim-green);
+  margin-bottom: 1.5rem;
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--terminal-text);
+  font-family: var(--terminal-font);
+  font-size: 1rem;
+  padding: 0.5rem 1.5rem;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.tab-btn:hover {
+  color: var(--terminal-green);
+}
+
+.tab-btn.active {
+  color: var(--terminal-green);
+}
+
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--terminal-green);
+}
+
+/* Form Styles */
+.crypto-form {
+  max-width: 800px;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--terminal-dim-green);
+  font-size: 0.9rem;
+}
+
+.form-group input[type="text"],
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 0.8rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--terminal-dim-green);
+  color: var(--terminal-bright);
+  font-family: var(--terminal-font);
+  font-size: 1rem;
+  outline: none;
+}
+
+.form-group input[type="text"]:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: var(--terminal-green);
+  box-shadow: 0 0 5px var(--glow-color);
+}
+
+.form-group textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.help-text {
+  color: var(--terminal-dim);
+  font-size: 0.8rem;
+  margin-top: 0.3rem;
+}
+
+/* Button Styles */
+.action-btn {
+  display: inline-block;
+  padding: 0.8rem 2rem;
+  background-color: var(--terminal-green);
+  border: none;
+  color: var(--terminal-bg);
+  font-family: var(--header-font);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.action-btn:hover {
+  background-color: var(--terminal-dim-green);
+}
+
+.action-btn:disabled {
+  background-color: var(--terminal-dim);
+  cursor: not-allowed;
+}
+
+.reset-btn {
+  display: inline-block;
+  padding: 0.6rem 1.5rem;
+  background-color: transparent;
+  border: 1px solid var(--terminal-green);
+  color: var(--terminal-green);
+  font-family: var(--terminal-font);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.reset-btn:hover {
+  background-color: var(--terminal-green);
+  color: var(--terminal-bg);
+}
+
+.copy-btn {
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+  background-color: transparent;
+  border: 1px solid var(--terminal-blue);
+  color: var(--terminal-blue);
+  font-family: var(--terminal-font);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-left: 0.5rem;
+}
+
+.copy-btn:hover {
+  background-color: var(--terminal-blue);
+  color: var(--terminal-bg);
+}
+
+/* Result Display */
+.result-container {
+  background-color: rgba(0, 20, 0, 0.5);
+  border: 1px solid var(--terminal-green);
+  padding: 1.5rem;
+  margin-top: 1rem;
+}
+
+.result-container h3 {
+  color: var(--terminal-green);
+  margin-bottom: 1rem;
+  font-family: var(--header-font);
+}
+
+.result-item {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.result-item label {
+  color: var(--terminal-dim-green);
+  margin-right: 1rem;
+  min-width: 150px;
+}
+
+.key-display {
+  font-family: var(--terminal-font);
+  color: var(--terminal-red);
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 0.5rem;
+  border: 1px dashed var(--terminal-red);
+  flex: 1;
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+
+.encrypted-display {
+  font-family: var(--terminal-font);
+  color: var(--terminal-blue);
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 0.5rem;
+  border: 1px dashed var(--terminal-blue);
+  max-height: 150px;
+  overflow-y: auto;
+  flex: 1;
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+
+.message-display {
+  font-family: var(--terminal-font);
+  color: var(--terminal-text);
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 0.5rem;
+  border: 1px dashed var(--terminal-dim-green);
+  max-height: 300px;
+  overflow-y: auto;
+  flex: 1;
+  white-space: pre-wrap;
+}
+
+.warning-text {
+  color: var(--terminal-red);
+  font-size: 0.9rem;
+  margin: 1rem 0;
+  text-align: center;
+}
+
+/* Option Selector */
+.option-selector {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.radio-label input[type="radio"] {
+  margin-right: 0.5rem;
+}
+
+/* Messages List */
+.messages-list-container {
+  width: 100%;
+}
+
+.messages-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--terminal-dim-green);
+}
+
+.messages-header h3 {
+  color: var(--terminal-green);
+  font-family: var(--header-font);
+  margin: 0;
+}
+
+.message-filter {
+  display: flex;
+  gap: 1rem;
+}
+
+.message-filter label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.message-filter input[type="radio"] {
+  margin-right: 0.3rem;
+}
+
+.messages-list {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.loading-messages {
+  color: var(--terminal-dim);
+  text-align: center;
+  padding: 2rem 0;
+  animation: blink 1s infinite;
+}
+
+.no-messages {
+  color: var(--terminal-dim);
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.error-messages {
+  color: var(--terminal-red);
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.message-item {
+  background-color: rgba(0, 20, 0, 0.3);
+  border: 1px solid var(--terminal-dim);
+  margin-bottom: 1rem;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.message-item:hover {
+  border-color: var(--terminal-dim-green);
+  background-color: rgba(0, 20, 0, 0.4);
+}
+
+.message-item.unread {
+  border-left: 3px solid var(--terminal-red);
+}
+
+.message-item.sent {
+  border-left: 3px solid var(--terminal-blue);
+}
+
+.message-item.received {
+  border-left: 3px solid var(--terminal-green);
+}
+
+.message-header {
+  flex: 1;
+}
+
+.message-info {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.message-direction {
+  color: var(--terminal-bright);
+}
+
+.message-date {
+  color: var(--terminal-dim);
+  font-size: 0.8rem;
+}
+
+.message-hint {
+  color: var(--terminal-purple);
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+.message-actions {
+  margin-left: 1rem;
+}
+
+.view-message-btn {
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+  background-color: transparent;
+  border: 1px solid var(--terminal-green);
+  color: var(--terminal-green);
+  font-family: var(--terminal-font);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.view-message-btn:hover {
+  background-color: var(--terminal-green);
+  color: var(--terminal-bg);
+}
+
+/* Message Detail */
+.message-detail {
+  background-color: rgba(0, 20, 0, 0.5);
+  border: 1px solid var(--terminal-green);
+  padding: 1.5rem;
+  width: 100%;
+}
+
+.message-detail .message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--terminal-dim-green);
+}
+
+.message-detail h3 {
+  color: var(--terminal-green);
+  font-family: var(--header-font);
+  margin: 0;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: var(--terminal-red);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  color: var(--terminal-bright);
+}
+
+.message-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-item label {
+  color: var(--terminal-dim-green);
+  font-size: 0.8rem;
+  margin-bottom: 0.3rem;
+}
+
+.decrypt-form {
+  margin-top: 2rem;
+}
+
+.detail-message-content {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--terminal-dim-green);
+  white-space: pre-wrap;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .tabs {
+    flex-direction: column;
+    border-bottom: none;
+  }
+  
+  .tab-btn {
+    text-align: left;
+    border-bottom: 1px solid var(--terminal-dim);
+  }
+  
+  .tab-btn.active::after {
+    display: none;
+  }
+  
+  .option-selector {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .message-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .message-actions {
+    margin-left: 0;
+    margin-top: 1rem;
+    align-self: flex-end;
+  }
+  
+  .result-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .result-item label {
+    margin-right: 0;
+    margin-bottom: 0.5rem;
+  }
+  
+  .copy-btn {
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+  
+  .message-info {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Animation for elements with the blink class */
+@keyframes blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Specific cursor style */
+.crypto-content input, 
+.crypto-content textarea, 
+.crypto-content select {
+  caret-color: var(--cursor-color);
+}
+
+.crypto-content button {
+  cursor: pointer;
+}

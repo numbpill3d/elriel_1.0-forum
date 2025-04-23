@@ -57,7 +57,6 @@ const feedRoutes = require('./routes/feed');
 const whisperRoutes = require('./routes/whisper');
 const forumRoutes = require('./routes/forum');
 const cryptoRoutes = require('./routes/crypto');
-const apiRoutes = require('./routes/api');
 
 // Use routes
 app.use('/', indexRoutes);
@@ -68,7 +67,6 @@ app.use('/feed', feedRoutes);
 app.use('/whisper', whisperRoutes);
 app.use('/forum', forumRoutes);
 app.use('/crypto', cryptoRoutes);
-app.use('/api', apiRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ACTIVITY LOG | ELRIEL</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/glitch.css">
+  <link rel="stylesheet" href="/css/profile.css">
+  <link rel="stylesheet" href="/css/activity.css">
+  <script src="/js/glitch.js" defer></script>
+</head>
+<body class="terminal">
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">TERMINAL ACCESS v1.0</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+            <li><a href="/crypto">ENCRYPT/DECRYPT</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">PROFILE</h3>
+          <ul class="nav-links">
+            <li><a href="/profile">DASHBOARD</a></li>
+            <li><a href="/profile/edit">EDIT PROFILE</a></li>
+            <li><a href="/activity-log" class="active">ACTIVITY LOG</a></li>
+            <li><a href="/feed/new">CREATE POST</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <section class="reputation-panel">
+          <div class="panel-header">
+            <h2>REPUTATION METRICS</h2>
+            <div class="status-indicator" id="reputation-level">LEVEL 1</div>
+          </div>
+          <div class="reputation-content">
+            <div class="reputation-info">
+              <div class="reputation-score">
+                <h3>REPUTATION SCORE</h3>
+                <div class="reputation-value" id="reputation-points">0</div>
+              </div>
+              <div class="reputation-progress">
+                <h3>PROGRESS TO NEXT LEVEL</h3>
+                <div class="progress-bar-container">
+                  <div class="progress-bar" id="level-progress"></div>
+                </div>
+                <div class="progress-text" id="progress-text">0/100</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="badges-panel">
+          <div class="panel-header">
+            <h2>BADGES & ACHIEVEMENTS</h2>
+            <div class="status-indicator" id="badges-count">0 BADGES</div>
+          </div>
+          <div class="badges-content">
+            <div class="badges-list" id="badges-list">
+              <!-- Badges will be injected here -->
+              <div class="no-badges">NO BADGES EARNED YET</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="activity-panel">
+          <div class="panel-header">
+            <h2>ACTIVITY LOG</h2>
+            <div class="status-indicator">RECENT ACTIONS</div>
+          </div>
+          <div class="activity-content">
+            <div class="activity-filters">
+              <div class="filter-label">FILTER:</div>
+              <button class="filter-btn active" data-filter="all">ALL</button>
+              <button class="filter-btn" data-filter="post">POSTS</button>
+              <button class="filter-btn" data-filter="glyph">GLYPHS</button>
+              <button class="filter-btn" data-filter="whisper">WHISPERS</button>
+              <button class="filter-btn" data-filter="district">DISTRICTS</button>
+              <button class="filter-btn" data-filter="reward">REWARDS</button>
+            </div>
+            
+            <div class="activity-timeline" id="activity-timeline">
+              <!-- Activity timeline will be injected here -->
+              <div class="loading-activity">LOADING ACTIVITY LOG...</div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="main-footer">
+      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+      <div class="footer-glyphs">
+        <span class="glyph">⌘</span>
+        <span class="glyph">⍟</span>
+        <span class="glyph">⎔</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Inject data from server
+    const data = __DATA__;
+    const user = data.user;
+    const activityLogs = data.activityLogs || [];
+    const reputation = data.reputation || { reputation_points: 0, reputation_level: 1 };
+    const rewards = data.rewards || [];
+    
+    // Update user status in header
+    const userStatusEl = document.getElementById('user-status');
+    if (user) {
+      userStatusEl.innerHTML = `
+        <div class="logged-in">
+          <span class="username">${user.username}</span>
+          <div class="user-links">
+            <a href="/profile">PROFILE</a>
+            <a href="/auth/logout">LOGOUT</a>
+          </div>
+        </div>
+      `;
+    } else {
+      userStatusEl.innerHTML = `
+        <div class="logged-out">
+          <a href="/auth/login" class="login-btn">LOGIN</a>
+          <a href="/auth/register" class="register-btn">REGISTER</a>
+        </div>
+      `;
+    }
+    
+    // Update reputation info
+    document.getElementById('reputation-level').textContent = `LEVEL ${reputation.reputation_level}`;
+    document.getElementById('reputation-points').textContent = reputation.reputation_points;
+    
+    // Calculate progress to next level
+    const pointsToNextLevel = 100;
+    const currentLevelBasePoints = (reputation.reputation_level - 1) * pointsToNextLevel;
+    const pointsInCurrentLevel = reputation.reputation_points - currentLevelBasePoints;
+    const progressPercent = Math.min(100, (pointsInCurrentLevel / pointsToNextLevel) * 100);
+    
+    document.getElementById('level-progress').style.width = `${progressPercent}%`;
+    document.getElementById('progress-text').textContent = `${pointsInCurrentLevel}/${pointsToNextLevel}`;
+    
+    // Display badges
+    const badgesListEl = document.getElementById('badges-list');
+    if (rewards.length > 0) {
+      badgesListEl.innerHTML = '';
+      document.getElementById('badges-count').textContent = `${rewards.length} BADGES`;
+      
+      rewards.forEach(reward => {
+        const badgeEl = document.createElement('div');
+        badgeEl.className = 'badge-item';
+        if (reward.is_equipped) {
+          badgeEl.classList.add('equipped');
+        }
+        
+        let badgeImage = reward.badge_image;
+        if (!badgeImage || badgeImage.startsWith('/')) {
+          // Use default badge icon if image path is not absolute
+          badgeImage = `<div class="default-badge">${reward.name.charAt(0)}</div>`;
+        } else {
+          badgeImage = `<img src="${badgeImage}" alt="${reward.name}" class="badge-image">`;
+        }
+        
+        badgeEl.innerHTML = `
+          <div class="badge-icon">
+            ${badgeImage}
+          </div>
+          <div class="badge-info">
+            <div class="badge-name">${reward.name}</div>
+            <div class="badge-description">${reward.description}</div>
+            <div class="badge-date">EARNED: ${formatDate(reward.earned_at)}</div>
+          </div>
+        `;
+        
+        badgesListEl.appendChild(badgeEl);
+      });
+    }
+    
+    // Process activity logs
+    const activityTimelineEl = document.getElementById('activity-timeline');
+    if (activityLogs.length > 0) {
+      activityTimelineEl.innerHTML = '';
+      
+      // Group activities by date
+      const groupedActivities = groupActivitiesByDate(activityLogs);
+      
+      // Display activities by date
+      Object.keys(groupedActivities).forEach(date => {
+        const dateHeader = document.createElement('div');
+        dateHeader.className = 'date-header';
+        dateHeader.textContent = date;
+        activityTimelineEl.appendChild(dateHeader);
+        
+        groupedActivities[date].forEach(activity => {
+          const activityEl = document.createElement('div');
+          activityEl.className = `activity-item ${getActivityClass(activity.activity_type)}`;
+          activityEl.dataset.type = getActivityType(activity.activity_type);
+          
+          const icon = getActivityIcon(activity.activity_type);
+          
+          activityEl.innerHTML = `
+            <div class="activity-icon">${icon}</div>
+            <div class="activity-details">
+              <div class="activity-time">${formatTime(activity.created_at)}</div>
+              <div class="activity-description">${activity.description}</div>
+            </div>
+          `;
+          
+          activityTimelineEl.appendChild(activityEl);
+        });
+      });
+    } else {
+      activityTimelineEl.innerHTML = '<div class="no-activity">NO ACTIVITY RECORDED YET</div>';
+    }
+    
+    // Activity filtering
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Remove active class from all buttons
+        filterBtns.forEach(b => b.classList.remove('active'));
+        // Add active class to clicked button
+        btn.classList.add('active');
+        
+        const filter = btn.dataset.filter;
+        const activityItems = document.querySelectorAll('.activity-item');
+        
+        activityItems.forEach(item => {
+          if (filter === 'all' || item.dataset.type === filter) {
+            item.style.display = 'flex';
+          } else {
+            item.style.display = 'none';
+          }
+        });
+        
+        // Show/hide date headers based on visible activities
+        const dateHeaders = document.querySelectorAll('.date-header');
+        dateHeaders.forEach(header => {
+          const nextEl = header.nextElementSibling;
+          let hasVisibleActivity = false;
+          
+          // Check if any activity items following this header are visible
+          let currentEl = nextEl;
+          while (currentEl && !currentEl.classList.contains('date-header')) {
+            if (currentEl.classList.contains('activity-item') && 
+                currentEl.style.display !== 'none') {
+              hasVisibleActivity = true;
+              break;
+            }
+            currentEl = currentEl.nextElementSibling;
+          }
+          
+          header.style.display = hasVisibleActivity ? 'block' : 'none';
+        });
+      });
+    });
+    
+    // Helper functions
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+    
+    function formatTime(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    }
+    
+    function groupActivitiesByDate(activities) {
+      const grouped = {};
+      
+      activities.forEach(activity => {
+        const date = new Date(activity.created_at);
+        const dateString = date.toLocaleDateString('en-US', { 
+          weekday: 'long', 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        });
+        
+        if (!grouped[dateString]) {
+          grouped[dateString] = [];
+        }
+        
+        grouped[dateString].push(activity);
+      });
+      
+      return grouped;
+    }
+    
+    function getActivityClass(activityType) {
+      if (activityType.includes('post')) return 'post-activity';
+      if (activityType.includes('glyph')) return 'glyph-activity';
+      if (activityType.includes('whisper')) return 'whisper-activity';
+      if (activityType.includes('district')) return 'district-activity';
+      if (activityType.includes('reward')) return 'reward-activity';
+      if (activityType.includes('message')) return 'message-activity';
+      return 'general-activity';
+    }
+    
+    function getActivityType(activityType) {
+      if (activityType.includes('post')) return 'post';
+      if (activityType.includes('glyph')) return 'glyph';
+      if (activityType.includes('whisper')) return 'whisper';
+      if (activityType.includes('district')) return 'district';
+      if (activityType.includes('reward')) return 'reward';
+      if (activityType.includes('message')) return 'message';
+      return 'general';
+    }
+    
+    function getActivityIcon(activityType) {
+      if (activityType.includes('post_created')) return '📝';
+      if (activityType.includes('post_viewed')) return '👁️';
+      if (activityType.includes('glyph_created')) return '🔮';
+      if (activityType.includes('whisper_created')) return '🤫';
+      if (activityType.includes('district_unlocked')) return '🔓';
+      if (activityType.includes('district_accessed')) return '🏙️';
+      if (activityType.includes('reward_earned')) return '🏆';
+      if (activityType.includes('message_sent')) return '📨';
+      if (activityType.includes('message_read')) return '📬';
+      return '🔄';
+    }
+    
+    // Toggle glitch effects
+    document.getElementById('toggle-glitch').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.body.classList.toggle('glitch-active');
+    });
+  </script>
+</body>
+</html>

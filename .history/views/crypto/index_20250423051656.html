@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ENCRYPT/DECRYPT | ELRIEL</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/glitch.css">
+  <link rel="stylesheet" href="/css/crypto.css">
+  <script src="/js/glitch.js" defer></script>
+</head>
+<body class="terminal">
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">TERMINAL ACCESS v1.0</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+            <li><a href="/crypto" class="active">ENCRYPT/DECRYPT</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">PROFILE</h3>
+          <ul class="nav-links">
+            <li><a href="/profile">DASHBOARD</a></li>
+            <li><a href="/profile/edit">EDIT PROFILE</a></li>
+            <li><a href="/feed/new">CREATE POST</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <section class="crypto-panel">
+          <div class="panel-header">
+            <h2>ENCRYPTION TERMINAL</h2>
+            <div class="status-indicator">SECURE</div>
+          </div>
+          <div class="crypto-content">
+            <div class="tabs">
+              <button class="tab-btn active" data-tab="encrypt">ENCRYPT</button>
+              <button class="tab-btn" data-tab="decrypt">DECRYPT</button>
+              <button class="tab-btn" data-tab="messages">MESSAGES</button>
+            </div>
+            
+            <div class="tab-content" id="encrypt-tab">
+              <div class="crypto-form">
+                <div class="form-group">
+                  <label for="encrypt-message">MESSAGE TO ENCRYPT:</label>
+                  <textarea id="encrypt-message" placeholder="Enter message to encrypt..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                  <label for="recipient-select">RECIPIENT (OPTIONAL):</label>
+                  <select id="recipient-select">
+                    <option value="">-- NO RECIPIENT --</option>
+                    <!-- Recipients will be injected here -->
+                  </select>
+                  <p class="help-text">If selected, the encrypted message will be sent to this user.</p>
+                </div>
+                
+                <div class="form-group">
+                  <label for="public-hint">PUBLIC HINT (OPTIONAL):</label>
+                  <input type="text" id="public-hint" placeholder="Hint for decryption key..." maxlength="100">
+                  <p class="help-text">This hint will be visible to the recipient.</p>
+                </div>
+                
+                <button id="encrypt-btn" class="action-btn">ENCRYPT MESSAGE</button>
+              </div>
+              
+              <div id="encrypt-result" class="result-container" style="display: none;">
+                <h3>ENCRYPTION SUCCESSFUL</h3>
+                <div class="result-item">
+                  <label>ENCRYPTION KEY:</label>
+                  <div class="key-display" id="encryption-key"></div>
+                  <button class="copy-btn" data-target="encryption-key">COPY</button>
+                </div>
+                <div id="encrypted-data-container" style="display: none;">
+                  <div class="result-item">
+                    <label>ENCRYPTED DATA:</label>
+                    <div class="encrypted-display" id="encrypted-data"></div>
+                    <button class="copy-btn" data-target="encrypted-data">COPY</button>
+                  </div>
+                </div>
+                <p class="warning-text">
+                  STORE THIS KEY SECURELY. YOU WILL NEED IT TO DECRYPT THE MESSAGE.<br>
+                  THE KEY WILL NOT BE DISPLAYED AGAIN.
+                </p>
+                <button id="reset-encrypt" class="reset-btn">ENCRYPT ANOTHER MESSAGE</button>
+              </div>
+            </div>
+            
+            <div class="tab-content" id="decrypt-tab" style="display: none;">
+              <div class="crypto-form">
+                <div class="form-group">
+                  <label for="decryption-key">DECRYPTION KEY:</label>
+                  <input type="text" id="decryption-key" placeholder="Enter decryption key...">
+                </div>
+                
+                <div class="form-group">
+                  <label>ENCRYPTED DATA:</label>
+                  <div class="option-selector">
+                    <label class="radio-label">
+                      <input type="radio" name="decrypt-source" value="paste" checked>
+                      PASTE ENCRYPTED DATA
+                    </label>
+                    <label class="radio-label">
+                      <input type="radio" name="decrypt-source" value="message">
+                      SELECT FROM MESSAGES
+                    </label>
+                  </div>
+                </div>
+                
+                <div id="paste-data-container">
+                  <div class="form-group">
+                    <label for="encrypted-input">ENCRYPTED DATA:</label>
+                    <textarea id="encrypted-input" placeholder="Paste encrypted data here..."></textarea>
+                  </div>
+                </div>
+                
+                <div id="message-select-container" style="display: none;">
+                  <div class="form-group">
+                    <label for="message-select">SELECT MESSAGE:</label>
+                    <select id="message-select">
+                      <option value="">-- SELECT A MESSAGE --</option>
+                      <!-- Messages will be injected here -->
+                    </select>
+                  </div>
+                </div>
+                
+                <button id="decrypt-btn" class="action-btn">DECRYPT MESSAGE</button>
+              </div>
+              
+              <div id="decrypt-result" class="result-container" style="display: none;">
+                <h3>DECRYPTION SUCCESSFUL</h3>
+                <div class="result-item">
+                  <label>DECRYPTED MESSAGE:</label>
+                  <div class="message-display" id="decrypted-message"></div>
+                  <button class="copy-btn" data-target="decrypted-message">COPY</button>
+                </div>
+                <button id="reset-decrypt" class="reset-btn">DECRYPT ANOTHER MESSAGE</button>
+              </div>
+            </div>
+            
+            <div class="tab-content" id="messages-tab" style="display: none;">
+              <div class="messages-list-container">
+                <div class="messages-header">
+                  <h3>ENCRYPTED COMMUNICATIONS</h3>
+                  <div class="message-filter">
+                    <label>
+                      <input type="radio" name="message-filter" value="all" checked> ALL
+                    </label>
+                    <label>
+                      <input type="radio" name="message-filter" value="received"> RECEIVED
+                    </label>
+                    <label>
+                      <input type="radio" name="message-filter" value="sent"> SENT
+                    </label>
+                  </div>
+                </div>
+                
+                <div class="messages-list" id="messages-list">
+                  <!-- Messages will be injected here -->
+                  <div class="loading-messages">SCANNING SECURE CHANNELS...</div>
+                </div>
+              </div>
+              
+              <div class="message-detail" id="message-detail" style="display: none;">
+                <div class="message-header">
+                  <h3 id="message-detail-title">MESSAGE DETAILS</h3>
+                  <button id="close-detail" class="close-btn">✕</button>
+                </div>
+                
+                <div class="message-info">
+                  <div class="info-item">
+                    <label>FROM:</label>
+                    <span id="message-detail-sender"></span>
+                  </div>
+                  <div class="info-item">
+                    <label>TO:</label>
+                    <span id="message-detail-recipient"></span>
+                  </div>
+                  <div class="info-item">
+                    <label>DATE:</label>
+                    <span id="message-detail-date"></span>
+                  </div>
+                  <div class="info-item">
+                    <label>HINT:</label>
+                    <span id="message-detail-hint"></span>
+                  </div>
+                </div>
+                
+                <div class="decrypt-form">
+                  <div class="form-group">
+                    <label for="detail-decrypt-key">DECRYPTION KEY:</label>
+                    <input type="text" id="detail-decrypt-key" placeholder="Enter decryption key...">
+                  </div>
+                  <button id="detail-decrypt-btn" class="action-btn">DECRYPT MESSAGE</button>
+                </div>
+                
+                <div id="detail-decrypt-result" style="display: none;">
+                  <h3>DECRYPTED MESSAGE:</h3>
+                  <div class="detail-message-content" id="detail-decrypted-message"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="main-footer">
+      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+      <div class="footer-glyphs">
+        <span class="glyph">⌘</span>
+        <span class="glyph">⍟</span>
+        <span class="glyph">⎔</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Inject data from server
+    const data = __DATA__;
+    const user = data.user;
+    const users = data.users || [];
+    
+    // Update user status in header
+    const userStatusEl = document.getElementById('user-status');
+    if (user) {
+      userStatusEl.innerHTML = `
+        <div class="logged-in">
+          <span class="username">${user.username}</span>
+          <div class="user-links">
+            <a href="/profile">PROFILE</a>
+            <a href="/auth/logout">LOGOUT</a>
+          </div>
+        </div>
+      `;
+    } else {
+      userStatusEl.innerHTML = `
+        <div class="logged-out">
+          <a href="/auth/login" class="login-btn">LOGIN</a>
+          <a href="/auth/register" class="register-btn">REGISTER</a>
+        </div>
+      `;
+    }
+    
+    // Populate user dropdown for recipients
+    const recipientSelect = document.getElementById('recipient-select');
+    if (users.length > 0) {
+      users.forEach(u => {
+        if (u.id !== user.id) { // Don't include current user
+          const option = document.createElement('option');
+          option.value = u.id;
+          option.textContent = u.username;
+          recipientSelect.appendChild(option);
+        }
+      });
+    }
+    
+    // Tab switching functionality
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Remove active class from all buttons
+        tabBtns.forEach(b => b.classList.remove('active'));
+        // Add active class to clicked button
+        btn.classList.add('active');
+        
+        // Hide all tab contents
+        tabContents.forEach(content => {
+          content.style.display = 'none';
+        });
+        
+        // Show the selected tab content
+        const targetTab = document.getElementById(`${btn.dataset.tab}-tab`);
+        if (targetTab) {
+          targetTab.style.display = 'block';
+          
+          // Load messages if messages tab is selected
+          if (btn.dataset.tab === 'messages') {
+            loadMessages();
+          }
+        }
+      });
+    });
+    
+    // Toggle between paste encrypted data and select message
+    const decryptSourceRadios = document.querySelectorAll('input[name="decrypt-source"]');
+    const pasteDataContainer = document.getElementById('paste-data-container');
+    const messageSelectContainer = document.getElementById('message-select-container');
+    
+    decryptSourceRadios.forEach(radio => {
+      radio.addEventListener('change', () => {
+        if (radio.value === 'paste') {
+          pasteDataContainer.style.display = 'block';
+          messageSelectContainer.style.display = 'none';
+        } else {
+          pasteDataContainer.style.display = 'none';
+          messageSelectContainer.style.display = 'block';
+          loadMessagesForDecrypt();
+        }
+      });
+    });
+    
+    // Encrypt functionality
+    const encryptBtn = document.getElementById('encrypt-btn');
+    const encryptResult = document.getElementById('encrypt-result');
+    const encryptionKeyDisplay = document.getElementById('encryption-key');
+    const encryptedDataDisplay = document.getElementById('encrypted-data');
+    const encryptedDataContainer = document.getElementById('encrypted-data-container');
+    const resetEncryptBtn = document.getElementById('reset-encrypt');
+    
+    encryptBtn.addEventListener('click', async () => {
+      const message = document.getElementById('encrypt-message').value.trim();
+      const recipientId = document.getElementById('recipient-select').value;
+      const publicHint = document.getElementById('public-hint').value.trim();
+      
+      if (!message) {
+        alert('Please enter a message to encrypt.');
+        return;
+      }
+      
+      try {
+        encryptBtn.disabled = true;
+        encryptBtn.textContent = 'ENCRYPTING...';
+        
+        const response = await fetch('/crypto/encrypt', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            message,
+            recipientId: recipientId || null,
+            publicHint
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          encryptionKeyDisplay.textContent = data.encryptionKey;
+          
+          if (data.encryptedData) {
+            encryptedDataDisplay.textContent = JSON.stringify(data.encryptedData);
+            encryptedDataContainer.style.display = 'block';
+          } else {
+            encryptedDataContainer.style.display = 'none';
+          }
+          
+          document.querySelector('.crypto-form').style.display = 'none';
+          encryptResult.style.display = 'block';
+        } else {
+          alert('Encryption failed: ' + (data.message || 'Unknown error'));
+        }
+      } catch (err) {
+        console.error('Encryption error:', err);
+        alert('An error occurred during encryption. Please try again.');
+      } finally {
+        encryptBtn.disabled = false;
+        encryptBtn.textContent = 'ENCRYPT MESSAGE';
+      }
+    });
+    
+    resetEncryptBtn.addEventListener('click', () => {
+      document.getElementById('encrypt-message').value = '';
+      document.getElementById('recipient-select').value = '';
+      document.getElementById('public-hint').value = '';
+      document.querySelector('.crypto-form').style.display = 'block';
+      encryptResult.style.display = 'none';
+    });
+    
+    // Decrypt functionality
+    const decryptBtn = document.getElementById('decrypt-btn');
+    const decryptResult = document.getElementById('decrypt-result');
+    const decryptedMessageDisplay = document.getElementById('decrypted-message');
+    const resetDecryptBtn = document.getElementById('reset-decrypt');
+    
+    decryptBtn.addEventListener('click', async () => {
+      const decryptionKey = document.getElementById('decryption-key').value.trim();
+      const decryptSource = document.querySelector('input[name="decrypt-source"]:checked').value;
+      
+      if (!decryptionKey) {
+        alert('Please enter a decryption key.');
+        return;
+      }
+      
+      let messageId, encryptedData;
+      
+      if (decryptSource === 'paste') {
+        const encryptedInput = document.getElementById('encrypted-input').value.trim();
+        if (!encryptedInput) {
+          alert('Please paste the encrypted data.');
+          return;
+        }
+        
+        try {
+          encryptedData = JSON.parse(encryptedInput);
+        } catch (err) {
+          alert('Invalid encrypted data format. Please check the input.');
+          return;
+        }
+      } else {
+        messageId = document.getElementById('message-select').value;
+        if (!messageId) {
+          alert('Please select a message to decrypt.');
+          return;
+        }
+      }
+      
+      try {
+        decryptBtn.disabled = true;
+        decryptBtn.textContent = 'DECRYPTING...';
+        
+        const response = await fetch('/crypto/decrypt', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            messageId,
+            encryptionKey: decryptionKey,
+            encryptedData
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          decryptedMessageDisplay.textContent = data.decryptedMessage;
+          document.querySelector('#decrypt-tab .crypto-form').style.display = 'none';
+          decryptResult.style.display = 'block';
+        } else {
+          alert('Decryption failed: ' + (data.message || 'Invalid key or corrupted data'));
+        }
+      } catch (err) {
+        console.error('Decryption error:', err);
+        alert('An error occurred during decryption. Please try again.');
+      } finally {
+        decryptBtn.disabled = false;
+        decryptBtn.textContent = 'DECRYPT MESSAGE';
+      }
+    });
+    
+    resetDecryptBtn.addEventListener('click', () => {
+      document.getElementById('decryption-key').value = '';
+      document.getElementById('encrypted-input').value = '';
+      document.getElementById('message-select').value = '';
+      document.querySelector('#decrypt-tab .crypto-form').style.display = 'block';
+      decryptResult.style.display = 'none';
+    });
+    
+    // Load messages for decrypt dropdown
+    async function loadMessagesForDecrypt() {
+      try {
+        const select = document.getElementById('message-select');
+        select.innerHTML = '<option value="">-- SELECT A MESSAGE --</option>';
+        
+        const response = await fetch('/crypto/messages');
+        const data = await response.json();
+        
+        if (data.success && data.messages.length > 0) {
+          data.messages.forEach(message => {
+            const option = document.createElement('option');
+            option.value = message.id;
+            
+            let description = '';
+            if (message.sender_username === user.username) {
+              description = `To: ${message.recipient_username}`;
+            } else {
+              description = `From: ${message.sender_username}`;
+            }
+            
+            option.textContent = `${description} (${new Date(message.created_at).toLocaleString()})`;
+            select.appendChild(option);
+          });
+        }
+      } catch (err) {
+        console.error('Failed to load messages:', err);
+      }
+    }
+    
+    // Copy button functionality
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetId = btn.dataset.target;
+        const textToCopy = document.getElementById(targetId).textContent;
+        
+        navigator.clipboard.writeText(textToCopy)
+          .then(() => {
+            const originalText = btn.textContent;
+            btn.textContent = 'COPIED!';
+            setTimeout(() => {
+              btn.textContent = originalText;
+            }, 1500);
+          })
+          .catch(err => {
+            console.error('Copy failed:', err);
+            alert('Failed to copy to clipboard');
+          });
+      });
+    });
+    
+    // Load messages for messages tab
+    async function loadMessages() {
+      try {
+        const messagesList = document.getElementById('messages-list');
+        messagesList.innerHTML = '<div class="loading-messages">SCANNING SECURE CHANNELS...</div>';
+        
+        const response = await fetch('/crypto/messages');
+        const data = await response.json();
+        
+        if (data.success) {
+          if (data.messages.length === 0) {
+            messagesList.innerHTML = '<div class="no-messages">NO ENCRYPTED MESSAGES FOUND</div>';
+            return;
+          }
+          
+          messagesList.innerHTML = '';
+          
+          data.messages.forEach(message => {
+            const messageEl = document.createElement('div');
+            messageEl.className = 'message-item';
+            if (message.recipient_username === user.username && !message.is_read) {
+              messageEl.classList.add('unread');
+            }
+            
+            let direction, partner;
+            if (message.sender_username === user.username) {
+              direction = 'SENT TO';
+              partner = message.recipient_username;
+              messageEl.classList.add('sent');
+            } else {
+              direction = 'FROM';
+              partner = message.sender_username;
+              messageEl.classList.add('received');
+            }
+            
+            messageEl.innerHTML = `
+              <div class="message-header">
+                <div class="message-info">
+                  <span class="message-direction">${direction}: ${partner}</span>
+                  <span class="message-date">${new Date(message.created_at).toLocaleString()}</span>
+                </div>
+                ${message.public_hint ? `<div class="message-hint">${message.public_hint}</div>` : ''}
+              </div>
+              <div class="message-actions">
+                <button class="view-message-btn" data-id="${message.id}" data-sender="${message.sender_username}" data-recipient="${message.recipient_username}" data-date="${message.created_at}" data-hint="${message.public_hint || 'None'}">VIEW</button>
+              </div>
+            `;
+            
+            messagesList.appendChild(messageEl);
+          });
+          
+          // Add event listeners to view buttons
+          document.querySelectorAll('.view-message-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+              viewMessageDetail(btn.dataset);
+            });
+          });
+          
+          // Setup message filtering
+          setupMessageFiltering();
+        } else {
+          messagesList.innerHTML = '<div class="error-messages">FAILED TO LOAD MESSAGES</div>';
+        }
+      } catch (err) {
+        console.error('Failed to load messages:', err);
+        document.getElementById('messages-list').innerHTML = 
+          '<div class="error-messages">ERROR LOADING MESSAGES</div>';
+      }
+    }
+    
+    // Message filtering
+    function setupMessageFiltering() {
+      const filterRadios = document.querySelectorAll('input[name="message-filter"]');
+      
+      filterRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+          const filter = radio.value;
+          const messages = document.querySelectorAll('.message-item');
+          
+          messages.forEach(msg => {
+            if (filter === 'all') {
+              msg.style.display = 'flex';
+            } else if (filter === 'sent' && msg.classList.contains('sent')) {
+              msg.style.display = 'flex';
+            } else if (filter === 'received' && msg.classList.contains('received')) {
+              msg.style.display = 'flex';
+            } else {
+              msg.style.display = 'none';
+            }
+          });
+        });
+      });
+    }
+    
+    // View message detail
+    function viewMessageDetail(data) {
+      const messageDetail = document.getElementById('message-detail');
+      const messagesList = document.querySelector('.messages-list-container');
+      
+      document.getElementById('message-detail-sender').textContent = data.sender;
+      document.getElementById('message-detail-recipient').textContent = data.recipient;
+      document.getElementById('message-detail-date').textContent = new Date(data.date).toLocaleString();
+      document.getElementById('message-detail-hint').textContent = data.hint;
+      
+      // Store the message ID for decryption
+      document.getElementById('detail-decrypt-btn').dataset.messageId = data.id;
+      
+      // Reset the decryption form
+      document.getElementById('detail-decrypt-key').value = '';
+      document.getElementById('detail-decrypt-result').style.display = 'none';
+      
+      messagesList.style.display = 'none';
+      messageDetail.style.display = 'block';
+    }
+    
+    // Detail view decrypt button
+    document.getElementById('detail-decrypt-btn').addEventListener('click', async () => {
+      const decryptBtn = document.getElementById('detail-decrypt-btn');
+      const messageId = decryptBtn.dataset.messageId;
+      const decryptionKey = document.getElementById('detail-decrypt-key').value.trim();
+      
+      if (!decryptionKey) {
+        alert('Please enter a decryption key.');
+        return;
+      }
+      
+      try {
+        decryptBtn.disabled = true;
+        decryptBtn.textContent = 'DECRYPTING...';
+        
+        const response = await fetch('/crypto/decrypt', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            messageId,
+            encryptionKey: decryptionKey
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          document.getElementById('detail-decrypted-message').textContent = data.decryptedMessage;
+          document.getElementById('detail-decrypt-result').style.display = 'block';
+        } else {
+          alert('Decryption failed: ' + (data.message || 'Invalid key or corrupted data'));
+        }
+      } catch (err) {
+        console.error('Decryption error:', err);
+        alert('An error occurred during decryption. Please try again.');
+      } finally {
+        decryptBtn.disabled = false;
+        decryptBtn.textContent = 'DECRYPT MESSAGE';
+      }
+    });
+    
+    // Close detail view
+    document.getElementById('close-detail').addEventListener('click', () => {
+      document.getElementById('message-detail').style.display = 'none';
+      document.querySelector('.messages-list-container').style.display = 'block';
+    });
+    
+    // Toggle glitch effects
+    document.getElementById('toggle-glitch').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.body.classList.toggle('glitch-active');
+    });
+  </script>
+</body>
+</html>
