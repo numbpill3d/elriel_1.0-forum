@@ -290,11 +290,7 @@
               case 'glyph':
               case 'glyph crucible':
                 response = ['Navigating to Glyph Crucible...'];
-                console.log("Terminal command navigating to glyph crucible");
-                setTimeout(() => {
-                  console.log("Navigation timeout triggered for glyph");
-                  window.location.href = '/glyph/crucible';
-                }, 1000);
+                setTimeout(() => { window.location.href = '/glyph/crucible'; }, 1000);
                 break;
               case 'whisper':
               case 'whisperboard':
