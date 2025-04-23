@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TOPIC | ELRIEL</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/glitch.css">
+  <link rel="stylesheet" href="/css/forum.css">
+  <script src="/js/glitch.js" defer></script>
+</head>
+<body class="terminal light-theme">
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">TERMINAL ACCESS v1.0</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+            <li><a href="/forum" class="active">FORUMS</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">PROFILE</h3>
+          <ul class="nav-links">
+            <li><a href="/profile">DASHBOARD</a></li>
+            <li><a href="/profile/edit">EDIT PROFILE</a></li>
+            <li><a href="/feed/new">CREATE POST</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <section class="topic-view-panel">
+          <div class="topic-header">
+            <h1 class="topic-view-title" id="topic-title"><!-- Topic title injected here --></h1>
+            <div class="topic-view-meta">
+              <span class="topic-view-author" id="topic-author"><!-- Author injected here --></span>
+              <span class="topic-view-date" id="topic-date"><!-- Date injected here --></span>
+            </div>
+          </div>
+          <div class="topic-content" id="topic-content">
+            <!-- Topic content injected here -->
+          </div>
+          <div class="topic-actions" id="topic-actions">
+            <!-- Topic actions injected here -->
+          </div>
+        </section>
+
+        <section class="comments-panel">
+          <div class="comments-header">
+            <h2>COMMENTS</h2>
+            <div class="comments-count" id="comments-count">0 COMMENTS</div>
+          </div>
+          <div class="comments-content" id="comments-list">
+            <!-- Comments will be injected here -->
+          </div>
+        </section>
+
+        <section class="reply-panel" id="reply-section">
+          <div class="panel-header">
+            <h2>POST REPLY</h2>
+            <div class="status-indicator">TERMINAL</div>
+          </div>
+          <div class="reply-content">
+            <div id="login-to-reply" style="display: none;">
+              <p>Please <a href="/auth/login">login</a> to post a reply.</p>
+            </div>
+            <form id="reply-form" style="display: none;" class="reply-form">
+              <div class="form-group">
+                <label for="reply-content">YOUR REPLY:</label>
+                <textarea id="reply-content" name="content" required placeholder="Enter your reply here..."></textarea>
+              </div>
+              <button type="submit">SUBMIT REPLY</button>
+              <div class="reply-note">
+                Comments earn you 2 reputation points. Be respectful and stay on topic.
+              </div>
+            </form>
+            <div id="reply-message" class="reply-message" style="display: none;"></div>
+          </div>
+        </section>
+
+        <section class="forum-navigation-panel">
+          <div class="panel-header">
+            <h2>NAVIGATION</h2>
+            <div class="status-indicator">INFO</div>
+          </div>
+          <div class="forum-description-content">
+            <div class="forum-navigation">
+              <a href="/forum" class="nav-link">⟵ Back to Forums</a>
+              <span class="nav-separator">|</span>
+              <a href="#" id="forum-link" class="nav-link">⟵ Back to Topics</a>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="main-footer">
+      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+      <div class="footer-glyphs">
+        <span class="glyph">⌘</span>
+        <span class="glyph">⍟</span>
+        <span class="glyph">⎔</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Inject data from server
+    const data = __DATA__;
+    const topic = data.topic;
+    const comments = data.comments;
+    const user = data.user;
+    const isOwner = data.isOwner;
+    
+    // Update page title
+    document.title = topic.title + " | ELRIEL";
+    
+    // Update user status in header
+    const userStatusEl = document.getElementById('user-status');
+    if (user) {
+      userStatusEl.innerHTML = `
+        <div class="logged-in">
+          <span class="username">${user.username}</span>
+          <div class="user-links">
+            <a href="/profile">PROFILE</a>
+            <a href="/auth/logout">LOGOUT</a>
+          </div>
+        </div>
+      `;
+      
+      // Show reply form
+      document.getElementById('reply-form').style.display = 'block';
+    } else {
+      userStatusEl.innerHTML = `
+        <div class="logged-out">
+          <a href="/auth/login" class="login-btn">LOGIN</a>
+          <a href="/auth/register" class="register-btn">REGISTER</a>
+        </div>
+      `;
+      
+      // Show login message
+      document.getElementById('login-to-reply').style.display = 'block';
+    }
+    
+    // Set topic details
+    document.getElementById('topic-title').textContent = topic.title;
+    document.getElementById('topic-author').textContent = `Posted by: ${topic.username}`;
+    document.getElementById('topic-date').textContent = new Date(topic.created_at).toLocaleString();
+    document.getElementById('topic-content').innerHTML = topic.content.replace(/\n/g, '<br>');
+    document.getElementById('comments-count').textContent = `${comments.length} COMMENTS`;
+    
+    // Set forum link
+    document.getElementById('forum-link').textContent = `⟵ Back to ${topic.forum_title}`;
+    document.getElementById('forum-link').href = `/forum/${topic.forum_slug}`;
+    
+    // Show topic actions if owner
+    if (isOwner) {
+      document.getElementById('topic-actions').innerHTML = `
+        <button class="topic-action-btn" id="edit-topic-btn">EDIT</button>
+        <button class="topic-action-btn" id="delete-topic-btn">DELETE</button>
+      `;
+      
+      // Add event listeners (to be implemented)
+      document.getElementById('edit-topic-btn').addEventListener('click', function() {
+        alert('Edit functionality coming soon');
+      });
+      
+      document.getElementById('delete-topic-btn').addEventListener('click', function() {
+        if (confirm('Are you sure you want to delete this topic?')) {
+          // Delete functionality would go here
+          alert('Delete functionality coming soon');
+        }
+      });
+    }
+    
+    // Render author signature if it exists
+    const renderSignature = (signature) => {
+      if (!signature || !signature.content) return '';
+      
+      return `
+        <div class="author-signature">
+          ${signature.content}
+        </div>
+      `;
+    };
+    
+    // Render author rewards if they exist
+    const renderRewards = (rewards) => {
+      if (!rewards || rewards.length === 0) return '';
+      
+      let rewardsHtml = '<div class="author-rewards">';
+      
+      rewards.forEach(reward => {
+        rewardsHtml += `
+          <div class="author-reward ${reward.css_class || ''}">
+            ${reward.name}
+          </div>
+        `;
+      });
+      
+      rewardsHtml += '</div>';
+      return rewardsHtml;
+    };
+    
+    // Populate comments list
+    const commentsListEl = document.getElementById('comments-list');
+    if (comments && comments.length > 0) {
+      comments.forEach((comment, index) => {
+        const commentEl = document.createElement('div');
+        commentEl.className = 'comment-item';
+        commentEl.id = `comment-${comment.id}`;
+        
+        // Render glyph if it exists
+        let glyphHtml = '';
+        if (comment.glyph_svg) {
+          glyphHtml = `
+            <div class="author-glyph">
+              ${comment.glyph_svg}
+            </div>
+          `;
+        }
+        
+        commentEl.innerHTML = `
+          <div class="comment-author">
+            <div class="author-name">${comment.username}</div>
+            ${glyphHtml}
+            <div class="author-info">District: ${comment.district_name || 'Unknown'}</div>
+            <div class="author-info">Posts: ${comment.post_count || '0'}</div>
+            ${renderRewards(comment.userRewards)}
+            ${renderSignature(comment.signature)}
+          </div>
+          <div class="comment-content-wrapper">
+            <div class="comment-meta">
+              <span class="comment-number">#${index + 1}</span>
+              <span class="comment-date">${new Date(comment.created_at).toLocaleString()}</span>
+            </div>
+            <div class="comment-content">${comment.content.replace(/\n/g, '<br>')}</div>
+          </div>
+        `;
+        
+        commentsListEl.appendChild(commentEl);
+      });
+    } else {
+      commentsListEl.innerHTML = '<div class="no-comments-message">No comments have been posted yet.</div>';
+    }
+    
+    // Handle reply form submission
+    if (user) {
+      document.getElementById('reply-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const content = document.getElementById('reply-content').value.trim();
+        
+        if (!content) {
+          alert('Please enter a comment.');
+          return;
+        }
+        
+        try {
+          const response = await fetch(`/forum/topic/${topic.id}/comment`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ content })
+          });
+          
+          const result = await response.json();
+          
+          if (result.success) {
+            // Show success message
+            document.getElementById('reply-form').style.display = 'none';
+            document.getElementById('reply-message').style.display = 'block';
+            document.getElementById('reply-message').innerHTML = `
+              <div class="success-message">
+                ${result.message}<br>
+                The page will refresh in 2 seconds.
+              </div>
+            `;
+            
+            // Refresh the page after a delay
+            setTimeout(() => {
+              window.location.reload();
+            }, 2000);
+          } else {
+            alert(result.message || 'Failed to post comment. Please try again.');
+          }
+        } catch (err) {
+          console.error('Error posting comment:', err);
+          alert('System error. Could not post comment.');
+        }
+      });
+    }
+    
+    // Toggle glitch effects
+    document.getElementById('toggle-glitch').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.body.classList.toggle('glitch-active');
+    });
+  </script>
+</body>
+</html>

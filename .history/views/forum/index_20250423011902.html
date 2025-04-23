@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FORUMS | ELRIEL</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/glitch.css">
+  <link rel="stylesheet" href="/css/forum.css">
+  <script src="/js/glitch.js" defer></script>
+</head>
+<body class="terminal light-theme">
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">TERMINAL ACCESS v1.0</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+            <li><a href="/forum" class="active">FORUMS</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">PROFILE</h3>
+          <ul class="nav-links">
+            <li><a href="/profile">DASHBOARD</a></li>
+            <li><a href="/profile/edit">EDIT PROFILE</a></li>
+            <li><a href="/feed/new">CREATE POST</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <section class="forums-panel">
+          <div class="panel-header">
+            <h2>ELRIEL FORUMS</h2>
+            <div class="status-indicator">ONLINE</div>
+          </div>
+          <div class="forums-content" id="forums-list">
+            <!-- Forums will be injected here -->
+          </div>
+        </section>
+
+        <section class="forum-stats-panel">
+          <div class="panel-header">
+            <h2>STATISTICS</h2>
+            <div class="status-indicator">DATA</div>
+          </div>
+          <div class="forum-stats-content">
+            <div class="stat-item">
+              <div class="stat-label">TOTAL FORUMS:</div>
+              <div class="stat-value" id="total-forums">-</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">TOTAL TOPICS:</div>
+              <div class="stat-value" id="total-topics">-</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">TOTAL COMMENTS:</div>
+              <div class="stat-value" id="total-comments">-</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">ACTIVE USERS:</div>
+              <div class="stat-value" id="active-users">-</div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="main-footer">
+      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+      <div class="footer-glyphs">
+        <span class="glyph">⌘</span>
+        <span class="glyph">⍟</span>
+        <span class="glyph">⎔</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Inject data from server
+    const data = __DATA__;
+    const forums = data.forums;
+    const user = data.user;
+    
+    // Update user status in header
+    const userStatusEl = document.getElementById('user-status');
+    if (user) {
+      userStatusEl.innerHTML = `
+        <div class="logged-in">
+          <span class="username">${user.username}</span>
+          <div class="user-links">
+            <a href="/profile">PROFILE</a>
+            <a href="/auth/logout">LOGOUT</a>
+          </div>
+        </div>
+      `;
+    } else {
+      userStatusEl.innerHTML = `
+        <div class="logged-out">
+          <a href="/auth/login" class="login-btn">LOGIN</a>
+          <a href="/auth/register" class="register-btn">REGISTER</a>
+        </div>
+      `;
+    }
+    
+    // Populate forums list
+    const forumsListEl = document.getElementById('forums-list');
+    if (forums && forums.length > 0) {
+      forums.forEach(forum => {
+        const forumEl = document.createElement('div');
+        forumEl.className = 'forum-item';
+        
+        // Format last activity date
+        let lastActivityText = 'No activity';
+        if (forum.last_activity) {
+          const lastActivity = new Date(forum.last_activity);
+          lastActivityText = lastActivity.toLocaleString();
+        }
+        
+        forumEl.innerHTML = `
+          <div class="forum-icon">${forum.icon || '📌'}</div>
+          <div class="forum-details">
+            <div class="forum-title"><a href="/forum/${forum.slug}">${forum.title}</a></div>
+            <div class="forum-description">${forum.description || ''}</div>
+          </div>
+          <div class="forum-stats">
+            <div class="stat-topics">${forum.topic_count || 0} topics</div>
+            <div class="stat-comments">${forum.comment_count || 0} comments</div>
+          </div>
+          <div class="forum-last-activity">
+            <div class="last-activity-label">Last Activity:</div>
+            <div class="last-activity-value">${lastActivityText}</div>
+          </div>
+        `;
+        
+        forumsListEl.appendChild(forumEl);
+      });
+    } else {
+      forumsListEl.innerHTML = '<div class="no-forums-message">No forums available.</div>';
+    }
+    
+    // Update statistics
+    document.getElementById('total-forums').textContent = forums.length;
+    
+    let totalTopics = 0;
+    let totalComments = 0;
+    
+    forums.forEach(forum => {
+      totalTopics += forum.topic_count || 0;
+      totalComments += forum.comment_count || 0;
+    });
+    
+    document.getElementById('total-topics').textContent = totalTopics;
+    document.getElementById('total-comments').textContent = totalComments;
+    document.getElementById('active-users').textContent = 'CALCULATING...';
+    
+    // Toggle glitch effects
+    document.getElementById('toggle-glitch').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.body.classList.toggle('glitch-active');
+    });
+  </script>
+</body>
+</html>

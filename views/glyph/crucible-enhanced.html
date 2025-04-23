@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GLYPH CRUCIBLE | ELRIEL</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/glitch.css">
+  <link rel="stylesheet" href="/css/glyph.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="/js/glyph3d.js" defer></script>
+  <script src="/js/glitch.js" defer></script>
+  <style>
+    .light-theme {
+      --bg-color: #0f0f0f;
+      --terminal-bg: #0a0a0a;
+      --terminal-green: #00ff00;
+      --terminal-dim-green: #00aa00;
+      --terminal-blue: #0077ff;
+      --terminal-red: #ff0033;
+      --terminal-purple: #cc00ff;
+      --terminal-text: #cccccc;
+      --terminal-bright: #ffffff;
+      --terminal-dim: #666666;
+      --glow-color: rgba(0, 255, 0, 0.5);
+      --panel-bg: rgba(0, 20, 0, 0.7);
+      --panel-border: 1px solid rgba(0, 255, 0, 0.3);
+      --sidebar-bg: rgba(5, 10, 5, 0.8);
+    }
+    
+    .glyph-3d-container {
+      width: 300px;
+      height: 300px;
+      margin: 0 auto;
+      border: 1px solid var(--terminal-green);
+      background-color: rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+    
+    .glyph-options-advanced {
+      margin-top: 1rem;
+      padding: 1rem;
+      background-color: rgba(0, 0, 0, 0.3);
+      border: 1px dashed rgba(0, 255, 0, 0.1);
+    }
+    
+    .glyph-options-advanced h3 {
+      font-family: var(--header-font);
+      color: var(--terminal-dim-green);
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+    
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+    
+    .option-group {
+      margin-bottom: 0.5rem;
+    }
+    
+    .option-group label {
+      display: block;
+      margin-bottom: 0.3rem;
+      color: var(--terminal-dim-green);
+      font-size: 0.8rem;
+    }
+    
+    .option-group select,
+    .option-group input {
+      width: 100%;
+      padding: 0.5rem;
+      background-color: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--terminal-dim-green);
+      color: var(--terminal-bright);
+      font-family: var(--terminal-font);
+    }
+    
+    .option-toggle {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    
+    .option-toggle label {
+      color: var(--terminal-dim-green);
+      font-size: 0.8rem;
+      margin-left: 0.5rem;
+    }
+    
+    .color-picker {
+      width: 100%;
+      height: 30px;
+      padding: 0;
+      border: none;
+    }
+  </style>
+</head>
+<body class="terminal light-theme">
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">TERMINAL ACCESS v1.0</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible" class="active">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+            <li><a href="/forum">FORUMS</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">PROFILE</h3>
+          <ul class="nav-links">
+            <li><a href="/profile">DASHBOARD</a></li>
+            <li><a href="/profile/edit">EDIT PROFILE</a></li>
+            <li><a href="/feed/new">CREATE POST</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <section class="crucible-panel">
+          <div class="panel-header">
+            <h2>GLYPH CRUCIBLE</h2>
+            <div class="status-indicator">ACTIVE</div>
+          </div>
+          <div class="crucible-content">
+            <div class="crucible-controls">
+              <div class="form-group">
+                <label for="seed">SEED (OPTIONAL):</label>
+                <input type="text" id="seed" name="seed" placeholder="Leave empty for random">
+              </div>
+              <div class="form-group">
+                <label for="complexity">COMPLEXITY:</label>
+                <select id="complexity" name="complexity">
+                  <option value="low">LOW</option>
+                  <option value="medium" selected>MEDIUM</option>
+                  <option value="high">HIGH</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="render-mode">RENDER MODE:</label>
+                <select id="render-mode" name="render-mode">
+                  <option value="2d">2D (CLASSIC)</option>
+                  <option value="3d">3D (ENHANCED)</option>
+                </select>
+              </div>
+              <button id="generate-glyph">GENERATE SIGIL</button>
+            </div>
+            
+            <div class="generated-glyph-area">
+              <div id="generated-glyph-svg" class="generated-glyph-svg">
+                <!-- Generated glyph SVG will be injected here -->
+              </div>
+              <div id="generated-glyph-3d" class="glyph-3d-container" style="display:none;">
+                <!-- 3D glyph will be rendered here -->
+              </div>
+              
+              <div id="glyph-options-advanced" class="glyph-options-advanced" style="display:none;">
+                <h3>ADVANCED OPTIONS</h3>
+                <div class="options-grid">
+                  <div class="option-group">
+                    <label for="glyph-shape">SIGIL SHAPE:</label>
+                    <select id="glyph-shape" name="glyph-shape">
+                      <option value="sphere">SPHERE</option>
+                      <option value="cube">CUBE</option>
+                      <option value="cylinder">CYLINDER</option>
+                      <option value="torus">TORUS</option>
+                      <option value="tetrahedron">TETRAHEDRON</option>
+                      <option value="octahedron">OCTAHEDRON</option>
+                      <option value="dodecahedron">DODECAHEDRON</option>
+                      <option value="icosahedron">ICOSAHEDRON</option>
+                    </select>
+                  </div>
+                  <div class="option-group">
+                    <label for="glyph-color">SIGIL COLOR:</label>
+                    <input type="color" id="glyph-color" name="glyph-color" value="#00ff00" class="color-picker">
+                  </div>
+                  <div class="option-group">
+                    <label for="rotation-speed">ROTATION SPEED:</label>
+                    <input type="range" id="rotation-speed" name="rotation-speed" min="0" max="5" step="0.1" value="1">
+                  </div>
+                  <div class="option-toggle">
+                    <input type="checkbox" id="auto-rotate" name="auto-rotate" checked>
+                    <label for="auto-rotate">AUTO-ROTATE</label>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="glyph-actions">
+                <button id="play-audio" style="display: none;">PLAY AUDIO</button>
+                <button id="save-glyph" style="display: none;">SAVE SIGIL</button>
+                <div id="generation-message" style="color: var(--terminal-green); margin-top: 1rem;"></div>
+                <div id="generation-error" style="color: var(--terminal-red); margin-top: 1rem;"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="user-glyphs-panel">
+          <div class="panel-header">
+            <h2>YOUR SAVED SIGILS</h2>
+            <div class="status-indicator">ARCHIVE</div>
+          </div>
+          <div class="user-glyphs-content" id="user-glyphs-content">
+            <!-- User's saved glyphs will be injected here -->
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="main-footer">
+      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+      <div class="footer-glyphs">
+        <span class="glyph">⌘</span>
+        <span class="glyph">⍟</span>
+        <span class="glyph">⎔</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Inject data from server
+    const data = __DATA__;
+    const user = data.user;
+    const userGlyphs = data.userGlyphs;
+    
+    // Global variables
+    let currentGeneratedGlyph = null;
+    let glyph3DRenderer = null;
+    let isRendering3D = false;
+    
+    // Update user status in header
+    const userStatusEl = document.getElementById('user-status');
+    if (user) {
+      userStatusEl.innerHTML = `
+        <div class="logged-in">
+          <span class="username">${user.username}</span>
+          <div class="user-links">
+            <a href="/profile">PROFILE</a>
+            <a href="/auth/logout">LOGOUT</a>
+          </div>
+        </div>
+      `;
+    } else {
+      userStatusEl.innerHTML = `
+        <div class="logged-out">
+          <a href="/auth/login" class="login-btn">LOGIN</a>
+          <a href="/auth/register" class="register-btn">REGISTER</a>
+        </div>
+      `;
+    }
+    
+    // Display user's saved glyphs
+    const userGlyphsContentEl = document.getElementById('user-glyphs-content');
+    if (userGlyphs && userGlyphs.length > 0) {
+      userGlyphs.forEach(glyph => {
+        const glyphItem = document.createElement('div');
+        glyphItem.className = 'user-glyph-item';
+        glyphItem.innerHTML = glyph.svg_data;
+        glyphItem.setAttribute('data-glyph-id', glyph.id);
+        glyphItem.title = `Generated: ${new Date(glyph.created_at).toLocaleString()}`;
+        
+        // Add attributes for 3D rendering if available
+        if (glyph.glyph_shape) {
+          glyphItem.setAttribute('data-shape', glyph.glyph_shape);
+          glyphItem.setAttribute('data-color', glyph.glyph_color || '#00ff00');
+          glyphItem.setAttribute('data-3d', glyph.glyph_3d_model ? '1' : '0');
+        }
+        
+        // Add click event to view glyph
+        glyphItem.addEventListener('click', () => {
+          window.location.href = `/glyph/view/${glyph.id}`;
+        });
+        
+        userGlyphsContentEl.appendChild(glyphItem);
+      });
+    } else {
+      userGlyphsContentEl.innerHTML = '<span>NO SAVED SIGILS. GENERATE SOME ABOVE.</span>';
+    }
+    
+    // Glyph generation functionality
+    const generateGlyphBtn = document.getElementById('generate-glyph');
+    const seedInput = document.getElementById('seed');
+    const complexitySelect = document.getElementById('complexity');
+    const renderModeSelect = document.getElementById('render-mode');
+    const generatedGlyphSvgEl = document.getElementById('generated-glyph-svg');
+    const generatedGlyph3dEl = document.getElementById('generated-glyph-3d');
+    const playAudioBtn = document.getElementById('play-audio');
+    const saveGlyphBtn = document.getElementById('save-glyph');
+    const generationMessageEl = document.getElementById('generation-message');
+    const generationErrorEl = document.getElementById('generation-error');
+    const glyphOptionsAdvancedEl = document.getElementById('glyph-options-advanced');
+    
+    // Advanced options
+    const glyphShapeSelect = document.getElementById('glyph-shape');
+    const glyphColorInput = document.getElementById('glyph-color');
+    const rotationSpeedInput = document.getElementById('rotation-speed');
+    const autoRotateCheckbox = document.getElementById('auto-rotate');
+    
+    // Toggle render mode
+    renderModeSelect.addEventListener('change', function() {
+      isRendering3D = this.value === '3d';
+      
+      if (isRendering3D) {
+        generatedGlyphSvgEl.style.display = 'none';
+        generatedGlyph3dEl.style.display = 'block';
+        glyphOptionsAdvancedEl.style.display = 'block';
+      } else {
+        generatedGlyphSvgEl.style.display = 'flex';
+        generatedGlyph3dEl.style.display = 'none';
+        glyphOptionsAdvancedEl.style.display = 'none';
+        
+        // Destroy 3D renderer if it exists
+        if (glyph3DRenderer) {
+          glyph3DRenderer.destroy();
+          glyph3DRenderer = null;
+        }
+      }
+      
+      // If we already have a generated glyph, regenerate it with the new mode
+      if (currentGeneratedGlyph) {
+        const seed = seedInput.value.trim();
+        const complexity = complexitySelect.value;
+        generateGlyph(seed, complexity);
+      }
+    });
+    
+    // Update 3D options when changed
+    glyphShapeSelect.addEventListener('change', updateGlyph3DOptions);
+    glyphColorInput.addEventListener('change', updateGlyph3DOptions);
+    rotationSpeedInput.addEventListener('input', updateGlyph3DOptions);
+    autoRotateCheckbox.addEventListener('change', updateGlyph3DOptions);
+    
+    // Function to update 3D glyph options
+    function updateGlyph3DOptions() {
+      if (!glyph3DRenderer) return;
+      
+      const options = {
+        shape: glyphShapeSelect.value,
+        color: glyphColorInput.value,
+        rotationSpeed: parseFloat(rotationSpeedInput.value) * 0.01,
+        autoRotate: autoRotateCheckbox.checked
+      };
+      
+      glyph3DRenderer.updateOptions(options);
+      
+      // Update currentGeneratedGlyph data
+      if (currentGeneratedGlyph) {
+        currentGeneratedGlyph.glyphShape = options.shape;
+        currentGeneratedGlyph.glyphColor = options.color;
+      }
+    }
+    
+    // Generate glyph
+    generateGlyphBtn.addEventListener('click', function() {
+      const seed = seedInput.value.trim();
+      const complexity = complexitySelect.value;
+      generateGlyph(seed, complexity);
+    });
+    
+    // Function to generate glyph based on mode
+    async function generateGlyph(seed, complexity) {
+      generationMessageEl.textContent = '';
+      generationErrorEl.textContent = '';
+      
+      // Clear previous glyph
+      generatedGlyphSvgEl.innerHTML = '<span>GENERATING...</span>';
+      
+      if (glyph3DRenderer) {
+        glyph3DRenderer.destroy();
+        glyph3DRenderer = null;
+      }
+      
+      playAudioBtn.style.display = 'none';
+      saveGlyphBtn.style.display = 'none';
+      currentGeneratedGlyph = null;
+      
+      try {
+        const response = await fetch('/glyph/generate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ seed, complexity })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          currentGeneratedGlyph = data.glyph;
+          
+          // Add 3D specific properties
+          currentGeneratedGlyph.glyphShape = glyphShapeSelect.value;
+          currentGeneratedGlyph.glyphColor = glyphColorInput.value;
+          
+          // Handle 2D rendering
+          generatedGlyphSvgEl.innerHTML = currentGeneratedGlyph.svgData;
+          
+          // Handle 3D rendering if enabled
+          if (isRendering3D) {
+            // Create 3D renderer
+            glyph3DRenderer = new Glyph3DRenderer('generated-glyph-3d', {
+              seed: currentGeneratedGlyph.seed,
+              complexity: complexity,
+              shape: glyphShapeSelect.value,
+              color: glyphColorInput.value,
+              rotationSpeed: parseFloat(rotationSpeedInput.value) * 0.01,
+              autoRotate: autoRotateCheckbox.checked
+            });
+          }
+          
+          playAudioBtn.style.display = 'inline-block';
+          
+          // Only show save button if logged in
+          if (user) {
+            saveGlyphBtn.style.display = 'inline-block';
+          }
+          
+          generationMessageEl.textContent = 'SIGIL GENERATED.';
+        } else {
+          generatedGlyphSvgEl.innerHTML = '<span>GENERATION FAILED</span>';
+          generationErrorEl.textContent = data.message || 'Glyph generation failed. Unknown error.';
+        }
+      } catch (error) {
+        console.error('Glyph generation error:', error);
+        generatedGlyphSvgEl.innerHTML = '<span>GENERATION FAILED</span>';
+        generationErrorEl.textContent = 'System error. Could not connect to crucible.';
+      }
+    }
+    
+    // Play glyph audio (placeholder)
+    playAudioBtn.addEventListener('click', () => {
+      if (currentGeneratedGlyph && currentGeneratedGlyph.audioData) {
+        try {
+          const audioParams = JSON.parse(currentGeneratedGlyph.audioData);
+          console.log('Playing audio with parameters:', audioParams);
+          // In a real implementation, you would use the Web Audio API here
+          generationMessageEl.textContent = 'PLAYING AUDIO (SIMULATED)...';
+          setTimeout(() => {
+            generationMessageEl.textContent = 'AUDIO PLAYBACK COMPLETE.';
+          }, 2000);
+        } catch (e) {
+          console.error('Error parsing audio data:', e);
+          generationErrorEl.textContent = 'Error playing audio. Corrupted data.';
+        }
+      }
+    });
+    
+    // Save glyph
+    saveGlyphBtn.addEventListener('click', async () => {
+      if (!currentGeneratedGlyph) return;
+      
+      generationMessageEl.textContent = '';
+      generationErrorEl.textContent = '';
+      
+      // Prepare data to save
+      const saveData = {
+        svgData: currentGeneratedGlyph.svgData,
+        audioData: currentGeneratedGlyph.audioData,
+        seed: currentGeneratedGlyph.seed,
+        glyphShape: currentGeneratedGlyph.glyphShape,
+        glyphColor: currentGeneratedGlyph.glyphColor,
+        glyph3d: isRendering3D ? 1 : 0
+      };
+      
+      try {
+        const response = await fetch('/glyph/save', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(saveData)
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          generationMessageEl.textContent = data.message;
+          // Reload saved glyphs
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+        } else {
+          generationErrorEl.textContent = data.message || 'Glyph save failed. Unknown error.';
+        }
+      } catch (error) {
+        console.error('Glyph save error:', error);
+        generationErrorEl.textContent = 'System error. Could not save glyph.';
+      }
+    });
+    
+    // Toggle glitch effects
+    document.getElementById('toggle-glitch').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.body.classList.toggle('glitch-active');
+    });
+  </script>
+</body>
+</html>

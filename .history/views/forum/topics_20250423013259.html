@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FORUM TOPICS | ELRIEL</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/glitch.css">
+  <link rel="stylesheet" href="/css/forum.css">
+  <script src="/js/glitch.js" defer></script>
+</head>
+<body class="terminal light-theme">
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">TERMINAL ACCESS v1.0</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+            <li><a href="/forum" class="active">FORUMS</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">PROFILE</h3>
+          <ul class="nav-links">
+            <li><a href="/profile">DASHBOARD</a></li>
+            <li><a href="/profile/edit">EDIT PROFILE</a></li>
+            <li><a href="/feed/new">CREATE POST</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <section class="topics-panel">
+          <div class="topics-header">
+            <div class="forum-title-header" id="forum-title"><!-- Forum title injected here --></div>
+            <div id="new-topic-btn-container">
+              <!-- New topic button will be injected here if logged in -->
+            </div>
+          </div>
+          <div class="panel-header">
+            <h2>TOPICS</h2>
+            <div class="status-indicator" id="topics-count">0 TOPICS</div>
+          </div>
+          <div class="topics-content" id="topics-list">
+            <!-- Topics will be injected here -->
+          </div>
+        </section>
+
+        <section class="forum-description-panel">
+          <div class="panel-header">
+            <h2>ABOUT THIS FORUM</h2>
+            <div class="status-indicator">INFO</div>
+          </div>
+          <div class="forum-description-content">
+            <div id="forum-description"><!-- Forum description injected here --></div>
+            <div class="forum-navigation">
+              <a href="/forum" class="nav-link">⟵ Back to Forums</a>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="main-footer">
+      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+      <div class="footer-glyphs">
+        <span class="glyph">⌘</span>
+        <span class="glyph">⍟</span>
+        <span class="glyph">⎔</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Inject data from server
+    const data = __DATA__;
+    const forum = data.forum;
+    const topics = data.topics;
+    const user = data.user;
+    
+    // Update user status in header
+    const userStatusEl = document.getElementById('user-status');
+    if (user) {
+      userStatusEl.innerHTML = `
+        <div class="logged-in">
+          <span class="username">${user.username}</span>
+          <div class="user-links">
+            <a href="/profile">PROFILE</a>
+            <a href="/auth/logout">LOGOUT</a>
+          </div>
+        </div>
+      `;
+      
+      // Show new topic button if logged in
+      document.getElementById('new-topic-btn-container').innerHTML = `
+        <a href="/forum/${forum.slug}/new" class="new-topic-btn">+ NEW TOPIC</a>
+      `;
+    } else {
+      userStatusEl.innerHTML = `
+        <div class="logged-out">
+          <a href="/auth/login" class="login-btn">LOGIN</a>

@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PROFILE | ELRIEL</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/glitch.css">
+  <link rel="stylesheet" href="/css/profile.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="/js/glyph3d.js" defer></script>
+  <script src="/js/glitch.js" defer></script>
+  <style>
+    /* Enhanced Profile Styles */
+    .light-theme {
+      --bg-color: #0f0f0f;
+      --terminal-bg: #0a0a0a;
+      --terminal-green: #00ff00;
+      --terminal-dim-green: #00aa00;
+      --terminal-blue: #0077ff;
+      --terminal-red: #ff0033;
+      --terminal-purple: #cc00ff;
+      --terminal-text: #cccccc;
+      --terminal-bright: #ffffff;
+      --terminal-dim: #666666;
+      --glow-color: rgba(0, 255, 0, 0.5);
+      --panel-bg: rgba(0, 20, 0, 0.7);
+      --panel-border: 1px solid rgba(0, 255, 0, 0.3);
+      --sidebar-bg: rgba(5, 10, 5, 0.8);
+    }
+    
+    /* Profile Header */
+    .profile-view-header {
+      position: relative;
+      height: 250px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+      border: 1px solid rgba(0, 255, 0, 0.2);
+    }
+    
+    /* Background options */
+    .profile-bg-single {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      filter: brightness(50%) contrast(150%);
+    }
+    
+    .profile-bg-tiled {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-repeat: repeat;
+      filter: brightness(50%) contrast(150%);
+    }
+    
+    /* Profile avatar and info section */
+    .profile-info-section {
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      margin: -50px 20px 0 20px;
+      z-index: 10;
+    }
+    
+    .profile-view-avatar {
+      flex: 0 0 100px;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background-color: rgba(0, 0, 0, 0.8);
+      border: 3px solid var(--terminal-green);
+      overflow: hidden;
+      margin-right: 20px;
+    }
+    
+    .profile-view-info {
+      flex: 1;
+      min-width: 200px;
+      padding: 10px 15px;
+      background-color: rgba(0, 0, 0, 0.8);
+      border: 1px solid var(--terminal-green);
+    }
+    
+    /* Sigil display */
+    .profile-sigil-display {
+      flex: 0 0 130px;
+      height: 130px;
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .profile-sigil-wrapper {
+      width: 120px;
+      height: 120px;
+      position: relative;
+    }
+    
+    /* Container customization */
+    .profile-containers {
+      margin-top: 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    .profile-container {
+      background-color: var(--panel-bg);
+      border: var(--panel-border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    
+    .container-header {
+      padding: 0.8rem 1rem;
+      background-color: rgba(0, 0, 0, 0.3);
+      border-bottom: var(--panel-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .container-title {
+      font-family: var(--header-font);
+      color: var(--terminal-green);
+      font-size: 1.1rem;
+      margin: 0;
+    }
+    
+    .container-content {
+      padding: 1rem;
+    }
+    
+    /* Container types */
+    .container-image-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 0.5rem;
+    }
+    
+    .gallery-image {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border: 1px solid rgba(0, 255, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+    
+    .gallery-image:hover {
+      transform: scale(1.05);
+      border-color: var(--terminal-green);
+    }
+    
+    .container-list ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .container-list li {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(0, 255, 0, 0.1);
+    }
+    
+    .container-list li:last-child {
+      border-bottom: none;
+    }
+    
+    .container-paragraph {
+      line-height: 1.6;
+    }
+    
+    .container-iframe {
+      width: 100%;
+      min-height: 250px;
+    }
+    
+    /* Repute display */
+    .repute-display {
+      display: flex;
+      align-items: center;
+      margin-top: 0.5rem;
+    }
+    
+    .repute-bar {
+      flex: 1;
+      height: 8px;
+      background-color: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--terminal-dim-green);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-right: 10px;
+    }
+    
+    .repute-progress {
+      height: 100%;
+      background-color: var(--terminal-green);
+      width: 0%; /* Will be set by JavaScript */
+    }
+    
+    .repute-value {
+      font-family: var(--header-font);
+      color: var(--terminal-green);
+      font-size: 0.9rem;
+    }
+    
+    /* Rewards section */
+    .rewards-display {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    
+    .reward-badge {
+      padding: 0.2rem 0.5rem;
+      background-color: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--terminal-dim-green);
+      border-radius: 3px;
+      font-size: 0.8rem;
+      color: var(--terminal-dim-green);
+    }
+    
+    /* Owner-only controls */
+    .profile-controls {
+      margin-top: 1rem;
+      padding: 1rem;
+      background-color: rgba(0, 0, 0, 0.3);
+      border: 1px dashed var(--terminal-dim-green);
+      display: none;
+    }
+    
+    .control-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .control-btn {
+      padding: 0.5rem 1rem;
+      background-color: rgba(0, 255, 0, 0.2);
+      border: 1px solid var(--terminal-dim-green);
+      color: var(--terminal-text);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .control-btn:hover {
+      background-color: rgba(0, 255, 0, 0.3);
+      border-color: var(--terminal-green);
+    }
+  </style>
+</head>
+<body class="terminal light-theme">
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">TERMINAL ACCESS v1.0</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+            <li><a href="/forum">FORUMS</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">PROFILE</h3>
+          <ul class="nav-links">
+            <li><a href="/profile">DASHBOARD</a></li>
+            <!-- Edit profile link only for owner -->
+            <li id="edit-profile-link" style="display: none;"><a href="/profile/edit">EDIT PROFILE</a></li>
+            <li><a href="/feed/new">CREATE POST</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <section class="profile-view-panel">
+          <div class="panel-header">
+            <h2>USER PROFILE: <span id="profile-view-username"></span></h2>
+            <div class="status-indicator" id="profile-view-status"></div>
+          </div>
+          <div class="profile-view-content">
+            <!-- Profile header with background -->
+            <div class="profile-view-header" id="profile-view-header">
+              <div id="profile-bg" class="profile-bg-single">
+                <!-- Background will be set by JavaScript -->
+              </div>
+            </div>
+            
+            <!-- Profile info section with avatar and sigil -->
+            <div class="profile-info-section">
+              <div class="profile-view-avatar">
+                <!-- Placeholder for avatar -->
+                <div class="default-avatar"></div>
+              </div>
+              
+              <div class="profile-view-info">
+                <h3 id="profile-view-username-large"></h3>
+                <div class="profile-view-district" id="profile-view-district"></div>
+                <div class="profile-view-status-text" id="profile-view-status-text"></div>
+                
+                <!-- Repute display -->
+                <div class="repute-display">
+                  <div class="repute-bar">
+                    <div class="repute-progress" id="repute-progress"></div>
+                  </div>
+                  <div class="repute-value">
+                    REPUTE: <span id="repute-value">0</span>
+                  </div>
+                </div>
+                
+                <!-- Rewards display -->
+                <div class="rewards-display" id="rewards-display">
+                  <!-- Rewards will be injected here -->
+                </div>
+              </div>
+              
+              <div class="profile-sigil-display">
+                <div class="profile-sigil-wrapper" id="profile-sigil-wrapper">
+                  <!-- Sigil will be injected here -->
+                </div>
+              </div>
+            </div>
+            
+            <!-- Owner-only controls -->
+            <div class="profile-controls" id="profile-controls">
+              <div class="control-buttons">
+                <button class="control-btn" id="edit-profile-btn">EDIT PROFILE</button>
+                <button class="control-btn" id="add-container-btn">ADD CONTAINER</button>
+                <button class="control-btn" id="change-background-btn">CHANGE BACKGROUND</button>
+              </div>
+            </div>
+            
+            <!-- Profile containers -->
+            <div class="profile-containers" id="profile-containers">
+              <!-- Containers will be injected here -->
+            </div>
+          </div>
+        </section>
+
+        <section class="user-view-posts-panel">
+          <div class="panel-header">
+            <h2>RECENT POSTS</h2>
+            <div class="status-indicator">ARCHIVE</div>
+          </div>
+          <div class="user-view-posts-content" id="user-view-posts-content">
+            <!-- User posts will be injected here -->
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="main-footer">
+      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+      <div class="footer-glyphs">
+        <span class="glyph">⌘</span>
+        <span class="glyph">⍟</span>
+        <span class="glyph">⎔</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Inject data from server
+    const data = __DATA__;
+    const profile = data.profile;
+    const user = data.user;
+    const glyph = data.glyph;
+    const posts = data.posts;
+    const isOwner = data.isOwner;
+    const userContainers = data.containers || [];
+    const userRewards = data.rewards || [];
+    let glyph3DRenderer = null;
+    
+    // Update user status in header
+    const userStatusEl = document.getElementById('user-status');
+    if (user) {
+      userStatusEl.innerHTML = `
+        <div class="logged-in">
+          <span class="username">${user.username}</span>
+          <div class="user-links">
+            <a href="/profile">PROFILE</a>
+            <a href="/auth/logout">LOGOUT</a>
+          </div>
+        </div>
+      `;
+    } else {
+      userStatusEl.innerHTML = `
+        <div class="logged-out">
+          <a href="/auth/login" class="login-btn">LOGIN</a>
+          <a href="/auth/register" class="register-btn">REGISTER</a>
+        </div>
+      `;
+    }
+    
+    // Show edit profile link if owner
+    if (isOwner) {
+      document.getElementById('edit-profile-link').style.display = 'list-item';
+      document.getElementById('profile-controls').style.display = 'block';
+    }
+    
+    // Update profile details
+    document.getElementById('profile-view-username').textContent = profile.username;
+    document.getElementById('profile-view-username-large').textContent = profile.username;
+    document.getElementById('profile-view-status').textContent = profile.status;
+    document.getElementById('profile-view-status-text').textContent = profile.status;
+    document.getElementById('profile-view-district').textContent = `DISTRICT: ${profile.district_name || 'UNKNOWN'}`;
+    
+    // Update reputation display
+    const reputeValue = profile.reputation || 0;
+    document.getElementById('repute-value').textContent = reputeValue;
+    
+    // Calculate progress to next reward tier
+    const nextRewardTier = calculateNextRewardTier(reputeValue);
+    if (nextRewardTier.required > 0) {
+      const progressPercent = Math.min(100, (reputeValue / nextRewardTier.required) * 100);
+      document.getElementById('repute-progress').style.width = progressPercent + '%';
+    }
+    
+    // Function to calculate next reward tier
+    function calculateNextRewardTier(reputation) {
+      const tiers = [0, 100, 150, 200, 250, 300, 350, 400, 450, 500, 600, 750];
+      let nextTier = 0;
+      
+      for (let tier of tiers) {
+        if (tier > reputation) {
+          nextTier = tier;
+          break;
+        }
+      }
+      
+      return {
+        current: reputation,
+        required: nextTier,
+        progress: nextTier > 0 ? reputation / nextTier : 1
+      };
+    }
+    
+    // Display user rewards
+    const rewardsDisplayEl = document.getElementById('rewards-display');
+    if (userRewards && userRewards.length > 0) {
+      userRewards.forEach(reward => {
+        if (reward.is_equipped) {
+          const badgeEl = document.createElement('div');
+          badgeEl.className = `reward-badge ${reward.css_class || ''}`;
+          badgeEl.textContent = reward.name;
+          rewardsDisplayEl.appendChild(badgeEl);
+        }
+      });
+    }
+    
+    // Set background image
+    const profileBgEl = document.getElementById('profile-bg');
+    if (profile.background_image) {
+      // Check background type
+      if (profile.profile_bg_type === 'tiled' && profile.profile_bg_tile) {
+        profileBgEl.className = 'profile-bg-tiled';
+        profileBgEl.style.backgroundImage = `url(${profile.background_image})`;
+      } else {
+        profileBgEl.className = 'profile-bg-single';
+        profileBgEl.style.backgroundImage = `url(${profile.background_image})`;
+      }
+      
+      profileBgEl.classList.add('glitch-image');
+      profileBgEl.setAttribute('data-image', profile.background_image);
+    }
+    
+    // Set profile glyph
+    const profileSigilWrapperEl = document.getElementById('profile-sigil-wrapper');
+    if (glyph && glyph.svg_data) {
+      // Check if 3D is enabled
+      if (glyph.glyph_3d_model || profile.glyph_3d) {
+        // Create 3D container
+        const glyph3dContainer = document.createElement('div');
+        glyph3dContainer.id = 'profile-sigil-3d';
+        glyph3dContainer.style.width = '100%';
+        glyph3dContainer.style.height = '100%';
+        profileSigilWrapperEl.appendChild(glyph3dContainer);
+        
+        // Initialize 3D renderer
+        glyph3DRenderer = new Glyph3DRenderer('profile-sigil-3d', {
+          seed: glyph.seed || profile.username,
+          complexity: 'medium',
+          shape: glyph.glyph_shape || 'sphere',
+          color: glyph.glyph_color || '#00ff00',
+          rotationSpeed: (profile.glyph_rotation_speed || 3) * 0.01,
+          autoRotate: true,
+          size: 0.8
+        });
+      } else {
+        // Use 2D SVG
+        profileSigilWrapperEl.innerHTML = glyph.svg_data;
+      }
+    } else {
+      profileSigilWrapperEl.innerHTML = '<span>NO SIGIL SET</span>';
+    }
+    
+    // Display profile containers
+    const profileContainersEl = document.getElementById('profile-containers');
+    if (userContainers && userContainers.length > 0) {
+      userContainers.forEach(container => {
+        const containerEl = document.createElement('div');
+        containerEl.className = 'profile-container';
+        
+        let containerContent = '';
+        
+        // Create container header
+        containerEl.innerHTML = `
+          <div class="container-header">
+            <h3 class="container-title">${container.title || 'UNTITLED'}</h3>
+          </div>
+          <div class="container-content container-${container.container_type}">
+            ${generateContainerContent(container)}
+          </div>
+        `;
+        
+        profileContainersEl.appendChild(containerEl);
+      });
+    } else {
+      // Display default container with instructions
+      if (isOwner) {
+        profileContainersEl.innerHTML = `
+          <div class="profile-container">
+            <div class="container-header">
+              <h3 class="container-title">WELCOME</h3>
+            </div>
+            <div class="container-content container-paragraph">
+              <p>This is your profile page. You can add custom containers, change your background, and more.</p>
+              <p>Use the controls above to customize your profile.</p>
+            </div>
+          </div>
+        `;
+      } else {
+        profileContainersEl.innerHTML = `
+          <div class="profile-container">
+            <div class="container-header">
+              <h3 class="container-title">USER PROFILE</h3>
+            </div>
+            <div class="container-content container-paragraph">
+              <p>This user hasn't added any custom containers yet.</p>
+            </div>
+          </div>
+        `;
+      }
+    }
+    
+    // Function to generate container content based on type
+    function generateContainerContent(container) {
+      const settings = container.settings ? JSON.parse(container.settings) : {};
+      
+      switch (container.container_type) {
+        case 'list':
+          let listItems = '';
+          if (container.content) {
+            try {
+              const items = JSON.parse(container.content);
+              items.forEach(item => {
+                listItems += `<li>${item}</li>`;
+              });
+            } catch (e) {
+              listItems = `<li>${container.content}</li>`;
+            }
+          }
+          return `<ul>${listItems}</ul>`;
+          
+        case 'image-gallery':
+          let gallery = '';
+          if (container.content) {
+            try {
+              const images = JSON.parse(container.content);
+              images.forEach(img => {
+                gallery += `<img src="${img.url}" alt="${img.caption || ''}" class="gallery-image">`;
+              });
+            } catch (e) {
+              gallery = `<p>Error loading gallery</p>`;
+            }
+          }
+          return gallery;
+          
+        case 'paragraph':
+          return `<div>${container.content || ''}</div>`;
+          
+        case 'iframe':
+          const iframeSrc = container.content || '';
+          return `<iframe src="${iframeSrc}" frameborder="0" class="container-iframe"></iframe>`;
+          
+        default:
+          return container.content || '';
+      }
+    }
+    
+    // Display user posts
+    const userPostsContentEl = document.getElementById('user-view-posts-content');
+    if (posts.length > 0) {
+      posts.forEach(post => {
+        const postEl = document.createElement('div');
+        postEl.className = 'user-view-post-item';
+        postEl.innerHTML = `
+          <div class="post-title"><a href="/feed/post/${post.id}">${post.title}</a></div>
+          <div class="post-meta">
+            <span class="post-date">${new Date(post.created_at).toLocaleString()}</span>
+            ${post.is_encrypted ? '<span class="post-encrypted">ENCRYPTED</span>' : ''}
+          </div>
+        `;
+        userPostsContentEl.appendChild(postEl);
+      });
+    } else {
+      userPostsContentEl.innerHTML = '<span>NO POSTS FOUND IN ARCHIVE.</span>';
+    }
+    
+    // Handle profile action buttons
+    if (isOwner) {
+      document.getElementById('edit-profile-btn').addEventListener('click', function() {
+        window.location.href = '/profile/edit';
+      });
+      
+      document.getElementById('add-container-btn').addEventListener('click', function() {
+        // Redirect to container creation
+        window.location.href = '/profile/container/new';
+      });
+      
+      document.getElementById('change-background-btn').addEventListener('click', function() {
+        // Redirect to background customization
+        window.location.href = '/profile/edit#background';
+      });
+    }
+    
+    // Toggle glitch effects
+    document.getElementById('toggle-glitch').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.body.classList.toggle('glitch-active');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEW TOPIC | ELRIEL</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/glitch.css">
+  <link rel="stylesheet" href="/css/forum.css">
+  <script src="/js/glitch.js" defer></script>
+</head>
+<body class="terminal light-theme">
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">TERMINAL ACCESS v1.0</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+            <li><a href="/forum" class="active">FORUMS</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">PROFILE</h3>
+          <ul class="nav-links">
+            <li><a href="/profile">DASHBOARD</a></li>
+            <li><a href="/profile/edit">EDIT PROFILE</a></li>
+            <li><a href="/feed/new">CREATE POST</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <section class="new-topic-panel">
+          <div class="panel-header">
+            <h2>CREATE NEW TOPIC</h2>
+            <div class="status-indicator" id="forum-name"><!-- Forum name injected here --></div>
+          </div>
+          <div class="new-topic-content">
+            <form id="new-topic-form" class="new-topic-form">
+              <div class="form-group">
+                <label for="topic-title">TOPIC TITLE:</label>
+                <input type="text" id="topic-title" name="title" required maxlength="100" placeholder="Enter topic title...">
+              </div>
+              <div class="form-group">
+                <label for="topic-content">TOPIC CONTENT:</label>
+                <textarea id="topic-content" name="content" required placeholder="Enter topic content..."></textarea>
+              </div>
+              <button type="submit">SUBMIT TOPIC</button>
+              <div class="new-topic-note">
+                Creating a topic earns you 5 reputation points. Be respectful and stay on topic.
+                Topics are public and will be visible to all users of Elriel.
+              </div>
+            </form>
+            <div id="new-topic-message" style="display: none;" class="new-topic-message"></div>
+          </div>
+        </section>
+
+        <section class="forum-navigation-panel">
+          <div class="panel-header">
+            <h2>NAVIGATION</h2>
+            <div class="status-indicator">INFO</div>
+          </div>
+          <div class="forum-description-content">
+            <div class="forum-navigation">
+              <a href="/forum" class="nav-link">⟵ Back to Forums</a>
+              <span class="nav-separator">|</span>
+              <a href="#" id="forum-link" class="nav-link">⟵ Back to Topics</a>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="main-footer">
+      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+      <div class="footer-glyphs">
+        <span class="glyph">⌘</span>
+        <span class="glyph">⍟</span>
+        <span class="glyph">⎔</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Inject data from server
+    const data = __DATA__;
+    const forum = data.forum;
+    const user = data.user;
+    
+    // Update page title
+    document.title = `New Topic in ${forum.title} | ELRIEL`;
+    
+    // Update user status in header
+    const userStatusEl = document.getElementById('user-status');
+    userStatusEl.innerHTML = `
+      <div class="logged-in">
+        <span class="username">${user.username}</span>
+        <div class="user-links">
+          <a href="/profile">PROFILE</a>
+          <a href="/auth/logout">LOGOUT</a>
+        </div>
+      </div>
+    `;
+    
+    // Set forum info
+    document.getElementById('forum-name').textContent = forum.title;
+    document.getElementById('forum-link').href = `/forum/${forum.slug}`;
+    document.getElementById('forum-link').textContent = `⟵ Back to ${forum.title}`;
+    
+    // Handle form submission
+    document.getElementById('new-topic-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const title = document.getElementById('topic-title').value.trim();
+      const content = document.getElementById('topic-content').value.trim();
+      
+      if (!title || !content) {
+        alert('Please fill out all fields.');
+        return;
+      }
+      
+      try {
+        const response = await fetch(`/forum/${forum.slug}/create`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ title, content })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          // Show success message
+          document.getElementById('new-topic-form').style.display = 'none';
+          document.getElementById('new-topic-message').style.display = 'block';
+          document.getElementById('new-topic-message').innerHTML = `
+            <div class="success-message">
+              ${result.message}<br>
+              Redirecting to your new topic...
+            </div>
+          `;
+          
+          // Redirect to the new topic
+          setTimeout(() => {
+            window.location.href = `/forum/topic/${result.topicId}`;
+          }, 2000);
+        } else {
+          alert(result.message || 'Failed to create topic. Please try again.');
+        }
+      } catch (err) {
+        console.error('Error creating topic:', err);
+        alert('System error. Could not create topic.');
+      }
+    });
+    
+    // Toggle glitch effects
+    document.getElementById('toggle-glitch').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.body.classList.toggle('glitch-active');
+    });
+  </script>
+</body>
+</html>
