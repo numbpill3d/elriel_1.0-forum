@@ -118,30 +118,7 @@ staticRouter.get('/bleedstream', (req, res) => {
 
 // Glyph routes
 staticRouter.get('/glyph/crucible', (req, res) => {
-  // Create mock glyph data
-  const glyphData = {
-    user: req.session.user || null,
-    glyphs: [
-      {
-        id: 1,
-        name: "Void Sigil",
-        creator: "system_admin",
-        created_at: new Date().toISOString()
-      },
-      {
-        id: 2,
-        name: "Digital Rune",
-        creator: "terminal_ghost",
-        created_at: new Date(Date.now() - 86400000).toISOString()
-      }
-    ]
-  };
-
-  // Inject data into the HTML
-  let html = fs.readFileSync(path.join(__dirname, 'views', 'glyph', 'crucible.html'), 'utf8');
-  html = html.replace('__DATA__', JSON.stringify(glyphData));
-
-  res.send(html);
+  res.sendFile(path.join(__dirname, 'views', 'glyph', 'crucible.html'));
 });
 
 // Redirect for compatibility with old links
@@ -151,28 +128,7 @@ staticRouter.get('/glyph-crucible', (req, res) => {
 
 // Whisper routes
 staticRouter.get('/whisper/board', (req, res) => {
-  // Create mock whisper data
-  const whisperData = {
-    user: req.session.user || null,
-    whispers: [
-      {
-        id: 1,
-        content: "The void listens. The network expands.",
-        created_at: new Date().toISOString()
-      },
-      {
-        id: 2,
-        content: "Signals in the noise. Patterns in the static.",
-        created_at: new Date(Date.now() - 86400000).toISOString()
-      }
-    ]
-  };
-
-  // Inject data into the HTML
-  let html = fs.readFileSync(path.join(__dirname, 'views', 'whisper', 'board.html'), 'utf8');
-  html = html.replace('__DATA__', JSON.stringify(whisperData));
-
-  res.send(html);
+  res.sendFile(path.join(__dirname, 'views', 'whisper', 'board.html'));
 });
 
 // Redirect for compatibility with old links

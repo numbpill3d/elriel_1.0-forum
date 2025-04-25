@@ -151,28 +151,7 @@ staticRouter.get('/glyph-crucible', (req, res) => {
 
 // Whisper routes
 staticRouter.get('/whisper/board', (req, res) => {
-  // Create mock whisper data
-  const whisperData = {
-    user: req.session.user || null,
-    whispers: [
-      {
-        id: 1,
-        content: "The void listens. The network expands.",
-        created_at: new Date().toISOString()
-      },
-      {
-        id: 2,
-        content: "Signals in the noise. Patterns in the static.",
-        created_at: new Date(Date.now() - 86400000).toISOString()
-      }
-    ]
-  };
-
-  // Inject data into the HTML
-  let html = fs.readFileSync(path.join(__dirname, 'views', 'whisper', 'board.html'), 'utf8');
-  html = html.replace('__DATA__', JSON.stringify(whisperData));
-
-  res.send(html);
+  res.sendFile(path.join(__dirname, 'views', 'whisper', 'board.html'));
 });
 
 // Redirect for compatibility with old links
