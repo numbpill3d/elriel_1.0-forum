@@ -35,15 +35,15 @@
           <h3 class="nav-title">MAIN SYSTEMS</h3>
           <ul class="nav-links">
             <li><a href="/" class="active">TERMINAL</a></li>
-            <li><a href="/feed/bleedstream.html" id="bleedstream-link">BLEEDSTREAM</a></li>
-            <li><a href="/glyph/crucible.html" id="crucible-link">GLYPH CRUCIBLE</a></li>
-            <li><a href="/whisper/board.html" id="whisper-link">WHISPERBOARD</a></li>
+            <li><a href="2133.lol/feed/bleedstream.html" id="bleedstream-link">BLEEDSTREAM</a></li>
+            <li><a href="2133.lol/glyph/crucible.html" id="crucible-link">GLYPH CRUCIBLE</a></li>
+            <li><a href="2133.lol/whisper/board.html" id="whisper-link">WHISPERBOARD</a></li>
           </ul>
         </div>
         <div class="nav-section">
           <h3 class="nav-title">DISTRICTS</h3>
           <ul class="nav-links">
-            <li><a href="/secrets/numbpill.html" class="district">NUMBPILL CELL</a></li>
+            <li><a href="2133,lol/secrets/numbpill.html" class="district">NUMBPILL CELL</a></li>
             <li><a href="#" class="district locked">LOCKED DISTRICT</a></li>
             <li><a href="#" class="district locked">LOCKED DISTRICT</a></li>
           </ul>
@@ -51,7 +51,7 @@
         <div class="nav-section">
           <h3 class="nav-title">SYSTEM</h3>
           <ul class="nav-links">
-            <li><a href="/about.html">ABOUT</a></li>
+            <li><a href="2133.lol/about.html">ABOUT</a></li>
             <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
           </ul>
         </div>
@@ -155,16 +155,16 @@
         <div class="logged-in">
           <span class="username">${data.user.username}</span>
           <div class="user-links">
-            <a href="/profile" class="win98-btn">PROFILE</a>
-            <a href="/auth/logout" class="win98-btn">LOGOUT</a>
+            <a href="2133.lol/profile" class="win98-btn">PROFILE</a>
+            <a href="2133.lol/auth/logout" class="win98-btn">LOGOUT</a>
           </div>
         </div>
       `;
     } else {
       userStatusEl.innerHTML = `
         <div class="logged-out">
-          <a href="/auth/login" class="win98-btn login-btn">LOGIN</a>
-          <a href="/auth/register" class="win98-btn register-btn">REGISTER</a>
+          <a href="2133.lol/auth/login" class="win98-btn login-btn">LOGIN</a>
+          <a href="2133.lol/auth/register" class="win98-btn register-btn">REGISTER</a>
         </div>
       `;
     }
@@ -272,7 +272,7 @@
             'REDIRECTING...'
           ];
           setTimeout(() => {
-            window.location.href = '/terminal/void';
+            window.location.href = '2133.lol/terminal/void';
           }, 2000);
           break;
         default:
@@ -284,12 +284,12 @@
                 console.log("Terminal command navigating to bleedstream");
                 setTimeout(() => {
                   console.log("Navigation timeout triggered");
-                  window.location.href = '/bleedstream.html';
+                  window.location.href = '2133.lol/bleedstream.html';
                   // Force reload if stuck
                   setTimeout(() => {
                     if (window.location.pathname === '/') {
                       console.log("Force reloading the page");
-                      window.location.replace('/bleedstream.html');
+                      window.location.replace('2133.lol/bleedstream.html');
                     }
                   }, 500);
                 }, 1000);
@@ -301,13 +301,13 @@
                 console.log("Terminal command navigating to glyph crucible");
                 setTimeout(() => {
                   console.log("Navigation timeout triggered for glyph");
-                  window.location.href = '/glyph-crucible.html';
+                  window.location.href = '2133.lol/glyph-crucible.html';
                 }, 1000);
                 break;
               case 'whisper':
               case 'whisperboard':
                 response = ['Navigating to Whisperboard...'];
-                setTimeout(() => { window.location.href = '/whisperboard.html'; }, 1000);
+                setTimeout(() => { window.location.href = '2133.lol/whisperboard.html'; }, 1000);
                 break;
               case 'profile':
                 if (data.user) {
@@ -320,7 +320,7 @@
               case 'numbpill':
               case 'numbpill cell':
                 response = ['Navigating to Numbpill Cell...'];
-                setTimeout(() => { window.location.href = '/numbpill.html'; }, 1000);
+                setTimeout(() => { window.location.href = '2133.lol/numbpill.html'; }, 1000);
                 break;
               default:
                 response = [`Unknown destination: ${destination}`];
@@ -354,9 +354,9 @@
     document.addEventListener('DOMContentLoaded', function() {
       // Add event listeners to main navigation links
       const navLinks = {
-        'bleedstream-link': '/feed/bleedstream',
-        'crucible-link': '/glyph/crucible',
-        'whisper-link': '/whisper/board'
+        'bleedstream-link': '2133.lol/feed/bleedstream',
+        'crucible-link': '2133,lol/glyph/crucible',
+        'whisper-link': '2133.lol/whisper/board'
       };
       
       for (const [id, url] of Object.entries(navLinks)) {
@@ -376,8 +376,8 @@
         console.log("User panel is empty, adding login buttons");
         userStatusEl.innerHTML = `
           <div class="logged-out">
-            <a href="/auth/login" class="win98-btn login-btn">LOGIN</a>
-            <a href="/auth/register" class="win98-btn register-btn">REGISTER</a>
+            <a href="2133.lol/auth/login" class="win98-btn login-btn">LOGIN</a>
+            <a href="2133.lol/auth/register" class="win98-btn register-btn">REGISTER</a>
           </div>
         `;
       }
