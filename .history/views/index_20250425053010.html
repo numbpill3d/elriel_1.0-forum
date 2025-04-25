@@ -35,15 +35,15 @@
           <h3 class="nav-title">MAIN SYSTEMS</h3>
           <ul class="nav-links">
             <li><a href="/" class="active">TERMINAL</a></li>
-            <li><a href="/feed/bleedstream" id="bleedstream-link">BLEEDSTREAM</a></li>
-            <li><a href="/glyph/crucible" id="crucible-link">GLYPH CRUCIBLE</a></li>
-            <li><a href="/whisper/board" id="whisper-link">WHISPERBOARD</a></li>
+            <li><a href="/feed/bleedstream.html" id="bleedstream-link">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible.html" id="crucible-link">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board.html" id="whisper-link">WHISPERBOARD</a></li>
           </ul>
         </div>
         <div class="nav-section">
           <h3 class="nav-title">DISTRICTS</h3>
           <ul class="nav-links">
-            <li><a href="/terminal/numbpill" class="district">NUMBPILL CELL</a></li>
+            <li><a href="/secrets/numbpill.html" class="district">NUMBPILL CELL</a></li>
             <li><a href="#" class="district locked">LOCKED DISTRICT</a></li>
             <li><a href="#" class="district locked">LOCKED DISTRICT</a></li>
           </ul>
@@ -51,7 +51,7 @@
         <div class="nav-section">
           <h3 class="nav-title">SYSTEM</h3>
           <ul class="nav-links">
-            <li><a href="/about">ABOUT</a></li>
+            <li><a href="/about.html">ABOUT</a></li>
             <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
           </ul>
         </div>
@@ -200,7 +200,149 @@
       activityFeed.appendChild(el);
     });
 
-    // Terminal functionality is handled by terminal.js
+    // Terminal input handling
+    const terminalInput = document.getElementById('terminal-input');
+    const terminalOutput = document.querySelector('.terminal-output');
+
+    terminalInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        const command = this.value.trim().toLowerCase();
+        const commandLine = document.createElement('div');
+        commandLine.className = 'line';
+        commandLine.innerHTML = `<span class="prompt">></span> ${this.value}`;
+
+        // Insert before the command input
+        terminalOutput.insertBefore(commandLine, document.querySelector('.command-line'));
+
+        // Process command
+        processCommand(command);
+
+        // Clear input
+        this.value = '';
+      }
+    });
+
+    function processCommand(command) {
+      let response;
+
+      switch(command) {
+        case 'help':
+          response = [
+            'AVAILABLE COMMANDS:',
+            '  help - Display this help message',
+            '  status - Display system status',
+            '  about - About Elriel Network',
+            '  navigate [destination] - Navigate to a destination',
+            '  clear - Clear terminal output',
+            '  glitch - Toggle glitch effects',
+            '  void - ???'
+          ];
+          break;
+        case 'status':
+          response = [
+            'ELRIEL NETWORK STATUS:',
+            '  Network: ONLINE',
+            '  Users Connected: ' + (Math.floor(Math.random() * 100) + 50),
+            '  Glyphs Generated: ' + (Math.floor(Math.random() * 10000) + 5000),
+            '  Whispers Active: ' + (Math.floor(Math.random() * 500) + 100),
+            '  System Integrity: COMPROMISED'
+          ];
+          break;
+        case 'about':
+          response = [
+            'ELRIEL NETWORK',
+            '  A digital wasteland of glitched terminals and corrupted data.',
+            '  This network was never meant to be found.',
+            '  Proceed with caution. Your contributions will be assimilated.'
+          ];
+          break;
+        case 'clear':
+          // Clear all lines except the last one (command input)
+          const lines = document.querySelectorAll('.terminal-output .line:not(.command-line)');
+          lines.forEach(line => line.remove());
+          return;
+        case 'glitch':
+          document.body.classList.toggle('glitch-active');
+          response = ['Glitch effects toggled.'];
+          break;
+        case 'void':
+          response = [
+            'VOID PROTOCOL INITIATED',
+            'ACCESSING RESTRICTED AREA...',
+            'REDIRECTING...'
+          ];
+          setTimeout(() => {
+            window.location.href = '/terminal/void';
+          }, 2000);
+          break;
+        default:
+          if (command.startsWith('navigate ')) {
+            const destination = command.substring(9);
+            switch(destination) {
+              case 'bleedstream':
+                response = ['Navigating to Bleedstream...'];
+                console.log("Terminal command navigating to bleedstream");
+                setTimeout(() => {
+                  console.log("Navigation timeout triggered");
+                  window.location.href = '/feed/bleedstream';
+                  // Force reload if stuck
+                  setTimeout(() => {
+                    if (window.location.pathname === '/') {
+                      console.log("Force reloading the page");
+                      window.location.replace('/feed/bleedstream');
+                    }
+                  }, 500);
+                }, 1000);
+                break;
+              case 'crucible':
+              case 'glyph':
+              case 'glyph crucible':
+                response = ['Navigating to Glyph Crucible...'];
+                console.log("Terminal command navigating to glyph crucible");
+                setTimeout(() => {
+                  console.log("Navigation timeout triggered for glyph");
+                  window.location.href = '/glyph/crucible';
+                }, 1000);
+                break;
+              case 'whisper':
+              case 'whisperboard':
+                response = ['Navigating to Whisperboard...'];
+                setTimeout(() => { window.location.href = '/whisperboard.html'; }, 1000);
+                break;
+              case 'profile':
+                if (data.user) {
+                  response = ['Navigating to Profile...'];
+                  setTimeout(() => { window.location.href = '2133.lol/profile'; }, 1000);
+                } else {
+                  response = ['Access denied. Authentication required.'];
+                }
+                break;
+              case 'numbpill':
+              case 'numbpill cell':
+                response = ['Navigating to Numbpill Cell...'];
+                setTimeout(() => { window.location.href = '/numbpill.html'; }, 1000);
+                break;
+              default:
+                response = [`Unknown destination: ${destination}`];
+            }
+          } else {
+            response = [`Unknown command: ${command}. Type 'help' for available commands.`];
+          }
+      }
+
+      // Add response lines
+      if (response) {
+        response.forEach(line => {
+          const lineEl = document.createElement('div');
+          lineEl.className = 'line';
+          lineEl.textContent = line;
+          terminalOutput.insertBefore(lineEl, document.querySelector('.command-line'));
+        });
+      }
+
+      // Scroll to bottom
+      terminalOutput.scrollTop = terminalOutput.scrollHeight;
+    }
 
     // Toggle glitch effects
     document.getElementById('toggle-glitch').addEventListener('click', function(e) {
