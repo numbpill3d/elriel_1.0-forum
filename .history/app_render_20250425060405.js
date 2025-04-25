@@ -62,22 +62,7 @@ const staticRouter = express.Router();
 
 // Basic home page
 staticRouter.get('/', (req, res) => {
-  // Create mock data for the index page
-  const data = {
-    announcement: {
-      title: "Welcome to Elriel Network",
-      content: "This is a static demo version. Some features may be limited.",
-      created_at: new Date().toISOString()
-    },
-    recentActivity: [],
-    user: req.session.user || null
-  };
-
-  // Inject data into the HTML
-  let html = fs.readFileSync(path.join(__dirname, 'views', 'index.html'), 'utf8');
-  html = html.replace('__DATA__', JSON.stringify(data));
-
-  res.send(html);
+  res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
 
 // Serve static views for demo
