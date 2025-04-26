@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EXTREME GLYPH CRUCIBLE | ELRIEL</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/glitch.css">
+  <link rel="stylesheet" href="/css/glyph.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+</head>
+<body class="terminal">
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">TERMINAL ACCESS v1.0</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible" class="active">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+            <li><a href="/forum">FORUMS</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">PROFILE</h3>
+          <ul class="nav-links">
+            <li><a href="/profile">DASHBOARD</a></li>
+            <li><a href="/profile/edit">EDIT PROFILE</a></li>
+            <li><a href="/feed/new">CREATE POST</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <section class="crucible-panel crucible-extreme">
+          <div class="panel-header">
+            <h2>EXTREME GLYPH CRUCIBLE</h2>
+            <div class="status-indicator">EXPERIMENTAL</div>
+          </div>
+          <div class="crucible-content">
+            <div class="crucible-controls">
+              <div class="form-group">
+                <label for="seed">SEED (OPTIONAL):</label>
+                <input type="text" id="seed" name="seed" placeholder="Leave empty for random">
+              </div>
+              <div class="form-group">
+                <label for="complexity">COMPLEXITY:</label>
+                <select id="complexity" name="complexity">
+                  <option value="low">LOW</option>
+                  <option value="medium" selected>MEDIUM</option>
+                  <option value="high">HIGH</option>
+                  <option value="extreme">EXTREME</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="render-mode">RENDER MODE:</label>
+                <select id="render-mode" name="render-mode">
+                  <option value="2d">2D (CLASSIC)</option>
+                  <option value="3d" selected>3D (ENHANCED)</option>
+                </select>
+              </div>
+              <button id="generate-glyph">GENERATE SIGIL</button>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    // Basic initialization script
+    document.addEventListener('DOMContentLoaded', function() {
+      // This will be replaced with full functionality
+      console.log('Extreme Glyph Crucible initialized');
+    });
+  </script>
+</body>
+</html>

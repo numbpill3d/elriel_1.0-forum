@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EXTREME GLYPH CRUCIBLE | ELRIEL</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/glitch.css">
+  <link rel="stylesheet" href="/css/glyph.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+</head>
+<body class="terminal">
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">TERMINAL ACCESS v1.0</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible" class="active">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+            <li><a href="/forum">FORUMS</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">PROFILE</h3>
+          <ul class="nav-links">
+            <li><a href="/profile">DASHBOARD</a></li>
+            <li><a href="/profile/edit">EDIT PROFILE</a></li>
+            <li><a href="/feed/new">CREATE POST</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <section class="crucible-panel crucible-extreme">
+          <div class="panel-header">
+            <h2>EXTREME GLYPH CRUCIBLE</h2>
+            <div class="status-indicator">EXPERIMENTAL</div>
+          </div>
+          <div class="crucible-content">
+            <div class="crucible-controls">
+              <div class="form-group">
+                <label for="seed">SEED (OPTIONAL):</label>
+                <input type="text" id="seed" name="seed" placeholder="Leave empty for random">
+              </div>
+              <div class="form-group">
+                <label for="complexity">COMPLEXITY:</label>
+                <select id="complexity" name="complexity">
+                  <option value="low">LOW</option>
+                  <option value="medium" selected>MEDIUM</option>
+                  <option value="high">HIGH</option>
+                  <option value="extreme">EXTREME</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="render-mode">RENDER MODE:</label>
+                <select id="render-mode" name="render-mode">
+                  <option value="2d">2D (CLASSIC)</option>
+                  <option value="3d" selected>3D (ENHANCED)</option>
+                </select>
+              </div>
+              <button id="generate-glyph">GENERATE SIGIL</button>
+            </div>
+            
+            <div class="generated-glyph-area">
+              <div id="generated-glyph-svg" class="generated-glyph-svg" style="display:none;">
+                <!-- Generated glyph SVG will be injected here -->
+              </div>
+              <div id="generated-glyph-3d" class="glyph-3d-container">
+                <!-- 3D glyph will be rendered here -->
+              </div>
+              
+              <div id="glyph-options-advanced" class="glyph-options-advanced">
+                <h3>ADVANCED CUSTOMIZATION</h3>
+                <div class="options-tabs">
+                  <div class="option-tab active" data-panel="basic-options">BASIC</div>
+                  <div class="option-tab" data-panel="glow-options">GLOW & EFFECTS</div>
+                  <div class="option-tab" data-panel="animation-options">ANIMATION</div>
+                  <div class="option-tab" data-panel="particle-options">PARTICLES</div>
+                  <div class="option-tab" data-panel="aura-options">AURA</div>
+                  <div class="option-tab" data-panel="texture-options">TEXTURE</div>
+                  <div class="option-tab" data-panel="preset-options">PRESETS</div>
+                </div>
+
+                <!-- Basic Options Panel -->
+                <div class="options-panel active" id="basic-options">
+                  <div class="options-grid">
+                    <div class="option-group">
+                      <label for="glyph-shape">SIGIL SHAPE:</label>
+                      <select id="glyph-shape" name="glyph-shape">
+                        <option value="sphere">SPHERE</option>
+                        <option value="cube">CUBE</option>
+                        <option value="cylinder">CYLINDER</option>
+                        <option value="torus">TORUS</option>
+                        <option value="tetrahedron">TETRAHEDRON</option>
+                        <option value="octahedron">OCTAHEDRON</option>
+                        <option value="dodecahedron">DODECAHEDRON</option>
+                        <option value="icosahedron">ICOSAHEDRON</option>
+                        <option value="torusknot">TORUS KNOT</option>
+                        <option value="custom">CUSTOM</option>
+                      </select>
+                    </div>
+                    <div class="option-group">
+                      <label for="glyph-color">PRIMARY COLOR:<span class="preview-swatch" id="primary-color-preview"></span></label>
+                      <input type="color" id="glyph-color" name="glyph-color" value="#00ff00" class="color-picker">
+                    </div>
+                    <div class="option-group">
+                      <label for="glyph-opacity">OPACITY: <span id="opacity-value" class="slider-value">100%</span></label>
+                      <input type="range" id="glyph-opacity" name="glyph-opacity" min="10" max="100" step="5" value="100">
+                    </div>
+                    <div class="option-group">
+                      <label for="glyph-size">SIZE: <span id="size-value" class="slider-value">1.0</span></label>
+                      <input type="range" id="glyph-size" name="glyph-size" min="0.5" max="2.0" step="0.1" value="1.0">
+                    </div>
+                    <div class="option-group">
+                      <label for="wireframe-style">WIREFRAME STYLE:</label>
+                      <select id="wireframe-style" name="wireframe-style">
+                        <option value="none">NONE</option>
+                        <option value="lines">LINES</option>
+                        <option value="points">POINTS</option>
+                        <option value="full">FULL WIREFRAME</option>
+                      </select>
+                    </div>
+                    <div class="option-group">
+                      <label for="metalness">METALNESS: <span id="metalness-value" class="slider-value">0.3</span></label>
+                      <input type="range" id="metalness" name="metalness" min="0" max="1" step="0.05" value="0.3">
+                    </div>
+                    <div class="option-group">
+                      <label for="roughness">ROUGHNESS: <span id="roughness-value" class="slider-value">0.4</span></label>
+                      <input type="range" id="roughness" name="roughness" min="0" max="1" step="0.05" value="0.4">
+                    </div>
+                    <div class="option-toggle">
+                      <input type="checkbox" id="auto-rotate" name="auto-rotate" checked>
+                      <label for="auto-rotate">AUTO-ROTATE</label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Glow Options Panel -->
+                <div class="options-panel" id="glow-options">
+                  <div class="options-grid">
+                    <div class="option-group">
+                      <label for="glow-color">GLOW COLOR:<span class="preview-swatch" id="glow-color-preview"></span></label>
+                      <input type="color" id="glow-color" name="glow-color" value="#00ff00" class="color-picker">
+                    </div>
+                    <div class="option-group">
+                      <label for="glow-intensity">GLOW INTENSITY: <span id="glow-intensity-value" class="slider-value">1.5</span></label>
+                      <input type="range" id="glow-intensity" name="glow-intensity" min="0" max="5" step="0.1" value="1.5">
+                    </div>
+                    <div class="option-group">
+                      <label for="glow-animation">GLOW ANIMATION:</label>
+                      <select id="glow-animation" name="glow-animation">
+                        <option value="none">NONE</option>
+                        <option value="pulse">PULSE</option>
+                        <option value="flicker">FLICKER</option>
+                        <option value="blink">BLINK</option>
+                        <option value="rainbow">RAINBOW</option>
+                        <option value="wave">WAVE</option>
+                      </select>
+                    </div>
+                    <div class="option-group">
+                      <label for="glow-speed">GLOW SPEED: <span id="glow-speed-value" class="slider-value">1.0</span></label>
+                      <input type="range" id="glow-speed" name="glow-speed" min="0.1" max="3.0" step="0.1" value="1.0">
+                    </div>
+                    <div class="option-group">
+                      <label for="secondary-color">SECONDARY COLOR:<span class="preview-swatch" id="secondary-color-preview"></span></label>
+                      <input type="color" id="secondary-color" name="secondary-color" value="#0088ff" class="color-picker">
+                    </div>
+                    <div class="option-group">
+                      <label for="bloom-effect">BLOOM EFFECT:</label>
+                      <select id="bloom-effect" name="bloom-effect">
+                        <option value="none">NONE</option>
+                        <option value="light">LIGHT</option>
+                        <option value="medium">MEDIUM</option>
+                        <option value="heavy">HEAVY</option>
+                      </select>
+                    </div>
+                    <div class="option-toggle">
+                      <input type="checkbox" id="secondary-glow" name="secondary-glow">
+                      <label for="secondary-glow">SECONDARY GLOW</label>
+                    </div>
+                    <div class="option-toggle">
+                      <input type="checkbox" id="halo-effect" name="halo-effect">
+                      <label for="halo-effect">HALO EFFECT</label>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Animation Options Panel -->
+                <div class="options-panel" id="animation-options">
+                  <div class="options-grid">
+                    <div class="option-group">
+                      <label for="rotation-speed">ROTATION SPEED: <span id="rotation-speed-value" class="slider-value">1.0</span></label>
+                      <input type="range" id="rotation-speed" name="rotation-speed" min="0" max="5" step="0.1" value="1">
+                    </div>
+                    <div class="option-group">
+                      <label for="animation-style">ANIMATION STYLE:</label>
+                      <select id="animation-style" name="animation-style">
+                        <option value="rotate">ROTATE</option>
+                        <option value="pulse">PULSE</option>
+                        <option value="morph">MORPH</option>
+                        <option value="orbit">ORBIT</option>
+                        <option value="chaos">CHAOS</option>
+                        <option value="breathe">BREATHE</option>
+                        <option value="spin">SPIN</option>
+                      </select>
+                    </div>
+                    <div class="option-group">
+                      <label for="animation-speed">ANIMATION SPEED: <span id="animation-speed-value" class="slider-value">1.0</span></label>
+                      <input type="range" id="animation-speed" name="animation-speed" min="0.1" max="3.0" step="0.1" value="1.0">
+                    </div>
+                    <div class="option-group">
+                      <label for="animation-path">ANIMATION PATH:</label>
+                      <select id="animation-path" name="animation-path">
+                        <option value="none">NONE</option>
+                        <option value="circle">CIRCLE</option>
+                        <option value="figure8">FIGURE 8</option>
+                        <option value="spiral">SPIRAL</option>
+                        <option value="zigzag">ZIGZAG</option>
+                        <option value="random">RANDOM</option>
+                      </select>
+                    </div>
+                    <div class="option-group">
+                      <label for="element-animation">ELEMENT ANIMATION:</label>
+                      <select id="element-animation" name="element-animation">
+                        <option value="none">NONE</option>
+                        <option value="randomize">RANDOMIZE</option>
+                        <option value="wave">WAVE</option>
+                        <option value="expand">EXPAND</option>
+                        <option value="swirl">SWIRL</option>
+                      </select>
+                    </div>
+                    <div class="option-group">
+                      <label for="morph-intensity">MORPH INTENSITY: <span id="morph-intensity-value" class="slider-value">0.5</span></label>
+                      <input type="range" id="morph-intensity" name="morph-intensity" min="0" max="1" step="0.05" value="0.5">
+                    </div>
+                    <div class="option-toggle">
+                      <input type="checkbox" id="reverse-animation" name="reverse-animation">
+                      <label for="reverse-animation">REVERSE DIRECTION</label>
+                    </div>
+                    <div class="option-toggle">
+                      <input type="checkbox" id="alternate-animation" name="alternate-animation">
+                      <label for="alternate-animation">ALTERNATE ANIMATION</label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Particle Options Panel -->
+                <div class="options-panel" id="particle-options">
+                  <div class="options-grid">
+                    <div class="option-group">
+                      <label for="particle-enabled">PARTICLE SYSTEM:</label>
+                      <select id="particle-enabled" name="particle-enabled">
+                        <option value="off">OFF</option>
+                        <option value="basic">BASIC</option>
+                        <option value="advanced" selected>ADVANCED</option>
+                      </select>
+                    </div>
+                    <div class="option-group">
+                      <label for="particle-count">PARTICLE COUNT: <span id="particle-count-value" class="slider-value">50</span></label>
+                      <input type="range" id="particle-count" name="particle-count" min="0" max="500" step="10" value="50">
+                    </div>
+                    <div class="option-group">
+                      <label for="particle-size">PARTICLE SIZE: <span id="particle-size-value" class="slider-value">0.05</span></label>
+                      <input type="range" id="particle-size" name="particle-size" min="0.01" max="0.2" step="0.01" value="0.05">
+                    </div>
+                    <div class="option-group">
+                      <label for="particle-color">PARTICLE COLOR:<span class="preview-swatch" id="particle-color-preview"></span></label>
+                      <input type="color" id="particle-color" name="particle-color" value="#00ff88" class="color-picker">
+                    </div>
+                    <div class="option-group">
+                      <label for="particle-shape">PARTICLE SHAPE:</label>
+                      <select id="particle-shape" name="particle-shape">
+                        <option value="point">POINT</option>
+                        <option value="sphere">SPHERE</option>
+                        <option value="star">STAR</option>
+                        <option value="cube">CUBE</option>
+                        <option value="custom">CUSTOM</option>
+                      </select>
+                    </div>
+                    <div class="option-group">
+                      <label for="particle-speed">PARTICLE SPEED: <span id="particle-speed-value" class="slider-value">1.0</span></label>
+                      <input type="range" id="particle-speed" name="particle-speed" min="0.1" max="3" step="0.1" value="1.0">
+                    </div>
+                    <div class="option-group">
+                      <label for="particle-opacity">PARTICLE OPACITY: <span id="particle-opacity-value" class="slider-value">0.7</span></label>
+                      <input type="range" id="particle-opacity" name="particle-opacity" min="0.1" max="1" step="0.05" value="0.7">
+                    </div>
+                    <div class="option-group">
+                      <label for="particle-behavior">PARTICLE BEHAVIOR:</label>
+                      <select id="particle-behavior" name="particle-behavior">
+                        <option value="orbit">ORBIT</option>
+                        <option value="float">FLOAT</option>
+                        <option value="swarm">SWARM</option>
+                        <option value="explode">EXPLODE</option>
+                        <option value="rain">RAIN</option>
+                        <option value="vortex">VORTEX</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>

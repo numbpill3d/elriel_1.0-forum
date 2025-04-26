@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EXTREME GLYPH CRUCIBLE | ELRIEL</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/glitch.css">
+  <link rel="stylesheet" href="/css/glyph.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+  <style>
+    .light-theme {
+      --bg-color: #0f0f0f;
+      --terminal-bg: #0a0a0a;
+      --terminal-green: #00ff00;
+      --terminal-dim-green: #00aa00;
+      --terminal-blue: #0077ff;
+      --terminal-red: #ff0033;
+      --terminal-purple: #cc00ff;
+      --terminal-text: #cccccc;
+      --terminal-bright: #ffffff;
+      --terminal-dim: #666666;
+      --glow-color: rgba(0, 255, 0, 0.5);
+      --panel-bg: rgba(0, 20, 0, 0.7);
+      --panel-border: 1px solid rgba(0, 255, 0, 0.3);
+      --sidebar-bg: rgba(5, 10, 5, 0.8);
+    }
+    
+    .glyph-3d-container {
+      width: 300px;
+      height: 300px;
+      margin: 0 auto;
+      border: 1px solid var(--terminal-green);
+      background-color: rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+    
+    .glyph-options-advanced {
+      margin-top: 1rem;
+      padding: 1rem;
+      background-color: rgba(0, 0, 0, 0.3);
+      border: 1px dashed rgba(0, 255, 0, 0.1);
+    }
+    
+    .glyph-options-advanced h3 {
+      font-family: var(--header-font);
+      color: var(--terminal-dim-green);
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+    
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+    }
+    
+    .option-group {
+      margin-bottom: 0.5rem;
+    }
+    
+    .option-group label {
+      display: block;
+      margin-bottom: 0.3rem;
+      color: var(--terminal-dim-green);
+      font-size: 0.8rem;
+    }
+    
+    .option-group select,
+    .option-group input {
+      width: 100%;
+      padding: 0.5rem;
+      background-color: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--terminal-dim-green);
+      color: var(--terminal-bright);
+      font-family: var(--terminal-font);
+    }
+    
+    .option-toggle {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    
+    .option-toggle label {
+      color: var(--terminal-dim-green);
+      font-size: 0.8rem;
+      margin-left: 0.5rem;
+    }
+    
+    .color-picker {
+      width: 100%;
+      height: 30px;
+      padding: 0;
+      border: none;
+    }
+
+    .options-tabs {
+      display: flex;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--terminal-dim-green);
+      flex-wrap: wrap;
+    }
+
+    .option-tab {
+      padding: 0.5rem 1rem;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+      background-color: rgba(0, 0, 0, 0.3);
+      color: var(--terminal-dim-green);
+      border: 1px solid var(--terminal-dim-green);
+      border-bottom: none;
+      cursor: pointer;
+      font-family: var(--terminal-font);
+      font-size: 0.8rem;
+    }
+
+    .option-tab.active {
+      background-color: rgba(0, 100, 0, 0.3);
+      color: var(--terminal-green);
+    }
+
+    .options-panel {
+      display: none;
+    }
+
+    .options-panel.active {
+      display: block;
+    }
+
+    .preview-swatch {
+      width: 20px;
+      height: 20px;
+      display: inline-block;
+      border: 1px solid var(--terminal-dim);
+      vertical-align: middle;
+      margin-left: 5px;
+    }
+
+    .slider-value {
+      display: inline-block;
+      width: 30px;
+      text-align: right;
+      margin-left: 5px;
+      font-size: 0.7rem;
+      color: var(--terminal-dim-green);
+    }
+
+    .presets-container {
+      display: flex;
+      flex-wrap: wrap;
+      margin-bottom: 0.5rem;
+    }
+    
+    .preset-button {
+      margin: 0.3rem 0.1rem;
+      padding: 0.3rem 0.5rem;
+      background-color: rgba(0, 50, 0, 0.3);
+      border: 1px solid var(--terminal-dim-green);
+      color: var(--terminal-dim-green);
+      font-family: var(--terminal-font);
+      font-size: 0.7rem;
+      cursor: pointer;
+    }
+    
+    .preset-button:hover {
+      background-color: rgba(0, 70, 0, 0.4);
+      color: var(--terminal-green);
+    }
+    
+    .effect-preview {
+      width: 15px;
+      height: 15px;
+      display: inline-block;
+      margin-left: 5px;
+      vertical-align: middle;
+    }
+    
+    .blink-preview {
+      animation: blink-effect 2s infinite;
+    }
+    
+    .pulse-preview {
+      animation: pulse-effect 2s infinite;
+    }
+    
+    .flicker-preview {
+      animation: flicker-effect 2s infinite;
+    }
+    
+    .rainbow-preview {
+      animation: rainbow-effect 2s infinite;
+    }
+    
+    @keyframes blink-effect {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0.2; }
+    }
+    
+    @keyframes pulse-effect {
+      0% { opacity: 1; }
+      50% { opacity: 0.3; }
+      100% { opacity: 1; }
+    }
+    
+    @keyframes flicker-effect {
+      0%, 100% { opacity: 1; }
+      10%, 30%, 70% { opacity: 0.4; }
+      20%, 40%, 60%, 80% { opacity: 0.8; }
+      50%, 90% { opacity: 0.2; }
+    }
+    
+    @keyframes rainbow-effect {
+      0% { background-color: #ff0000; }
+      17% { background-color: #ffff00; }
+      33% { background-color: #00ff00; }
+      50% { background-color: #00ffff; }
+      67% { background-color: #0000ff; }
+      83% { background-color: #ff00ff; }
+      100% { background-color: #ff0000; }
+    }
+  </style>
+</head>
+<body class="terminal light-theme">
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">TERMINAL ACCESS v1.0</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible" class="active">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+            <li><a href="/forum">FORUMS</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">PROFILE</h3>
+          <ul class="nav-links">
+            <li><a href="/profile">DASHBOARD</a></li>
+            <li><a href="/profile/edit">EDIT PROFILE</a></li>
+            <li><a href="/feed/new">CREATE POST</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <section class="crucible-panel">
+          <div class="panel-header">
+            <h2>EXTREME GLYPH CRUCIBLE</h2>
+            <div class="status-indicator">EXPERIMENTAL</div>
+          </div>
+          <div class="crucible-content">
+            <div class="crucible-controls">
+              <div class="form-group">
+                <label for="seed">SEED (OPTIONAL):</label>
+                <input type="text" id="seed" name="seed" placeholder="Leave empty for random">
+              </div>
+              <div class="form-group">
+                <label for="complexity">COMPLEXITY:</label>
+                <select id="complexity" name="complexity">
+                  <option value="low">LOW</option>
+                  <option value="medium" selected>MEDIUM</option>
+                  <option value="high">HIGH</option>
+                  <option value="extreme">EXTREME</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="render-mode">RENDER MODE:</label>
+                <select id="render-mode" name="render-mode">
+                  <option value="2d">2D (CLASSIC)</option>
+                  <option value="3d" selected>3D (ENHANCED)</option>
+                </select>
+              </div>
+              <button id="generate-glyph">GENERATE SIGIL</button>
+            </div>
+            
+            <div class="generated-glyph-area">
+              <div id="generated-glyph-svg" class="generated-glyph-svg" style="display:none;">
+                <!-- Generated glyph SVG will be injected here -->
+              </div>
+              <div id="generated-glyph-3d" class="glyph-3d-container">
+                <!-- 3D glyph will be rendered here -->
+              </div>
+              
+              <div id="glyph-options-advanced" class="glyph-options-advanced">
+                <h3>ADVANCED CUSTOMIZATION</h3>
+                <div class="options-tabs">
+                  <div class="option-tab active" data-panel="basic-options">BASIC</div>
+                  <div class="option-tab" data-panel="glow-options">GLOW & EFFECTS</div>
+                  <div class="option-tab" data-panel="animation-options">ANIMATION</div>
+                  <div class="option-tab" data-panel="particle-options">PARTICLES</div>
+                  <div class="option-tab" data-panel="aura-options">AURA</div>
+                  <div class="option-tab" data-panel="texture-options">TEXTURE</div>
+                  <div class="option-tab" data-panel="preset-options">PRESETS</div>
+                </div>
+
+                <!-- Basic Options Panel -->
+                <div class="options-panel active" id="basic-options">
+                  <div class="options-grid">
+                    <div class="option-group">
+                      <label for="glyph-shape">SIGIL SHAPE:</label>
+                      <select id="glyph-shape" name="glyph-shape">
+                        <option value="sphere">SPHERE</option>
+                        <option value="cube">CUBE</option>
+                        <option value="cylinder">CYLINDER</option>
+                        <option value="torus">TORUS</option>
+                        <option value="tetrahedron">TETRAHEDRON</option>
+                        <option value="octahedron">OCTAHEDRON</option>
+                        <option value="dodecahedron">DODECAHEDRON</option>
+                        <option value="icosahedron">ICOSAHEDRON</option>
+                        <option value="torusknot">TORUS KNOT</option>
+                        <option value="custom">CUSTOM</option>
+                      </select>
+                    </div>
+                    <div class="option-group">
+                      <label for="glyph-color">PRIMARY COLOR:<span class="preview-swatch" id="primary-color-preview"></span></label>
+                      <input type="color" id="glyph-color" name="glyph-color" value="#00ff00" class="color-picker">
+                    </div>
+                    <div class="option-group">
+                      <label for="glyph-opacity">OPACITY: <span id="opacity-value" class="slider-value">100%</span></label>
+                      <input type="range" id="glyph-opacity" name="glyph-opacity" min="10" max="100" step="5" value="100">
+                    </div>
+                    <div class="option-group">
+                      <label for="glyph-size">SIZE: <span id="size-value" class="slider-value">1.0</span></label>
+                      <input type="range" id="glyph-size" name="glyph-size" min="0.5" max="2.0" step="0.1" value="1.0">
+                    </div>
+                    <div class="option-group">
+                      <label for="wireframe-style">WIREFRAME STYLE:</label>
+                      <select id="wireframe-style" name="wireframe-style">
+                        <option value="none">NONE</option>
+                        <option value="lines">LINES</option>
+                        <option value="points">POINTS</option>
+                        <option value="full">FULL WIREFRAME</option>
+                      </select>
+                    </div>
+                    <div class="option-group">
+                      <label for="metalness">METALNESS: <span id="metalness-value" class="slider-value">0.3</span></label>
+                      <input type="range" id="metalness" name="metalness" min="0" max="1" step="0.05" value="0.3">
+                    </div>
+                    <div class="option-group">
+                      <label for="roughness">ROUGHNESS: <span id="roughness-value" class="slider-value">0.4</span></label>
+                      <input type="range" id="roughness" name="roughness" min="0" max="1" step="0.05" value="0.4">
+                    </div>
+                    <div class="option-toggle">
+                      <input type="checkbox" id="auto-rotate" name="auto-rotate" checked>
+                      <label for="auto-rotate">AUTO-ROTATE</label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Glow Options Panel -->
+                <div class="options-panel" id="glow-options">
+                  <div class="options-grid">
+                    <div class="option-group">
+                      <label for="glow-color">GLOW COLOR:<span class="preview-swatch" id="glow-color-preview"></span></label>
+                      <input type="color" id="glow-color" name="glow-color" value="#00ff00" class="color-picker">
+                    </div>
+                    <div class="option-group">
+                      <label for="glow-intensity">GLOW INTENSITY: <span id="glow-intensity-value" class="slider-value">1.5</span></label>
+                      <input type="range" id="glow-intensity" name="glow-intensity" min="0" max="5" step="0.1" value="1.5">
+                    </div>
+                    <div class="option-group">
+                      <label for="glow-animation">GLOW ANIMATION:</label>
+                      <select id="glow-animation" name="glow-animation">
+                        <option value="none">NONE</option>
+                        <option value="pulse">PULSE <span class="effect-preview pulse-preview"></span></option>
+                        <option value="flicker">FLICKER <span class="effect-preview flicker-preview"></span></option>
+                        <option value="blink">BLINK <span class="effect-preview blink-preview"></span></option>
+                        <option value="rainbow">RAINBOW <span class="effect-preview rainbow-preview"></span></option>
+                        <option value="wave">WAVE</option>
+                      </select>
+                    </div>
+                    <div class="option-group">
+                      <label for="glow-speed">GLOW SPEED: <span id="glow-speed-value" class="slider-value">1.0</span></label>
+                      <input type="range" id="glow-speed" name="glow-speed" min="0.1" max="3.0" step="0.1" value="1.0">
+                    </div>
+                    <div class="option-group">
+                      <label for="secondary-color">SECONDARY COLOR:<span class="preview-swatch" id="secondary-color-preview"></span></label>
+                      <input type="color" id="secondary-color" name="secondary-color" value="#0088ff" class="color-picker">
+                    </div>
+                    <div class="option-group">
+                      <label for="bloom-effect">BLOOM EFFECT:</label>
+                      <select id="bloom-effect" name="bloom-effect">
+                        <option value="none">NONE</option>
+                        <option value="light">LIGHT</option>
+                        <option value="medium">MEDIUM</option>
+                        <option value="heavy">HEAVY</option>
+                      </select>
+                    </div>
+                    <div class="option-toggle">
+                      <input type="checkbox" id="secondary-glow" name="secondary-glow">
+                      <label for="secondary-glow">SECONDARY GLOW</label>
+                    </div>
+                    <div class="option-toggle">
+                      <input type="checkbox" id="halo-effect" name="halo-effect">
+                      <label for="halo-effect">HALO EFFECT</label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Animation Options Panel -->
+                <div class="options-panel" id="animation-options">
+                  <div class="options-grid">
+                    <div class="option-group">
+                      <label for="rotation-speed">ROTATION SPEED: <span id="rotation-speed-value" class="slider-value">1.0</span></label>
+                      <input type="range" id="rotation-speed" name="rotation-speed" min="0" max="5" step="0.1" value="1">
+                    </div>
+                    <div class="option-group">
+                      <label for="animation-style">ANIMATION STYLE:</label>
+                      <select id="animation-style" name="animation-style">
+                        <option value="rotate">ROTATE</option>
+                        <option value="pulse">PULSE</option>
+                        <option value="morph">MORPH</option>
+                        <option value="orbit">ORBIT</option>
+                        <option value="chaos">CHAOS</option>
+                        <option value="breathe">BREATHE</option>
+                        <option value="spin">SPIN</option>
+                      </select>
+                    </div>
+                    <div class="option-group">
+                      <label for="animation-speed">ANIMATION SPEED: <span id="animation-speed-value" class="slider-value">1.0</span></label>
+                      <input type="range" id="animation-speed" name="animation-speed" min="0.1" max="3.0" step="0.1" value="1.0">
+                    </div>
+                    <div class="option-group">
+                      <label for="animation-path">ANIMATION PATH:</label>
+                      <select id="animation-path" name="animation-path">
+                        <option value="none">NONE</option>
+                        <option value="circle">CIRCLE</option>
+                        <option value="figure8">FIGURE 8</option>
+                        <option value="spiral">SPIRAL</option>
+                        <option value="zigzag">ZIGZAG</option>
+                        <option value="random">RANDOM</option>
+                      </select>
+                    </div>
+                    <div class="option-group">
+                      <label for="element-animation">ELEMENT ANIMATION:</label>
+                      <select id="element-animation" name="element-animation">
+                        <option value="none">NONE</option>
+                        <option value="randomize">RANDOMIZE</option>
