@@ -163,38 +163,15 @@
   padding: 1rem;
 }
 
-/* Enhanced form styles */
-.form-group {
+.edit-form .form-group {
   margin-bottom: 1.5rem;
 }
 
-.form-group label {
+.edit-form label {
   display: block;
   margin-bottom: 0.5rem;
   color: var(--terminal-dim-green);
   font-size: 0.9rem;
-}
-
-.help-text {
-  font-size: 0.8rem;
-  color: var(--terminal-dim);
-  margin-top: 0.4rem;
-  line-height: 1.4;
-}
-
-/* Form sections styling */
-.edit-section {
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px dashed rgba(0, 255, 0, 0.1);
-}
-
-.section-header {
-  color: var(--terminal-green);
-  font-size: 1.2rem;
-  margin: 1rem 0;
-  border-left: 3px solid var(--terminal-green);
-  padding-left: 0.8rem;
 }
 
 .edit-form input[type="text"],
@@ -229,15 +206,8 @@
   font-family: var(--terminal-font);
 }
 
-/* Form action buttons */
-.form-actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.submit-btn {
-  flex: 2;
+.edit-form button {
+  display: inline-block;
   padding: 0.8rem 2rem;
   background-color: var(--terminal-green);
   border: none;
@@ -245,34 +215,12 @@
   font-family: var(--header-font);
   font-size: 1.2rem;
   cursor: pointer;
-  transition: all 0.3s ease;
-  text-align: center;
-  border-radius: 3px;
+  transition: background-color 0.3s ease;
+  margin-top: 1rem;
 }
 
-.submit-btn:hover {
-  background-color: var(--terminal-bright);
-  box-shadow: 0 0 10px var(--glow-color);
-}
-
-.cancel-btn {
-  flex: 1;
-  padding: 0.8rem 1rem;
-  background-color: rgba(0, 0, 0, 0.3);
-  border: 1px solid var(--terminal-dim);
-  color: var(--terminal-dim);
-  font-family: var(--header-font);
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-align: center;
-  text-decoration: none;
-  border-radius: 3px;
-}
-
-.cancel-btn:hover {
-  color: var(--terminal-bright);
-  border-color: var(--terminal-bright);
+.edit-form button:hover {
+  background-color: var(--terminal-dim-green);
 }
 
 .current-background-preview {
@@ -314,9 +262,8 @@
   border: 1px solid var(--terminal-dim);
   padding: 3px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: border-color 0.3s ease;
   background-color: rgba(0, 0, 0, 0.5);
-  border-radius: 4px;
 }
 
 .glyph-item:hover, .glyph-item.selected {
@@ -330,60 +277,6 @@
 
 .glyph-item.selected {
   box-shadow: 0 0 5px var(--glow-color);
-  border-color: var(--terminal-green);
-  transform: scale(1.05);
-}
-
-/* Form checkboxes and radio buttons */
-.form-check {
-  margin: 0.5rem 0;
-  display: flex;
-  align-items: center;
-}
-
-.form-check input[type="checkbox"],
-.form-check input[type="radio"] {
-  margin-right: 0.5rem;
-  cursor: pointer;
-}
-
-.form-check label {
-  display: inline;
-  cursor: pointer;
-}
-
-/* Range input styling */
-input[type="range"] {
-  width: 100%;
-  background: rgba(0, 0, 0, 0.3);
-  height: 8px;
-  border-radius: 4px;
-  outline: none;
-  -webkit-appearance: none;
-  margin: 0.5rem 0;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 15px;
-  height: 15px;
-  background: var(--terminal-green);
-  border-radius: 50%;
-  cursor: pointer;
-}
-
-.range-values {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.8rem;
-  color: var(--terminal-dim);
-}
-
-/* Background options styling */
-.bg-options {
-  display: flex;
-  gap: 1rem;
-  margin-top: 0.5rem;
 }
 
 /* Profile View Page Styles */
