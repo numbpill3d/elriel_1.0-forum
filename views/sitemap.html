@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sitemap | ELRIEL</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="ELRIEL network sitemap - Find all available pages and sections in the terminal network.">
+  <meta name="keywords" content="ELRIEL, sitemap, terminal, network, navigation">
+  
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/glitch.css">
+  <link rel="stylesheet" href="/css/win98.css">
+  <link rel="stylesheet" href="/css/cursor-fix.css">
+  
+  <!-- Core scripts -->
+  <script src="/js/error-logger.js" defer></script>
+  <script src="/js/glitch.js?v=1" defer></script>
+  <script src="/js/navigation-debug.js" defer></script>
+  <script src="/js/theme-switcher.js" defer></script>
+  
+  <!-- Enhancement scripts -->
+  <script src="/js/accessibility.js" defer></script>
+  <script src="/js/seo-enhancer.js" defer></script>
+  <script src="/js/mobile-enhancements.js" defer></script>
+  <script src="/js/performance-optimizer.js" defer></script>
+  
+  <style>
+    .sitemap-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    .sitemap-title {
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    
+    .sitemap-section {
+      margin-bottom: 2rem;
+    }
+    
+    .sitemap-section h2 {
+      border-bottom: var(--panel-border);
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .sitemap-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+    
+    .sitemap-card {
+      background-color: var(--panel-bg);
+      border: var(--panel-border);
+      padding: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .sitemap-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .sitemap-card h3 {
+      margin-bottom: 0.5rem;
+    }
+    
+    .sitemap-links {
+      list-style: none;
+      padding-left: 0;
+    }
+    
+    .sitemap-links li {
+      margin-bottom: 0.5rem;
+    }
+    
+    .sitemap-links a {
+      color: var(--terminal-green);
+      text-decoration: none;
+      display: block;
+      padding: 0.3rem 0;
+      transition: all 0.2s ease;
+    }
+    
+    .sitemap-links a:hover {
+      color: var(--terminal-bright);
+      transform: translateX(5px);
+    }
+    
+    .sitemap-links a::before {
+      content: '>';
+      margin-right: 0.5rem;
+      color: var(--terminal-dim-green);
+    }
+    
+    @media (max-width: 768px) {
+      .sitemap-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .sitemap-container {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body class="terminal">
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">TERMINAL ACCESS v1.0</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream" id="bleedstream-link">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible" id="crucible-link">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board" id="whisper-link">WHISPERBOARD</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">DISTRICTS</h3>
+          <ul class="nav-links">
+            <li><a href="/terminal/numbpill" class="district">NUMBPILL CELL</a></li>
+            <li><a href="#" class="district locked">LOCKED DISTRICT</a></li>
+            <li><a href="#" class="district locked">LOCKED DISTRICT</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+            <li><a href="/sitemap.html" class="active">SITEMAP</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content sitemap-container">
+        <div class="sitemap-title">
+          <h1>ELRIEL NETWORK SITEMAP</h1>
+          <p>Complete navigation map of the terminal network</p>
+        </div>
+        
+        <div class="sitemap-section">
+          <h2>Main Systems</h2>
+          <div class="sitemap-grid">
+            <div class="sitemap-card">
+              <h3>Terminal</h3>
+              <ul class="sitemap-links">
+                <li><a href="/">Main Terminal</a></li>
+                <li><a href="/terminal/numbpill">Numbpill Cell</a></li>
+                <li><a href="/terminal/void">Void Terminal</a></li>
+              </ul>
+            </div>
+            
+            <div class="sitemap-card">
+              <h3>Bleedstream</h3>
+              <ul class="sitemap-links">
+                <li><a href="/feed/bleedstream">Main Feed</a></li>
+                <li><a href="/feed/popular">Popular Posts</a></li>
+                <li><a href="/feed/recent">Recent Posts</a></li>
+                <li><a href="/feed/create">Create Post</a></li>
+              </ul>
+            </div>
+            
+            <div class="sitemap-card">
+              <h3>Glyph Crucible</h3>
+              <ul class="sitemap-links">
+                <li><a href="/glyph/crucible">Glyph Crucible</a></li>
+                <li><a href="/glyph/gallery">Glyph Gallery</a></li>
+                <li><a href="/glyph/create">Create Glyph</a></li>
+              </ul>
+            </div>
+            
+            <div class="sitemap-card">
+              <h3>Whisperboard</h3>
+              <ul class="sitemap-links">
+                <li><a href="/whisper/board">Whisperboard</a></li>
+                <li><a href="/whisper/create">Create Whisper</a></li>
+                <li><a href="/whisper/popular">Popular Whispers</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <div class="sitemap-section">
+          <h2>User & Account</h2>
+          <div class="sitemap-grid">
+            <div class="sitemap-card">
+              <h3>Authentication</h3>
+              <ul class="sitemap-links">
+                <li><a href="/auth/login">Login</a></li>
+                <li><a href="/auth/register">Register</a></li>
+                <li><a href="/auth/recover">Recover Account</a></li>
+                <li><a href="/auth/logout">Logout</a></li>
+              </ul>
+            </div>
+            
+            <div class="sitemap-card">
+              <h3>Profile</h3>
+              <ul class="sitemap-links">
+                <li><a href="/profile">View Profile</a></li>
+                <li><a href="/profile/edit">Edit Profile</a></li>
+                <li><a href="/profile/settings">Profile Settings</a></li>
+                <li><a href="/profile/activity">Activity Log</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <div class="sitemap-section">
+          <h2>System Pages</h2>
+          <div class="sitemap-grid">
+            <div class="sitemap-card">
+              <h3>Information</h3>
+              <ul class="sitemap-links">
+                <li><a href="/about">About ELRIEL</a></li>
+                <li><a href="/help">Help & Documentation</a></li>
+                <li><a href="/sitemap.html">Sitemap</a></li>
+              </ul>
+            </div>
+            
+            <div class="sitemap-card">
+              <h3>Error Pages</h3>
+              <ul class="sitemap-links">
+                <li><a href="/404">404 Not Found</a></li>
+                <li><a href="/500">500 Server Error</a></li>
+                <li><a href="/maintenance">Maintenance</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <footer class="main-footer">
+      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+      <div class="footer-glyphs">
+        <span class="glyph">⌘</span>
+        <span class="glyph">⍟</span>
+        <span class="glyph">⎔</span>
+      </div>
+    </footer>
+  </div>
+  
+  <script>
+    // Toggle glitch effects
+    document.getElementById('toggle-glitch').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.body.classList.toggle('glitch-active');
+    });
+    
+    // Add user status
+    const userStatusEl = document.getElementById('user-status');
+    if (userStatusEl) {
+      userStatusEl.innerHTML = `
+        <div class="logged-out">
+          <a href="/auth/login" class="win98-btn login-btn">LOGIN</a>
+          <a href="/auth/register" class="win98-btn register-btn">REGISTER</a>
+        </div>
+      `;
+    }
+    
+    // Add random glitch effect to sitemap links
+    function addRandomGlitchToLinks() {
+      if (!document.body.classList.contains('glitch-active')) return;
+      
+      const links = document.querySelectorAll('.sitemap-links a');
+      const randomIndex = Math.floor(Math.random() * links.length);
+      const link = links[randomIndex];
+      
+      const originalText = link.textContent;
+      const glitchChars = '!@#$%^&*()_+-=[]{}|;:,.<>?/\\`~░▒▓█▄▀■□▪▫▬▲►▼◄◊○●◘◙☺☻♥♦♣♠♂♀♪♫☼►◄▲▼§¶';
+      
+      // Generate glitched text
+      let glitchedText = '';
+      for (let i = 0; i < originalText.length; i++) {
+        if (Math.random() < 0.1) {
+          glitchedText += glitchChars.charAt(Math.floor(Math.random() * glitchChars.length));
+        } else {
+          glitchedText += originalText.charAt(i);
+        }
+      }
+      
+      // Apply glitched text
+      link.textContent = glitchedText;
+      
+      // Restore original text after a short delay
+      setTimeout(() => {
+        link.textContent = originalText;
+      }, 500);
+    }
+    
+    // Apply random glitches periodically
+    setInterval(addRandomGlitchToLinks, 2000);
+  </script>
+</body>
+</html>

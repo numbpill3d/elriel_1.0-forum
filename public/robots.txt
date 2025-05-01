@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /auth/
+Disallow: /profile/settings
+Disallow: /profile/edit
+Disallow: /maintenance
+Disallow: /500
+
+# Allow search engines to access sitemap
+Sitemap: https://elriel.network/sitemap.xml
