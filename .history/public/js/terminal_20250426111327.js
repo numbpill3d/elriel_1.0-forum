@@ -175,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'numbpill':
             case 'numbpill cell':
               response = ['Navigating to Numbpill Cell...'];
-              setTimeout(() => { window.location.href = '/terminal/numbpill'; }, 1000);
+              setTimeout(() => { window.location.href = '/secrets/numbpill'; }, 1000);
               break;
             default:
               response = [`Unknown destination: ${destination}`];

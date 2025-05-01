@@ -21,13 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
     '/auth/login',
     '/auth/register',
     '/auth/logout',
-    '/about',
-    '/health',
-    '/static',
-    '/images',
-    '/css',
-    '/js',
-    '/uploads'
+    '/about'
   ];
 
   const oldStylePaths = {
@@ -38,12 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
     '/login': '/auth/login',
     '/register': '/auth/register',
     '/secrets/numbpill': '/terminal/numbpill',
-    '/secrets/void': '/terminal/void',
-    '/bleedstream': '/feed/bleedstream',
-    '/glyph-crucible': '/glyph/crucible',
-    '/whisperboard': '/whisper/board',
-    '/numbpill': '/terminal/numbpill',
-    '/void': '/terminal/void'
+    '/secrets/void': '/terminal/void'
   };
 
   // Log and fix navigation

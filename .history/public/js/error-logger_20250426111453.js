@@ -27,29 +27,13 @@ window.addEventListener('error', function(e) {
 // Create a user-friendly error notification
 function showErrorNotification(resource) {
   // Only show for important resources, not for things like tracking pixels
-  if (resource.includes('css') || resource.includes('js') || resource.includes('html') ||
-      resource.includes('feed') || resource.includes('glyph') || resource.includes('whisper') ||
-      resource.includes('terminal') || resource.includes('auth')) {
-
-    // Try to fix the path if it's a navigation issue
-    let fixedResource = resource;
-    let isNavigationIssue = false;
-
-    // Check if it's a navigation path issue
-    if (resource.includes('/feed/') || resource.includes('/glyph/') ||
-        resource.includes('/whisper/') || resource.includes('/terminal/') ||
-        resource.includes('/auth/')) {
-      isNavigationIssue = true;
-    }
-
-    // Create notification
+  if (resource.includes('css') || resource.includes('js') || resource.includes('html')) {
     const notification = document.createElement('div');
     notification.className = 'error-notification';
     notification.innerHTML = `
       <div class="error-notification-content">
-        <div class="error-notification-title">${isNavigationIssue ? 'Navigation Error' : 'Resource Error'}</div>
+        <div class="error-notification-title">Resource Error</div>
         <div class="error-notification-message">Failed to load: ${resource.split('/').pop()}</div>
-        ${isNavigationIssue ? '<div class="error-notification-help">Try refreshing the page or returning to the home page.</div>' : ''}
         <div class="error-notification-close">×</div>
       </div>
     `;
@@ -65,11 +49,11 @@ function showErrorNotification(resource) {
           right: 20px;
           background-color: rgba(204, 0, 0, 0.9);
           color: white;
-          padding: 15px;
+          padding: 10px;
           border-radius: 4px;
           z-index: 9999;
           font-family: var(--terminal-font, monospace);
-          max-width: 350px;
+          max-width: 300px;
           box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
           animation: slideIn 0.3s ease-out;
         }
@@ -83,13 +67,6 @@ function showErrorNotification(resource) {
           font-size: 0.9em;
           margin-bottom: 5px;
           word-break: break-all;
-        }
-
-        .error-notification-help {
-          font-size: 0.85em;
-          margin-top: 8px;
-          margin-bottom: 5px;
-          opacity: 0.9;
         }
 
         .error-notification-close {
@@ -123,13 +100,6 @@ function showErrorNotification(resource) {
         notification.remove();
       }
     }, 5000);
-
-    // Log additional information for debugging
-    if (isNavigationIssue) {
-      console.warn('[NAV ERROR] Navigation issue detected:', resource);
-      console.info('[NAV ERROR] Current pathname:', window.location.pathname);
-      console.info('[NAV ERROR] Referrer:', document.referrer);
-    }
   }
 }
 

@@ -328,24 +328,12 @@ app.use('/', staticRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error('Server error:', err.stack);
-
-  // Log additional information for debugging
-  console.error('Error URL:', req.originalUrl);
-  console.error('Error Method:', req.method);
-  console.error('Error Headers:', JSON.stringify(req.headers, null, 2));
-
+  console.error(err.stack);
   res.status(500).sendFile(path.join(__dirname, 'views', 'error.html'));
 });
 
-// 404 handler with detailed logging
+// 404 handler
 app.use((req, res) => {
-  // Log detailed information about the 404 error
-  console.warn('404 Not Found:', req.originalUrl);
-  console.warn('Referrer:', req.get('Referrer') || 'None');
-  console.warn('User Agent:', req.get('User-Agent') || 'None');
-
-  // Send the 404 page
   res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
 });
 
