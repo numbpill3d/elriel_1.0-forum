@@ -117,7 +117,7 @@ router.get('/crucible-3d', (req, res) => {
   }
 });
 
-// Generate a new glyph - Database-independent endpoint
+// Generate a new glyph
 router.post('/generate', (req, res) => {
   console.log('Received glyph generation request:', req.body);
   try {
@@ -129,6 +129,7 @@ router.post('/generate', (req, res) => {
     console.log('Using seed:', glyphSeed);
 
     // Generate SVG data based on the seed
+    // This is a placeholder - the actual generation would be more complex
     console.log('Generating SVG data...');
     const svgData = generateGlyphSVG(glyphSeed, complexity || 'medium');
     console.log('SVG data generated successfully');

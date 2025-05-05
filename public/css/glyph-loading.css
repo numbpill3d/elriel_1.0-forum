@@ -1,0 +1,124 @@
+/* Glyph Crucible Loading Animation Styles */
+
+/* Generation loading container */
+.generation-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--terminal-green);
+}
+
+/* Loading indicator text */
+.loading-indicator {
+  font-family: var(--header-font, monospace);
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 0 5px var(--glow-color);
+  animation: pulse-text 2s infinite;
+}
+
+/* Pulsing animation for text */
+@keyframes pulse-text {
+  0%, 100% { opacity: 1; text-shadow: 0 0 5px var(--glow-color); }
+  50% { opacity: 0.7; text-shadow: 0 0 15px var(--glow-color); }
+}
+
+/* Crucible pulse animation */
+.crucible-pulse {
+  width: 100px;
+  height: 100px;
+  border: 2px solid var(--terminal-green);
+  border-radius: 50%;
+  position: relative;
+  animation: pulse-ring 2s infinite;
+}
+
+/* Pulse ring animation */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.3;
+    border-color: var(--terminal-green);
+  }
+  50% {
+    transform: scale(1);
+    opacity: 0.8;
+    border-color: var(--glow-color);
+  }
+  100% {
+    transform: scale(0.7);
+    opacity: 0.3;
+    border-color: var(--terminal-green);
+  }
+}
+
+/* Inner pulse dot */
+.crucible-pulse::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  background-color: var(--terminal-green);
+  border-radius: 50%;
+  animation: pulse-dot 2s infinite;
+}
+
+/* Pulse dot animation */
+@keyframes pulse-dot {
+  0%, 100% {
+    width: 20px;
+    height: 20px;
+    opacity: 0.5;
+  }
+  50% {
+    width: 40px;
+    height: 40px;
+    opacity: 0.8;
+  }
+}
+
+/* Error display */
+.generation-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--terminal-red);
+}
+
+.error-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  animation: error-blink 1s infinite;
+}
+
+.error-message {
+  font-family: var(--header-font, monospace);
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  text-shadow: 0 0 5px var(--terminal-red);
+}
+
+@keyframes error-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Glyph appearance animation */
+.glyph-appear {
+  animation: appear 0.5s ease-in-out;
+}
+
+@keyframes appear {
+  0% { opacity: 0; transform: scale(0.8); }
+  100% { opacity: 1; transform: scale(1); }
+}

@@ -6,25 +6,8 @@ const router = express.Router();
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
-
-// Try to connect to the database, but don't fail if it doesn't exist
-let db;
-try {
-  const Database = require('better-sqlite3');
-  db = new Database('./db/elriel.db', { verbose: console.log });
-  console.log('Successfully connected to the database');
-} catch (err) {
-  console.error('Error connecting to database:', err);
-  console.log('Continuing without database connection');
-  // Create a mock db object with empty methods
-  db = {
-    prepare: () => ({
-      all: () => [],
-      get: () => null,
-      run: () => ({ changes: 0, lastInsertRowid: 0 })
-    })
-  };
-}
+const Database = require('better-sqlite3');
+const db = new Database('./db/elriel.db', { verbose: console.log });
 
 // Authentication middleware
 const isAuthenticated = (req, res, next) => {
@@ -117,29 +100,22 @@ router.get('/crucible-3d', (req, res) => {
   }
 });
 
-// Generate a new glyph - Database-independent endpoint
+// Generate a new glyph
 router.post('/generate', (req, res) => {
-  console.log('Received glyph generation request:', req.body);
   try {
     const { seed, complexity } = req.body;
-    console.log('Processing with seed:', seed, 'and complexity:', complexity);
 
     // Generate a random seed if not provided
     const glyphSeed = seed || crypto.randomBytes(16).toString('hex');
-    console.log('Using seed:', glyphSeed);
 
     // Generate SVG data based on the seed
-    console.log('Generating SVG data...');
+    // This is a placeholder - the actual generation would be more complex
     const svgData = generateGlyphSVG(glyphSeed, complexity || 'medium');
-    console.log('SVG data generated successfully');
 
     // Generate audio data based on the seed
-    console.log('Generating audio data...');
     const audioData = generateGlyphAudio(glyphSeed, complexity || 'medium');
-    console.log('Audio data generated successfully');
 
     // Return the generated glyph
-    console.log('Sending successful response');
     res.json({
       success: true,
       glyph: {
@@ -150,7 +126,6 @@ router.post('/generate', (req, res) => {
     });
   } catch (err) {
     console.error('Glyph generation error:', err);
-    console.error('Error stack:', err.stack);
     res.status(500).json({
       error: 'System error',
       message: 'Crucible malfunction. Try again later.'
@@ -431,6 +406,22 @@ function generateGlyphAudio(seed, complexity) {
   }
 
   return JSON.stringify(audioData);
+}
+
+// Deterministic random number generator based on a seed
+function seedRandom(seed) {
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = ((hash << 5) - hash) + seed.charCodeAt(i);
+    hash |= 0; // Convert to 32-bit integer
+  }
+
+  // Simple LCG random number generator
+  let state = hash;
+  return function() {
+    state = (state * 1664525 + 1013904223) % 4294967296;
+    return state / 4294967296;
+  };
 }
 
 module.exports = router;

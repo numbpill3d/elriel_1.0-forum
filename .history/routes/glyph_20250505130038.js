@@ -6,25 +6,8 @@ const router = express.Router();
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
-
-// Try to connect to the database, but don't fail if it doesn't exist
-let db;
-try {
-  const Database = require('better-sqlite3');
-  db = new Database('./db/elriel.db', { verbose: console.log });
-  console.log('Successfully connected to the database');
-} catch (err) {
-  console.error('Error connecting to database:', err);
-  console.log('Continuing without database connection');
-  // Create a mock db object with empty methods
-  db = {
-    prepare: () => ({
-      all: () => [],
-      get: () => null,
-      run: () => ({ changes: 0, lastInsertRowid: 0 })
-    })
-  };
-}
+const Database = require('better-sqlite3');
+const db = new Database('./db/elriel.db', { verbose: console.log });
 
 // Authentication middleware
 const isAuthenticated = (req, res, next) => {
@@ -117,7 +100,7 @@ router.get('/crucible-3d', (req, res) => {
   }
 });
 
-// Generate a new glyph - Database-independent endpoint
+// Generate a new glyph
 router.post('/generate', (req, res) => {
   console.log('Received glyph generation request:', req.body);
   try {
@@ -129,6 +112,7 @@ router.post('/generate', (req, res) => {
     console.log('Using seed:', glyphSeed);
 
     // Generate SVG data based on the seed
+    // This is a placeholder - the actual generation would be more complex
     console.log('Generating SVG data...');
     const svgData = generateGlyphSVG(glyphSeed, complexity || 'medium');
     console.log('SVG data generated successfully');
