@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ELRIEL | SCRAPYARD</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="ELRIEL Scrapyard - A mystical collection of discarded code, forgotten artifacts, and broken tech. Exchange and collect digital artifacts from the wasteland.">
+  <meta name="keywords" content="ELRIEL, Scrapyard, artifacts, digital wasteland, cyberpunk, retro, glitch">
+
+  <!-- Open Graph / Social Media -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://elriel.network/forum/scrapyard">
+  <meta property="og:title" content="ELRIEL | SCRAPYARD">
+  <meta property="og:description" content="A mystical collection of discarded code and broken tech. Exchange digital artifacts from the wasteland.">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/forum.css">
+  <link rel="stylesheet" href="/css/glitch.css">
+  <link rel="stylesheet" href="/css/win98.css">
+  <link rel="stylesheet" href="/css/cursor-fix.css">
+  <link rel="stylesheet" href="/css/win98-cursors.css">
+  <link rel="stylesheet" href="/css/glitch-effects.css">
+  
+  <!-- Scripts -->
+  <script src="/js/error-logger.js" defer></script>
+  <script src="/js/glitch.js" defer></script>
+  <script src="/js/navigation-debug.js" defer></script>
+  <script src="/js/theme-switcher.js" defer></script>
+  <script src="/js/accessibility.js" defer></script>
+</head>
+<body class="scrapyard-page">
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">SCRAPYARD v1.0</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+            <li><a href="/forum/scrapyard" class="active">SCRAPYARD</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">FORUM</h3>
+          <ul class="nav-links">
+            <li><a href="/forum">MAIN FORUMS</a></li>
+            <li><a href="/forum/scrapyard" class="active">SCRAPYARD</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <section class="win98-window scrapyard-panel">
+          <div class="win98-titlebar">
+            <div class="win98-titlebar-text">SCRAPYARD ACCESS</div>
+            <div class="win98-window-controls">
+              <div class="win98-window-control">_</div>
+              <div class="win98-window-control">□</div>
+              <div class="win98-window-control">×</div>
+            </div>
+          </div>
+          <div class="win98-window-content">
+            <div class="scrapyard-intro">
+              <div class="scrapyard-icon">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="50" cy="50" r="45" fill="none" stroke="red" stroke-width="2"/>
+                  <path d="M30,30 L70,70" stroke="red" stroke-width="2"/>
+                  <path d="M70,30 L30,70" stroke="red" stroke-width="2"/>
+                  <circle cx="50" cy="50" r="20" fill="none" stroke="red" stroke-width="1"/>
+                  <text x="38" y="55" font-family="monospace" font-size="12" fill="red">01</text>
+                </svg>
+              </div>
+              <div class="scrapyard-description">
+                <h2 class="glitch-text" data-text="SCRAPYARD">SCRAPYARD</h2>
+                <p>Welcome to the digital junkyard where discarded artifacts, forgotten code, and broken tech find new purpose. Here, users exchange and collect pieces of the digital wasteland—each with its own history and hidden power.</p>
+                <div id="scrapyard-controls">
+                  <a href="/forum/scrapyard" class="win98-btn">REFRESH YARD</a>
+                  <a href="/forum/scrapyard/new" class="win98-btn">ADD ARTIFACT</a>
+                </div>
+              </div>
+            </div>
+            
+            <div class="scrapyard-listing" id="scrapyard-items">
+              <!-- Scrapyard items will be injected here -->
+              <div class="loading-indicator">LOADING ARTIFACTS...</div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="main-footer">
+      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+      <div class="footer-glyphs">
+        <span class="glyph">⌘</span>
+        <span class="glyph">⍟</span>
+        <span class="glyph">⎔</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Debug navigation
+    console.log("Scrapyard.html script loaded");
+
+    // Inject data from server
+    const data = __DATA__;
+
+    // Update user status
+    const userStatusEl = document.getElementById('user-status');
+    if (data.user) {
+      userStatusEl.innerHTML = `
+        <div class="logged-in">
+          <span class="username">${data.user.username}</span>
+          <div class="user-links">
+            <a href="/profile" class="win98-btn">PROFILE</a>
+            <a href="/auth/logout" class="win98-btn">LOGOUT</a>
+          </div>
+        </div>
+      `;
+    } else {
+      userStatusEl.innerHTML = `
+        <div class="logged-out">
+          <a href="/auth/login" class="win98-btn login-btn">LOGIN</a>
+          <a href="/auth/register" class="win98-btn register-btn">REGISTER</a>
+        </div>
+      `;
+    }
+
+    // Populate scrapyard items
+    const scrapyardItems = document.getElementById('scrapyard-items');
+    if (data.items && data.items.length > 0) {
+      scrapyardItems.innerHTML = '';
+      
+      data.items.forEach(item => {
+        const itemDate = new Date(item.created_at).toLocaleDateString();
+        const lastActivity = item.last_activity ? new Date(item.last_activity).toLocaleDateString() : itemDate;
+        
+        scrapyardItems.innerHTML += `
+          <div class="scrapyard-item win98-window">
+            <div class="win98-titlebar">
+              <div class="win98-titlebar-text">${item.title}</div>
+            </div>
+            <div class="win98-window-content">
+              <div class="scrapyard-item-meta">
+                <span class="artifact-id">ID: ${item.id}</span>
+                <span class="artifact-founder">FOUNDER: ${item.username}</span>
+                <span class="artifact-date">DISCOVERED: ${itemDate}</span>
+              </div>
+              <div class="scrapyard-item-description">
+                ${item.content.substring(0, 100)}...
+              </div>
+              <div class="scrapyard-item-footer">
+                <div class="artifact-stats">
+                  <span class="comment-count">ANALYSES: ${item.comment_count}</span>
+                  <span class="last-activity">LAST SIGNAL: ${lastActivity}</span>
+                </div>
+                <a href="/forum/topic/${item.id}" class="win98-btn">EXAMINE</a>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    } else {
+      scrapyardItems.innerHTML = `
+        <div class="empty-scrapyard">
+          <p>No artifacts found in the Scrapyard. The signal is weak today.</p>
+          <p>Be the first to add something from the digital wasteland.</p>
+        </div>
+      `;
+    }
+
+    // Toggle glitch effects
+    document.getElementById('toggle-glitch').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.body.classList.toggle('glitch-active');
+    });
+  </script>
+</body>
+</html>

@@ -269,10 +269,9 @@
       display: inline-block;
       margin-top: 1rem;
       padding: 0.7rem 1.5rem;
-      background-color: #440000;
-      border: 2px outset #800000;
-      color: #ffffff;
-      text-shadow: 1px 1px 0 #000000;
+      background-color: #c0c0c0;
+      border: 2px outset #f0f0f0;
+      color: #000000;
       text-decoration: none;
       font-family: var(--header-font);
       letter-spacing: 1px;
@@ -285,9 +284,8 @@
     }
     
     .edit-profile-btn:hover {
-      background-color: #550000;
-      box-shadow: 0 0 15px var(--red-glow-medium);
-      text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+      background-color: #d0d0d0;
+      box-shadow: 0 0 8px var(--glow-color);
     }
     
     .edit-profile-btn:active {
@@ -305,10 +303,9 @@
     .action-button {
       flex: 1;
       padding: 0.6rem 1rem;
-      background-color: #440000;
-      border: 2px outset #800000;
-      color: #ffffff;
-      text-shadow: 1px 1px 0 #000000;
+      background-color: #c0c0c0;
+      border: 2px outset #f0f0f0;
+      color: #000000;
       text-align: center;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -319,9 +316,8 @@
     }
     
     .action-button:hover {
-      background-color: #550000;
-      box-shadow: 0 0 8px var(--red-glow-medium);
-      text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+      background-color: #d0d0d0;
+      box-shadow: 0 0 5px var(--glow-color);
     }
     
     .action-button:active {
@@ -373,30 +369,11 @@
     }
     
     /* Geocities/Neoweb style elements */
-    /* Enhanced Web 1.0 style divider */
     .web1-divider {
       height: 15px;
       background: repeating-linear-gradient(45deg, var(--terminal-dim-green), var(--terminal-dim-green) 5px, black 5px, black 10px);
       margin: 15px 0;
-      box-shadow: 0 0 15px var(--red-glow-medium);
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .web1-divider::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 50%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,0,0,0.3), transparent);
-      animation: divider-shine 3s infinite;
-    }
-    
-    @keyframes divider-shine {
-      0% { left: -100%; }
-      100% { left: 200%; }
+      box-shadow: 0 0 10px var(--glow-color);
     }
     
     .web1-marquee {
