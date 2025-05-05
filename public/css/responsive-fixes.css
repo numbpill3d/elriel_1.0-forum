@@ -1,0 +1,229 @@
+/* Elriel - Responsive Fixes and Mobile Optimizations
+   This file provides fixes for responsive display issues across all pages */
+
+/* General Responsive Fixes */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  -webkit-tap-highlight-color: rgba(255, 0, 0, 0.2);
+}
+
+img, svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Make sure we have correct box-sizing everywhere */
+* {
+  box-sizing: border-box;
+}
+
+/* Improve mobile navigation */
+@media (max-width: 768px) {
+  /* Fix content layout when sidebar is hidden */
+  .main-content {
+    width: 100% !important;
+    grid-template-columns: 1fr !important;
+    padding: 10px !important;
+  }
+  
+  /* Fix header on mobile */
+  .main-header {
+    padding: 0.5rem !important;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .logo h1 {
+    font-size: 2.2rem !important;
+    margin-bottom: 0.3rem;
+  }
+  
+  .user-panel {
+    margin-top: 0.5rem;
+    text-align: center !important;
+    width: 100%;
+  }
+  
+  .logged-in, .logged-out {
+    align-items: center !important;
+  }
+  
+  .user-links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  
+  /* Fix form controls on mobile */
+  input, select, textarea, button, .win98-btn {
+    font-size: 16px !important; /* Prevents iOS zoom */
+    padding: 8px !important;
+  }
+  
+  /* Make sure all containers are full width */
+  .container, .panel-content, .win98-window, .crucible-panel, .user-glyphs-panel {
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  
+  /* Fix footer on mobile */
+  .main-footer {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+    padding: 10px 5px !important;
+  }
+}
+
+/* Small phone fixes */
+@media (max-width: 480px) {
+  .logo h1 {
+    font-size: 1.8rem !important;
+    letter-spacing: 0.4rem !important;
+  }
+  
+  .logo-subtitle {
+    font-size: 0.8rem !important;
+  }
+  
+  /* Fix crucible controls */
+  .crucible-controls {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+  
+  /* Fix spacing for win98 buttons */
+  .win98-btn {
+    margin: 5px !important;
+  }
+}
+
+/* Fix Glyph Crucible specific issues */
+.generated-glyph-svg {
+  width: 100% !important;
+  max-width: 300px !important;
+  height: auto !important;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto !important;
+}
+
+.view-glyph-svg {
+  width: 100% !important;
+  max-width: 400px !important;
+  height: auto !important;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto !important;
+}
+
+.user-glyphs-content {
+  justify-content: center;
+}
+
+/* Fix Scrapyard specific issues */
+@media (max-width: 768px) {
+  .scrapyard-listing {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .scrapyard-item-footer {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  
+  .artifact-stats {
+    width: 100%;
+  }
+}
+
+/* Better touch targets */
+@media (max-width: 768px) {
+  .nav-links a, button, .win98-btn, input[type="submit"], .win98-window-control {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 10px !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .win98-window-controls {
+    gap: 8px !important;
+  }
+}
+
+/* Fix Windows 98 styling on mobile */
+@media (max-width: 768px) {
+  .win98-titlebar {
+    padding: 5px 8px !important;
+  }
+  
+  .win98-window-content {
+    padding: 10px !important;
+  }
+  
+  .win98-titlebar-text {
+    font-size: 14px !important;
+  }
+}
+
+/* Fix forum displays */
+@media (max-width: 768px) {
+  .comment-item {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .topics-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  
+  .forum-title-header {
+    font-size: 1.2rem !important;
+  }
+}
+
+/* Fix scrolling issues */
+.terminal-output, .comments-content, .user-glyphs-content {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Fix element sizing inconsistencies */
+.user-glyph-item {
+  width: 90px !important;
+  height: 90px !important;
+}
+
+/* Ensure the scanner line and noise overlays stay properly positioned */
+.scanner-line, .noise-overlay, .scan-lines {
+  position: fixed !important;
+}
+
+/* Fix interactive elements that may be too small */
+button, .clickable, a.win98-btn {
+  cursor: pointer;
+}
+
+/* Ensure proper display of mobile navigation */
+.mobile-nav-toggle {
+  appearance: none;
+  -webkit-appearance: none;
+  border-radius: 0;
+}
+
+/* Ensure proper positioning in fixed layouts */
+.container {
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+}
+
+/* Fix content overflow */
+.generated-glyph-svg svg, .view-glyph-svg svg, .user-glyph-item svg {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain;
+}
