@@ -78,41 +78,6 @@
   background-color: rgba(0, 0, 0, 0.6);
 }
 
-.feed-controls {
-  padding: 1rem;
-  background-color: rgba(10, 0, 0, 0.7);
-  border-bottom: 1px solid var(--terminal-dim-green);
-}
-
-.form-group {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.form-group label {
-  color: var(--terminal-green);
-  font-family: var(--header-font);
-  letter-spacing: 1px;
-  font-size: 0.9rem;
-}
-
-.form-group select {
-  background-color: rgba(0, 0, 0, 0.7);
-  border: 1px solid var(--terminal-dim-green);
-  color: var(--terminal-text);
-  padding: 0.5rem;
-  font-family: var(--terminal-font);
-  min-width: 150px;
-  cursor: pointer;
-}
-
-.form-group select:focus {
-  border-color: var(--terminal-green);
-  outline: none;
-  box-shadow: 0 0 5px var(--glow-color);
-}
-
 .feed-item {
   padding: 1.2rem;
   border-bottom: 1px solid rgba(255, 0, 0, 0.2);
