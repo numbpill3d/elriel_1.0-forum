@@ -369,166 +369,6 @@
     .profile-windows-container {
       background-color: #008080;
       background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h20v20H0V0zm20 20h20v20H20V20z' fill='%23007070' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
-      border: 2px inset #c0c0c0;
-      min-height: 250px;
-    }
-  </style>
-</head>
-<body class="terminal">
-  <div class="noise-overlay"></div>
-  <div class="scan-lines"></div>
-  <div class="container">
-    <header class="main-header">
-      <div class="logo">
-        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
-        <div class="logo-subtitle">TERMINAL ACCESS v1.0</div>
-      </div>
-      <div class="user-panel">
-        <div id="user-status">
-          <!-- User status will be injected here -->
-        </div>
-      </div>
-    </header>
-
-    <div class="content-wrapper">
-      <nav class="sidebar">
-        <div class="nav-section">
-          <h3 class="nav-title">MAIN SYSTEMS</h3>
-          <ul class="nav-links">
-            <li><a href="/">TERMINAL</a></li>
-            <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
-            <li><a href="/glyph/crucible">GLYPH CRUCIBLE</a></li>
-            <li><a href="/whisper/board">WHISPERBOARD</a></li>
-          </ul>
-        </div>
-        <div class="nav-section">
-          <h3 class="nav-title">PROFILE</h3>
-          <ul class="nav-links">
-            <li><a href="/profile">DASHBOARD</a></li>
-            <!-- Edit profile link only for owner -->
-            <li id="edit-profile-link" style="display: none;"><a href="/profile/edit">EDIT PROFILE</a></li>
-            <li><a href="/feed/new">CREATE POST</a></li>
-          </ul>
-        </div>
-        <div class="nav-section">
-          <h3 class="nav-title">SYSTEM</h3>
-          <ul class="nav-links">
-            <li><a href="/about">ABOUT</a></li>
-            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
-          </ul>
-        </div>
-      </nav>
-
-      <main class="main-content">
-        <div class="web1-marquee">
-          <div class="web1-marquee-content">
-            WELCOME TO THE DEEPWEB FORUM OF MYSTICAL HACKER SECRETS... PROCEED WITH CAUTION... KNOWLEDGE IS POWER... TRUTH IS HIDDEN... <span class="blink-text">INCOMING TRANSMISSION...</span>
-          </div>
-        </div>
-        
-        <section class="profile-view-panel">
-          <div class="panel-header">
-            <h2>USER PROFILE: <span id="profile-view-username"></span></h2>
-            <div class="status-indicator" id="profile-view-status"></div>
-          </div>
-          <div class="profile-view-content">
-            <!-- Win98-style profile navigation bar -->
-            <div class="profile-nav-bar">
-              <a href="#profile" class="profile-nav-item active">PROFILE</a>
-              <a href="#posts" class="profile-nav-item">POSTS</a>
-              <a href="#activity" class="profile-nav-item">ACTIVITY</a>
-              <a href="#glyphs" class="profile-nav-item">GLYPHS</a>
-            </div>
-            
-            <div class="profile-view-header">
-              <div class="scanner-line"></div>
-              <div class="profile-view-background" id="profile-view-background">
-                <!-- Background image will be injected here -->
-              </div>
-              <div class="profile-view-avatar">
-                <!-- Placeholder for avatar -->
-                <div class="default-avatar"></div>
-              </div>
-              <div class="profile-view-info">
-                <h3 id="profile-view-username-large"></h3>
-                <div class="profile-view-district" id="profile-view-district"></div>
-              </div>
-            </div>
-            
-            <!-- Owner-only edit controls with Win98 styling -->
-            <div id="profile-owner-controls" style="display: none;">
-              <a href="/profile/edit" class="edit-profile-btn">EDIT PROFILE</a>
-              
-              <div class="action-buttons">
-                <a href="/profile/edit#background" class="action-button">CHANGE BACKGROUND</a>
-                <a href="/profile/edit#glyph" class="action-button">CHANGE SIGIL</a>
-                <a href="/glyph/crucible" class="action-button">GLYPH CRUCIBLE</a>
-              </div>
-            </div>
-            
-            <div class="web1-divider"></div>
-            
-            <div class="profile-view-details">
-              <div class="profile-view-section">
-                <div class="section-title">STATUS:</div>
-                <div class="section-content" id="profile-view-status-text"></div>
-              </div>
-              
-              <div class="profile-view-section">
-                <div class="section-title">PROFILE SIGIL:</div>
-                <div class="section-content" id="profile-view-glyph">
-                  <!-- Profile glyph will be injected here -->
-                </div>
-              </div>
-              
-              <div class="profile-view-section">
-                <div class="section-title">RECENT ACTIVITY:</div>
-                <div class="section-content">
-                  <div class="profile-activity-log" id="profile-activity-log">
-                    <!-- Recent activity items will be loaded here -->
-                    <div class="loading-activity">LOADING ACTIVITY LOG...</div>
-                  </div>
-                  <div class="view-all-activity">
-                    <a href="/activity-log" class="activity-link">VIEW FULL ACTIVITY LOG</a>
-                  </div>
-                </div>
-              </div>
-              
-              <div class="profile-view-section">
-                <div class="section-title">CUSTOM CODE:</div>
-                <div class="section-content">
-                  <style id="profile-view-custom-css"></style>
-                  <style id="profile-view-theme-template"></style>
-                  <div id="profile-view-custom-html"></div>
-                </div>
-              </div>
-              
-              <div class="profile-view-section">
-                <div class="section-title">WINDOWS 98 EXPERIENCE:</div>
-                <div class="section-content">
-                  <div id="profile-windows" class="profile-windows-container"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="user-view-posts-panel">
-          <div class="panel-header">
-            <h2>RECENT POSTS</h2>
-            <div class="status-indicator">ARCHIVE</div>
-          </div>
-          <div class="user-view-posts-content" id="user-view-posts-content">
-            <!-- User posts will be injected here -->
-          </div>
-        </section>
-      </main>
-    </div>
-
-    <footer class="main-footer">
-      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
-      <div class="footer-glyphs">
-        <span class="glyph">⌘</span>
         <span class="glyph">⍟</span>
         <span class="glyph">⎔</span>
       </div>
@@ -591,7 +431,7 @@
     if (glyph && glyph.svg_data) {
       profileGlyphEl.innerHTML = glyph.svg_data;
     } else {
-      profileGlyphEl.innerHTML = '<span class="blink-text">NO SIGIL SET</span>';
+      profileGlyphEl.innerHTML = '<span>NO SIGIL SET</span>';
     }
     
     // Load recent activity placeholder until API is ready
@@ -600,10 +440,10 @@
     
     // Inject custom CSS, theme template, and HTML
     document.getElementById('profile-view-custom-css').textContent = profile.custom_css || '';
-    document.getElementById('profile-view-custom-html').innerHTML = profile.custom_html || '<span class="blink-text">NO CUSTOM CODE</span>';
+    document.getElementById('profile-view-custom-html').innerHTML = profile.custom_html || '<span>NO CUSTOM CODE</span>';
     
     // Apply theme template if exists
-    applyThemeTemplate(profile.theme_template || 'darkweb');
+    applyThemeTemplate(profile.theme_template || 'default');
     
     // Load profile windows
     loadProfileWindows();
@@ -622,7 +462,10 @@
         // Get the target section from href
         const targetSection = this.getAttribute('href').substring(1);
         
-        // For demonstration, just scroll to appropriate section if it exists
+        // In a full implementation, you would show/hide sections here
+        console.log(`Navigating to profile section: ${targetSection}`);
+        
+        // For now, just scroll to appropriate section if it exists
         const sectionMap = {
           'profile': '.profile-view-details',
           'posts': '.user-view-posts-panel',
@@ -639,9 +482,9 @@
       });
     });
     
-    // Display user posts with animation for empty state
+    // Display user posts
     const userPostsContentEl = document.getElementById('user-view-posts-content');
-    if (posts && posts.length > 0) {
+    if (posts.length > 0) {
       posts.forEach(post => {
         const postEl = document.createElement('div');
         postEl.className = 'user-view-post-item';
@@ -649,14 +492,16 @@
           <div class="post-title"><a href="/feed/post/${post.id}">${post.title}</a></div>
           <div class="post-meta">
             <span class="post-date">${new Date(post.created_at).toLocaleString()}</span>
-            ${post.is_encrypted ? '<span class="post-encrypted blink-text">ENCRYPTED</span>' : ''}
+            ${post.is_encrypted ? '<span class="post-encrypted">ENCRYPTED</span>' : ''}
           </div>
         `;
         userPostsContentEl.appendChild(postEl);
       });
     } else {
-      userPostsContentEl.innerHTML = '<div class="no-activity blink-text">NO POSTS FOUND IN ARCHIVE.</div>';
+      userPostsContentEl.innerHTML = '<span>NO POSTS FOUND IN ARCHIVE.</span>';
     }
+    
+    // Placeholder for future activity log function
     
     // Function to apply theme templates
     function applyThemeTemplate(templateName) {
@@ -865,40 +710,12 @@
       }
     }
     
-    // Enhanced window loading function with Win98 icons
+    // Simplified window loading function
     function loadProfileWindows() {
       try {
         console.log('Windows 98 profile section initialized');
         if (typeof Win98WindowManager !== 'undefined') {
           window.windowManager = new Win98WindowManager('profile-windows');
-          
-          // Add desktop icons to the Windows 98 desktop
-          const desktopIconsContainer = document.createElement('div');
-          desktopIconsContainer.className = 'win98-desktop-icons';
-          
-          // Sample icons
-          const icons = [
-            { name: 'My Computer', img: '/images/win98-icons/mycomputer.png' },
-            { name: 'Network', img: '/images/win98-icons/network.png' },
-            { name: 'Recycle Bin', img: '/images/win98-icons/recyclefull.png' },
-            { name: 'My Documents', img: '/images/win98-icons/mydocuments.png' },
-            { name: 'Internet Explorer', img: '/images/win98-icons/ie.png' },
-            { name: 'README.TXT', img: '/images/win98-icons/notepad.png' }
-          ];
-          
-          // Create desktop icons
-          icons.forEach(icon => {
-            const iconDiv = document.createElement('div');
-            iconDiv.className = 'win98-desktop-icon';
-            iconDiv.innerHTML = `
-              <img src="${icon.img || '/images/win98-icons/default.png'}" class="win98-desktop-icon-img">
-              <div class="win98-desktop-icon-label">${icon.name}</div>
-            `;
-            desktopIconsContainer.appendChild(iconDiv);
-          });
-          
-          document.getElementById('profile-windows').appendChild(desktopIconsContainer);
-          
         } else {
           console.log('Win98WindowManager not defined yet');
         }
