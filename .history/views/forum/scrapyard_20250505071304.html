@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SCRAPYARD | Digital Wasteland Terminal</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="ELRIEL Scrapyard - A mystical collection of discarded code, forgotten artifacts, and broken tech from the digital wasteland. Explore the cyberpunk junkyard.">
+  <meta name="keywords" content="ELRIEL, Scrapyard, artifacts, digital wasteland, cyberpunk, retro, glitch, digital archaeology">
+
+  <!-- Open Graph / Social Media -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://elriel.network/forum/scrapyard">
+  <meta property="og:title" content="SCRAPYARD | Digital Wasteland Terminal">
+  <meta property="og:description" content="A mystical collection of discarded code and broken tech. Explore digital artifacts from the wasteland.">
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/css/cyberpunk-terminal.css">
+  <link rel="stylesheet" href="/css/forum.css">
+  
+  <!-- Scripts -->
+  <script src="/js/error-logger.js" defer></script>
+  <script src="/js/cyberpunk-terminal.js" defer></script>
+</head>
+<body class="terminal">
+  <!-- Screen Effects -->
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  <div class="crt-effect"></div>
+  
+  <!-- Main Container -->
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">DIGITAL WASTELAND v1.3.7</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+            <li><a href="/forum/scrapyard" class="active">SCRAPYARD</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">FORUM</h3>
+          <ul class="nav-links">
+            <li><a href="/forum">MAIN FORUMS</a></li>
+            <li><a href="/forum/scrapyard" class="active">SCRAPYARD</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <!-- System Log Sidebar -->
+        <aside class="system-log-sidebar">
+          <div class="panel-header">
+            <h2>SCRAP LOG</h2>
+            <div class="status-indicator">LIVE</div>
+          </div>
+          <div class="panel-content" id="system-log">
+            <div class="log-entry">
+              <span class="log-time">06:52:32</span>
+              <span class="log-text">Scanning sector 7 for artifacts</span>
+            </div>
+            <div class="log-entry">
+              <span class="log-time">06:55:48</span>
+              <span class="log-text">Hardware signature detected</span>
+            </div>
+            <div class="log-entry">
+              <span class="log-time">06:58:19</span>
+              <span class="log-text">User [REDACTED] salvaged artifact #405</span>
+            </div>
+            <div class="log-entry">
+              <span class="log-time">07:01:05</span>
+              <span class="log-text">Decoding fragmented memory block</span>
+            </div>
+            <div class="log-entry">
+              <span class="log-time">07:04:22</span>
+              <span class="log-text">Analysis complete: 73% recovery</span>
+            </div>
+            <div class="log-entry">
+              <span class="log-time">07:08:14</span>
+              <span class="log-text">New artifact classification pending</span>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Main Scrapyard Panel -->
+        <section class="panel scrapyard-panel">
+          <div class="scanner-line"></div>
+          <div class="panel-header">
+            <h2>SCRAPYARD ACCESS</h2>
+            <div class="status-indicator alert">ACTIVE</div>
+          </div>
+          <div class="panel-content">
+            <div class="scrapyard-intro">
+              <div class="scrapyard-icon">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <radialGradient id="glow" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                      <stop offset="0%" stop-color="#ff0000" stop-opacity="0.3"/>
+                      <stop offset="100%" stop-color="#330000" stop-opacity="0"/>
+                    </radialGradient>
+                  </defs>
+                  <circle cx="50" cy="50" r="48" fill="url(#glow)"/>
+                  <circle cx="50" cy="50" r="45" fill="none" stroke="#ff0033" stroke-width="2"/>
+                  <path d="M30,30 L70,70" stroke="#ff0033" stroke-width="2"/>
+                  <path d="M70,30 L30,70" stroke="#ff0033" stroke-width="2"/>
+                  <circle cx="50" cy="50" r="20" fill="none" stroke="#ff0033" stroke-width="1"/>
+                  <text x="38" y="55" font-family="monospace" font-size="12" fill="#ff0033">01</text>
+                </svg>
+              </div>
+              <div class="scrapyard-description">
+                <h2 class="glitch-effect" data-text="SCRAPYARD">SCRAPYARD</h2>
+                <p>Welcome to the digital junkyard—a wasteland collection point for discarded code, forgotten artifacts, and broken tech from the digital ruins. Here, scavengers exchange and catalog the debris of the network—each piece with its own history and hidden power.</p>
+                <div id="scrapyard-controls">
+                  <a href="/forum/scrapyard" class="button hover-glow">SCAN YARD</a>
+                  <a href="/forum/scrapyard/new" class="button hover-glow">DEPOSIT ARTIFACT</a>
+                </div>
+              </div>
+            </div>
+            
+            <div class="scrapyard-listing" id="scrapyard-items">
+              <!-- Scrapyard items will be injected here -->
+              <div class="loading-indicator">INITIALIZING ARTIFACT SCAN</div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- Artifact Registry -->
+        <section class="panel ascii-panel">
+          <div class="scanner-line"></div>
+          <div class="panel-header">
+            <h2>ARTIFACT REGISTRY</h2>
+            <div class="status-indicator">ARCHIVE</div>
+          </div>
+          <div class="panel-content ascii-content">
+            <pre class="ascii-art">
+  .--.      .--.      .--.      .--.      .--.      .--.
+:::::.\::::::::.\::::::::.\::::::::.\::::::::.\::::::::.\
+'      `--'      `--'      `--'      `--'      `--'      `
+</pre>
+            <div class="registry-stats">
+              <div class="stat-block">
+                <div class="stat-value" id="artifact-count">--</div>
+                <div class="stat-label">ARTIFACTS</div>
+              </div>
+              <div class="stat-block">
+                <div class="stat-value" id="scrap-count">--</div>
+                <div class="stat-label">ANALYSES</div>
+              </div>
+              <div class="stat-block">
+                <div class="stat-value" id="active-scavengers">--</div>
+                <div class="stat-label">SCAVENGERS</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="main-footer">
+      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+      <div class="footer-glyphs">
+        <span class="glyph" data-symbol="command">⌘</span>
+        <span class="glyph" data-symbol="star">⍟</span>
+        <span class="glyph" data-symbol="node">⎔</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Debug navigation
+    console.log("Scrapyard.html script loaded");
+
+    // Inject data from server
+    const data = __DATA__;
+
+    // Update user status
+    const userStatusEl = document.getElementById('user-status');
+    if (data.user) {
+      userStatusEl.innerHTML = `
+        <div class="logged-in">
+          <span class="username">${data.user.username}</span>
+          <div class="user-links">
+            <a href="/profile" class="win98-btn">PROFILE</a>
+            <a href="/auth/logout" class="win98-btn">LOGOUT</a>
+          </div>
+        </div>
+      `;
+    } else {
+      userStatusEl.innerHTML = `
+        <div class="logged-out">
+          <a href="/auth/login" class="win98-btn login-btn">LOGIN</a>
+          <a href="/auth/register" class="win98-btn register-btn">REGISTER</a>
+        </div>
+      `;
+    }
+
+    // Populate scrapyard items
+    const scrapyardItems = document.getElementById('scrapyard-items');
+    if (data.items && data.items.length > 0) {
+      scrapyardItems.innerHTML = '';
+      
+      data.items.forEach(item => {
+        const itemDate = new Date(item.created_at).toLocaleDateString();
+        const lastActivity = item.last_activity ? new Date(item.last_activity).toLocaleDateString() : itemDate;
+        
+        scrapyardItems.innerHTML += `
+          <div class="scrapyard-item win98-window">
+            <div class="win98-titlebar">
+              <div class="win98-titlebar-text">${item.title}</div>
+            </div>
+            <div class="win98-window-content">
+              <div class="scrapyard-item-meta">
+                <span class="artifact-id">ID: ${item.id}</span>
+                <span class="artifact-founder">FOUNDER: ${item.username}</span>
+                <span class="artifact-date">DISCOVERED: ${itemDate}</span>
+              </div>
+              <div class="scrapyard-item-description">
+                ${item.content.substring(0, 100)}...
+              </div>
+              <div class="scrapyard-item-footer">
+                <div class="artifact-stats">
+                  <span class="comment-count">ANALYSES: ${item.comment_count}</span>
+                  <span class="last-activity">LAST SIGNAL: ${lastActivity}</span>
+                </div>
+                <a href="/forum/topic/${item.id}" class="win98-btn">EXAMINE</a>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    } else {
+      scrapyardItems.innerHTML = `
+        <div class="empty-scrapyard">
+          <p>No artifacts found in the Scrapyard. The signal is weak today.</p>
+          <p>Be the first to add something from the digital wasteland.</p>
+        </div>
+      `;
+    }
+
+    // Toggle glitch effects
+    document.getElementById('toggle-glitch').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.body.classList.toggle('glitch-active');
+    });
+  </script>
+</body>
+</html>

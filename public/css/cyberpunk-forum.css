@@ -1,0 +1,441 @@
+/**
+ * ELRIEL - CYBERPUNK FORUM AESTHETICS
+ * Specific styling for the forum/scrapyard areas
+ * Extends the base cyberpunk-terminal.css
+ */
+
+/* ===== SCRAPYARD GRID LAYOUT ===== */
+.scrapyard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-3);
+  width: 100%;
+  animation: fade-in 0.8s ease-out;
+}
+
+@media (max-width: 768px) {
+  .scrapyard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== SCRAPYARD ITEMS ===== */
+.scrapyard-item {
+  position: relative;
+  background-color: var(--bg-panel);
+  border: var(--border-secondary);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+  animation: item-appear 0.5s backwards;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.scrapyard-item .panel-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: var(--space-2);
+}
+
+.scrapyard-item:hover {
+  transform: translateY(-5px);
+  border-color: var(--terminal-green);
+  box-shadow: var(--glow-medium);
+}
+
+.scrapyard-item:active {
+  transform: scale(0.98);
+}
+
+.scrapyard-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(to right, 
+    transparent, 
+    var(--terminal-green), 
+    transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.scrapyard-item:hover::before {
+  opacity: 1;
+}
+
+.scrapyard-item .panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-2);
+  background-color: rgba(0, 10, 0, 0.8);
+  border-bottom: var(--border-primary);
+}
+
+.scrapyard-item .panel-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 75%;
+}
+
+.artifact-id {
+  font-family: var(--font-terminal);
+  font-size: 0.9rem;
+  color: var(--terminal-dim-green);
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 2px 5px;
+  border-radius: 3px;
+  border: 1px solid var(--terminal-dim-green);
+}
+
+/* Artifact layout */
+.artifact-pattern {
+  width: 80px;
+  height: 80px;
+  margin-right: var(--space-2);
+  float: left;
+}
+
+.artifact-symbol {
+  width: 100%;
+  height: 100%;
+}
+
+.artifact-info {
+  overflow: hidden;
+}
+
+.scrapyard-item-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: var(--space-2);
+  font-size: 0.8rem;
+  color: var(--terminal-dim-green);
+}
+
+.artifact-founder, .artifact-date {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.scrapyard-item-description {
+  margin-bottom: var(--space-3);
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.scrapyard-item-footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--space-2);
+  border-top: 1px dashed rgba(0, 255, 0, 0.2);
+}
+
+.artifact-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.75rem;
+  color: var(--terminal-dim-green);
+}
+
+/* ===== SCRAPYARD INTRO ===== */
+.scrapyard-intro {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background-color: rgba(0, 10, 0, 0.7);
+  border-bottom: var(--border-primary);
+  margin-bottom: var(--space-3);
+  position: relative;
+  overflow: hidden;
+}
+
+.scrapyard-intro::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--terminal-dim-green), transparent);
+  opacity: 0.5;
+}
+
+.scrapyard-icon {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scrapyard-icon svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0 8px rgba(255, 0, 0, 0.5));
+}
+
+.scrapyard-description h2 {
+  margin-top: 0;
+  margin-bottom: var(--space-2);
+  color: var(--terminal-red);
+  text-shadow: var(--glow-red);
+}
+
+.scrapyard-description p {
+  margin-bottom: var(--space-3);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+#scrapyard-controls {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .scrapyard-intro {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  
+  .scrapyard-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto var(--space-2);
+  }
+  
+  #scrapyard-controls {
+    justify-content: center;
+  }
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+  text-align: center;
+  padding: var(--space-5) var(--space-3);
+  color: var(--terminal-dim-green);
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: var(--space-3);
+  opacity: 0.7;
+}
+
+.empty-message {
+  font-size: 1.2rem;
+  margin-bottom: var(--space-2);
+  font-family: var(--font-header);
+  letter-spacing: 2px;
+  color: var(--terminal-dim-red);
+}
+
+.empty-subtitle {
+  font-size: 0.9rem;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* ===== ARTIFACT REGISTRY ===== */
+.registry-stats {
+  display: flex;
+  justify-content: space-around;
+  margin-top: var(--space-3);
+}
+
+.stat-block {
+  text-align: center;
+  padding: var(--space-2);
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-family: var(--font-header);
+  color: var(--terminal-green);
+  text-shadow: var(--glow-weak);
+  margin-bottom: var(--space-1);
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--terminal-dim-green);
+  letter-spacing: 1px;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes item-appear {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ===== LOG HIGHLIGHT ===== */
+.log-entry.highlight {
+  background-color: rgba(0, 255, 0, 0.1);
+  animation: highlight-fade 2s;
+}
+
+@keyframes highlight-fade {
+  0% { background-color: rgba(0, 255, 0, 0.2); }
+  100% { background-color: transparent; }
+}
+
+/* ===== TOPIC VIEW STYLES ===== */
+.topic-header {
+  padding: var(--space-3);
+  margin-bottom: var(--space-3);
+  border-bottom: var(--border-primary);
+  background-color: rgba(0, 10, 0, 0.7);
+}
+
+.topic-title {
+  font-size: 1.5rem;
+  margin-bottom: var(--space-2);
+  color: var(--terminal-green);
+  text-shadow: var(--glow-medium);
+}
+
+.topic-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  font-size: 0.9rem;
+  color: var(--terminal-dim-green);
+  margin-bottom: var(--space-2);
+}
+
+.topic-content {
+  padding: var(--space-3);
+  margin-bottom: var(--space-4);
+  background-color: rgba(0, 5, 0, 0.5);
+  border: var(--border-secondary);
+  line-height: 1.6;
+}
+
+.comments-section {
+  margin-top: var(--space-4);
+}
+
+.comment {
+  margin-bottom: var(--space-3);
+  padding: var(--space-3);
+  background-color: rgba(0, 5, 0, 0.3);
+  border: var(--border-secondary);
+  position: relative;
+}
+
+.comment::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--terminal-dim-green), transparent);
+  opacity: 0.3;
+}
+
+.comment-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+  font-size: 0.9rem;
+  color: var(--terminal-dim-green);
+}
+
+.comment-content {
+  line-height: 1.5;
+}
+
+/* New comment form */
+.new-comment-form {
+  margin-top: var(--space-4);
+  padding: var(--space-3);
+  background-color: rgba(0, 10, 0, 0.5);
+  border: var(--border-secondary);
+}
+
+.new-comment-form textarea {
+  width: 100%;
+  min-height: 120px;
+  margin-bottom: var(--space-3);
+  background-color: rgba(0, 0, 0, 0.5);
+  border: var(--border-secondary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  padding: var(--space-2);
+  resize: vertical;
+}
+
+.new-comment-form textarea:focus {
+  border-color: var(--terminal-green);
+  outline: none;
+  box-shadow: var(--glow-weak);
+}
+
+/* ===== RESPONSIVENESS ===== */
+@media (max-width: 480px) {
+  .scrapyard-item .panel-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .scrapyard-item .panel-header h3 {
+    max-width: 100%;
+    margin-bottom: var(--space-1);
+  }
+  
+  .artifact-pattern {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .registry-stats {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  
+  .stat-block {
+    padding: var(--space-1);
+  }
+  
+  .stat-value {
+    font-size: 1.5rem;
+  }
+  
+  .topic-meta {
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+}

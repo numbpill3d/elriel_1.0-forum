@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GLYPH CRUCIBLE | Digital Wasteland</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Create digital sigils in the Glyph Crucible. Generate unique patterns that resonate with the digital wasteland.">
+  <meta name="keywords" content="elriel, glyph crucible, digital sigils, cyberpunk, retro web, hacker aesthetics">
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/css/cyberpunk-terminal.css">
+  <link rel="stylesheet" href="/css/glyph.css">
+  
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="/js/cyberpunk-terminal.js" defer></script>
+  <script src="/js/glyph3d.js" defer></script>
+</head>
+<body class="terminal">
+  <!-- Screen Effects -->
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  <div class="crt-effect"></div>
+  
+  <!-- Main Container -->
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">DIGITAL WASTELAND v1.3.7</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible" class="active">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+            <li><a href="/forum/scrapyard">SCRAPYARD</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">PROFILE</h3>
+          <ul class="nav-links">
+            <li><a href="/profile">DASHBOARD</a></li>
+            <li><a href="/profile/edit">EDIT PROFILE</a></li>
+            <li><a href="/feed/new">CREATE POST</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <!-- System Log Sidebar -->
+        <aside class="system-log-sidebar">
+          <div class="panel-header">
+            <h2>CRUCIBLE LOG</h2>
+            <div class="status-indicator">LIVE</div>
+          </div>
+          <div class="panel-content" id="system-log">
+            <div class="log-entry">
+              <span class="log-time">06:45:12</span>
+              <span class="log-text">Crucible subsystems initialized</span>
+            </div>
+            <div class="log-entry">
+              <span class="log-time">06:47:03</span>
+              <span class="log-text">Connected to sigil database</span>
+            </div>
+            <div class="log-entry">
+              <span class="log-time">06:48:22</span>
+              <span class="log-text">Psychogeometric algorithms loaded</span>
+            </div>
+            <div class="log-entry">
+              <span class="log-time">06:50:45</span>
+              <span class="log-text">Pattern recognition at 94% efficiency</span>
+            </div>
+            <div class="log-entry">
+              <span class="log-time">06:54:31</span>
+              <span class="log-text">User [REDACTED] accessed glyph archives</span>
+            </div>
+            <div class="log-entry">
+              <span class="log-time">06:58:17</span>
+              <span class="log-text">Reality anchor points established</span>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Main Crucible Panel -->
+        <section class="panel crucible-panel">
+          <div class="scanner-line"></div>
+          <div class="panel-header">
+            <h2>GLYPH CRUCIBLE</h2>
+            <div class="status-indicator alert">ACTIVE</div>
+          </div>
+          <div class="panel-content crucible-content">
+            <div class="crucible-controls">
+              <div class="form-group">
+                <label for="seed">SEED PHRASE:</label>
+                <input type="text" id="seed" name="seed" placeholder="Leave empty for random pattern" class="hover-glow">
+              </div>
+              <div class="form-group">
+                <label for="complexity">COMPLEXITY:</label>
+                <select id="complexity" name="complexity" class="hover-glow">
+                  <option value="low">LOW</option>
+                  <option value="medium" selected>MEDIUM</option>
+                  <option value="high">HIGH</option>
+                  <option value="extreme">EXTREME</option>
+                </select>
+              </div>
+              <button id="generate-glyph" class="button hover-glow">GENERATE SIGIL</button>
+            </div>
+            
+            <div class="generated-glyph-area">
+              <div id="generated-glyph-svg" class="generated-glyph-svg">
+                <!-- Generated glyph SVG will be injected here -->
+                <div class="loading-indicator">AWAITING INPUT</div>
+              </div>
+              <div class="glyph-actions">
+                <button id="play-audio" class="button hover-glow" style="display: none;">PLAY AUDIO</button>
+                <button id="save-glyph" class="button hover-glow" style="display: none;">SAVE SIGIL</button>
+                <div id="generation-message" style="color: var(--terminal-green); margin-top: 1rem;"></div>
+                <div id="generation-error" class="glitch-effect" style="margin-top: 1rem; display: none;"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- User's Saved Glyphs Panel -->
+        <section class="panel user-glyphs-panel">
+          <div class="scanner-line"></div>
+          <div class="panel-header">
+            <h2>YOUR SAVED SIGILS</h2>
+            <div class="status-indicator">ARCHIVE</div>
+          </div>
+          <div class="panel-content user-glyphs-content" id="user-glyphs-content">
+            <!-- User's saved glyphs will be injected here -->
+            <div class="glyph-grid">
+              <!-- Will be populated by JavaScript -->
+            </div>
+          </div>
+        </section>
+        
+        <!-- Symbol Reference Panel -->
+        <section class="panel ascii-panel">
+          <div class="scanner-line"></div>
+          <div class="panel-header">
+            <h2>SYMBOL REFERENCE</h2>
+            <div class="status-indicator">ARCHIVE</div>
+          </div>
+          <div class="panel-content ascii-content">
+            <div class="ascii-grid">
+              <div class="ascii-cell" id="symbol1">
+                <!-- Will be populated by JS -->
+              </div>
+              <div class="ascii-cell" id="symbol2">
+                <!-- Will be populated by JS -->
+              </div>
+              <div class="ascii-cell" id="symbol3">
+                <!-- Will be populated by JS -->
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="main-footer">
+      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+      <div class="footer-glyphs">
+        <span class="glyph" data-symbol="command">⌘</span>
+        <span class="glyph" data-symbol="star">⍟</span>
+        <span class="glyph" data-symbol="node">⎔</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Add error handling for data injection
+    let data, user, userGlyphs = [];
+    try {
+      // Inject data from server
+      data = JSON.parse('__DATA__'.replace(/\\n/g, "\\n")
+        .replace(/\\'/g, "\\'")
+        .replace(/\\"/g, '\\"')
+        .replace(/\\&/g, "\\&")
+        .replace(/\\r/g, "\\r")
+        .replace(/\\t/g, "\\t")
+        .replace(/\\b/g, "\\b")
+        .replace(/\\f/g, "\\f"));
+      user = data.user;
+      userGlyphs = data.userGlyphs || [];
+      console.log("Glyph data loaded successfully:", {
+        hasUser: !!user,
+        glyphCount: userGlyphs.length
+      });
+    } catch (err) {
+      console.error("Error parsing injected data:", err);
+      // Set default values
+      data = {};
+      user = null;
+      userGlyphs = [];
+    }
+    
+    // Update user status in header
+    const userStatusEl = document.getElementById('user-status');
+    if (user) {
+      userStatusEl.innerHTML = `
+        <div class="logged-in">
+          <span class="username">${user.username}</span>
+          <div class="user-links">
+            <a href="/profile" class="win98-btn">PROFILE</a>
+            <a href="/auth/logout" class="win98-btn">LOGOUT</a>
+          </div>
+        </div>
+      `;
+    } else {
+      userStatusEl.innerHTML = `
+        <div class="logged-out">
+          <a href="/auth/login" class="win98-btn login-btn">LOGIN</a>
+          <a href="/auth/register" class="win98-btn register-btn">REGISTER</a>
+        </div>
+      `;
+    }
+    
+    // Display user's saved glyphs
+    const userGlyphsContentEl = document.getElementById('user-glyphs-content');
+    if (userGlyphs && userGlyphs.length > 0) {
+      userGlyphs.forEach(glyph => {
+        const glyphItem = document.createElement('div');
+        glyphItem.className = 'user-glyph-item';
+        glyphItem.innerHTML = glyph.svg_data;
+        glyphItem.setAttribute('data-glyph-id', glyph.id);
+        glyphItem.title = `Generated: ${new Date(glyph.created_at).toLocaleString()}`;
+        
+        // Add click event to view glyph
+        glyphItem.addEventListener('click', () => {
+          window.location.href = `/glyph/view/${glyph.id}`;
+        });
+        
+        userGlyphsContentEl.appendChild(glyphItem);
+      });
+    } else {
+      userGlyphsContentEl.innerHTML = '<span>NO SAVED SIGILS. GENERATE SOME ABOVE.</span>';
+    }
+    
+    // Glyph generation functionality
+    const generateGlyphBtn = document.getElementById('generate-glyph');
+    const seedInput = document.getElementById('seed');
+    const complexitySelect = document.getElementById('complexity');
+    const generatedGlyphSvgEl = document.getElementById('generated-glyph-svg');
+    const playAudioBtn = document.getElementById('play-audio');
+    const saveGlyphBtn = document.getElementById('save-glyph');
+    const generationMessageEl = document.getElementById('generation-message');
+    const generationErrorEl = document.getElementById('generation-error');
+    
+    let currentGeneratedGlyph = null;
+    
+    generateGlyphBtn.addEventListener('click', async () => {
+      const seed = seedInput.value.trim();
+      const complexity = complexitySelect.value;
+      
+      generationMessageEl.textContent = '';
+      generationErrorEl.textContent = '';
+      generatedGlyphSvgEl.innerHTML = '<span>GENERATING...</span>';
+      playAudioBtn.style.display = 'none';
+      saveGlyphBtn.style.display = 'none';
+      currentGeneratedGlyph = null;
+      
+      try {
+        const response = await fetch('/glyph/generate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ seed, complexity })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          currentGeneratedGlyph = data.glyph;
+          generatedGlyphSvgEl.innerHTML = currentGeneratedGlyph.svgData;
+          playAudioBtn.style.display = 'inline-block';
+          
+          // Only show save button if logged in
+          if (user) {
+            saveGlyphBtn.style.display = 'inline-block';
+          }
+          
+          generationMessageEl.textContent = 'SIGIL GENERATED.';
+        } else {
+          generatedGlyphSvgEl.innerHTML = '<span>GENERATION FAILED</span>';
+          generationErrorEl.textContent = data.message || 'Glyph generation failed. Unknown error.';
+        }
+      } catch (error) {
+        console.error('Glyph generation error:', error);
+        generatedGlyphSvgEl.innerHTML = '<span>GENERATION FAILED</span>';
+        generationErrorEl.textContent = 'System error. Could not connect to crucible.';
+      }
+    });
+    
+    // Play glyph audio (placeholder)
+    playAudioBtn.addEventListener('click', () => {
+      if (currentGeneratedGlyph && currentGeneratedGlyph.audioData) {
+        try {
+          const audioParams = JSON.parse(currentGeneratedGlyph.audioData);
+          console.log('Playing audio with parameters:', audioParams);
+          // In a real implementation, you would use the Web Audio API here
+          generationMessageEl.textContent = 'PLAYING AUDIO (SIMULATED)...';
+          setTimeout(() => {
+            generationMessageEl.textContent = 'AUDIO PLAYBACK COMPLETE.';
+          }, 2000);
+        } catch (e) {
+          console.error('Error parsing audio data:', e);
+          generationErrorEl.textContent = 'Error playing audio. Corrupted data.';
+        }
+      }
+    });
+    
+    // Save glyph
+    saveGlyphBtn.addEventListener('click', async () => {
+      if (!currentGeneratedGlyph) return;
+      
+      generationMessageEl.textContent = '';
+      generationErrorEl.textContent = '';
+      
+      try {
+        const response = await fetch('/glyph/save', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(currentGeneratedGlyph)
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          generationMessageEl.textContent = data.message;
+          // Reload saved glyphs
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+        } else {
+          generationErrorEl.textContent = data.message || 'Glyph save failed. Unknown error.';
+        }
+      } catch (error) {
+        console.error('Glyph save error:', error);
+        generationErrorEl.textContent = 'System error. Could not save glyph.';
+      }
+    });
+    
+    // Toggle glitch effects
+    document.getElementById('toggle-glitch').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.body.classList.toggle('glitch-active');
+    });
+  </script>
+</body>
+</html>

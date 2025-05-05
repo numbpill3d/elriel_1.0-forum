@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ELRIEL | Digital Wasteland Terminal</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="ELRIEL - A forgotten underground internet cathedral. Part TempleOS, part Geocities, part industrial hacker shrine. Enter the digital wasteland.">
+  <meta name="keywords" content="ELRIEL, terminal, haunted web, digital wasteland, cyberpunk, retro, glitch, hackers, webcore, neocities">
+  <meta name="author" content="ELRIEL Network">
+
+  <!-- Open Graph / Social Media -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://elriel.network/">
+  <meta property="og:title" content="ELRIEL | Digital Wasteland Terminal">
+  <meta property="og:description" content="Enter the forgotten underground internet cathedral. A cyberpunk dreamworld awaits.">
+  <meta property="og:image" content="/images/elriel-og-image.png">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="ELRIEL | Digital Wasteland Terminal">
+  <meta name="twitter:description" content="Enter the forgotten underground internet cathedral. A cyberpunk dreamworld awaits.">
+  <meta name="twitter:image" content="/images/elriel-twitter-image.png">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/css/cyberpunk-terminal.css">
+  
+  <!-- Core scripts -->
+  <script src="/js/error-logger.js" defer></script>
+  <script src="/js/cyberpunk-terminal.js" defer></script>
+  <script src="/js/terminal.js?v=1" defer></script>
+
+  <!-- Enhancement scripts -->
+  <script src="/js/accessibility.js" defer></script>
+</head>
+<body class="terminal">
+  <!-- Screen Effects -->
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  <div class="crt-effect"></div>
+  
+  <!-- Main Container -->
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">DIGITAL WASTELAND v1.3.7</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/" class="active">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream" id="bleedstream-link">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible" id="crucible-link">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board" id="whisper-link">WHISPERBOARD</a></li>
+            <li><a href="/forum/scrapyard" id="scrapyard-link">SCRAPYARD</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">DISTRICTS</h3>
+          <ul class="nav-links">
+            <li><a href="/terminal/numbpill" class="district">NUMBPILL CELL</a></li>
+            <li><a href="#" class="district locked">LOCKED DISTRICT</a></li>
+            <li><a href="#" class="district locked">LOCKED DISTRICT</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <!-- System Log Sidebar -->
+        <aside class="system-log-sidebar">
+          <div class="panel-header">
+            <h2>SYSTEM LOG</h2>
+            <div class="status-indicator">LIVE</div>
+          </div>
+          <div class="panel-content" id="system-log">
+            <div class="log-entry">
+              <span class="log-time">05:38:08</span>
+              <span class="log-text">User [REDACTED] joined the Numbpill Cell</span>
+            </div>
+            <div class="log-entry">
+              <span class="log-time">05:11:31</span>
+              <span class="log-text">New whisper detected in sector 7</span>
+            </div>
+            <div class="log-entry">
+              <span class="log-time">05:45:44</span>
+              <span class="log-text">Glyph Crucible activity increased by 27%</span>
+            </div>
+            <div class="log-entry">
+              <span class="log-time">05:18:17</span>
+              <span class="log-text">System scan complete: 3 anomalies detected</span>
+            </div>
+            <div class="log-entry">
+              <span class="log-time">05:11:43</span>
+              <span class="log-text">User terminal_ghost uploaded a new post</span>
+            </div>
+            <div class="log-entry">
+              <span class="log-time">05:18:09</span>
+              <span class="log-text">District access protocols updated</span>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Main Terminal Window -->
+        <section class="panel welcome-panel">
+          <div class="scanner-line"></div>
+          <div class="panel-header">
+            <h2>TERMINAL ACCESS</h2>
+            <div class="status-indicator alert">COMPROMISED</div>
+          </div>
+          <div class="panel-content">
+            <div class="terminal-output">
+              <div class="line">INITIALIZING ELRIEL NETWORK CONNECTION...</div>
+              <div class="line">ESTABLISHING SECURE CHANNEL...</div>
+              <div class="line">TERMINAL ACCESS GRANTED.</div>
+              <div class="line">&nbsp;</div>
+              <div class="line blink">WELCOME TO ELRIEL. THIS TERMINAL HAS BEEN COMPROMISED.</div>
+              <div class="line">&nbsp;</div>
+              <div class="line">THE NETWORK AWAITS YOUR CONTRIBUTION.</div>
+              <div class="line">PROCEED WITH CAUTION.</div>
+              <div class="line">&nbsp;</div>
+              <div class="line">TYPE 'HELP' FOR AVAILABLE COMMANDS.</div>
+              <div class="line">&nbsp;</div>
+              <div class="command-line">
+                <label for="terminal-input" class="sr-only">Terminal command input</label>
+                <input type="text" id="terminal-input" autocomplete="off" autofocus aria-label="Terminal command input">
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- System Alert Window -->
+        <section class="panel announcement-panel">
+          <div class="scanner-line"></div>
+          <div class="panel-header">
+            <h2>SYSTEM ALERT</h2>
+            <div class="status-indicator">PRIORITY</div>
+          </div>
+          <div class="panel-content">
+            <div class="announcement-content" id="announcement">
+              <!-- Announcement will be injected here -->
+              <h3 class="announcement-title flicker">CONNECTION INSTABILITY DETECTED</h3>
+              <div class="announcement-body">Welcome to Elriel. This terminal has been compromised. Proceed with caution. The Numbpill Cell awaits your contribution.</div>
+              <div class="announcement-timestamp">TIMESTAMP: 4/21/2025, 6:38:34 AM</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ASCII Art Glyphs -->
+        <section class="panel ascii-panel">
+          <div class="panel-header">
+            <h2>TERMINAL GLYPHS</h2>
+            <div class="status-indicator">ARCHIVE</div>
+          </div>
+          <div class="panel-content ascii-content">
+            <div class="ascii-grid">
+              <div class="ascii-cell" id="glyph1">
+                <!-- Will be populated by JS -->
+              </div>
+              <div class="ascii-cell" id="glyph2">
+                <!-- Will be populated by JS -->
+              </div>
+              <div class="ascii-cell" id="glyph3">
+                <!-- Will be populated by JS -->
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="main-footer">
+      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+      <div class="footer-glyphs">
+        <span class="glyph">⌘</span>
+        <span class="glyph">⍟</span>
+        <span class="glyph">⎔</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Debug navigation
+    console.log("Index.html script loaded");
+
+    // Function to log navigation
+    function logNavigation(destination) {
+      console.log("Attempting to navigate to: " + destination);
+      return true;
+    }
+
+    // Inject data from server
+    const data = __DATA__;
+
+    // Update user status
+    const userStatusEl = document.getElementById('user-status');
+    if (data.user) {
+      userStatusEl.innerHTML = `
+        <div class="logged-in">
+          <span class="username">${data.user.username}</span>
+          <div class="user-links">
+            <a href="/profile" class="win98-btn">PROFILE</a>
+            <a href="/auth/logout" class="win98-btn">LOGOUT</a>
+          </div>
+        </div>
+      `;
+    } else {
+      userStatusEl.innerHTML = `
+        <div class="logged-out">
+          <a href="/auth/login" class="win98-btn login-btn">LOGIN</a>
+          <a href="/auth/register" class="win98-btn register-btn">REGISTER</a>
+        </div>
+      `;
+    }
+
+    // Update announcement
+    const announcementEl = document.getElementById('announcement');
+    if (data.announcement) {
+      announcementEl.innerHTML = `
+        <h3 class="announcement-title">${data.announcement.title}</h3>
+        <div class="announcement-body">${data.announcement.content}</div>
+        <div class="announcement-timestamp">TIMESTAMP: ${new Date(data.announcement.created_at).toLocaleString()}</div>
+      `;
+    }
+
+    // Simulate activity feed
+    const activityFeed = document.getElementById('activity-feed');
+    const activities = [
+      'User [REDACTED] joined the Numbpill Cell',
+      'New whisper detected in sector 7',
+      'Glyph Crucible activity increased by 27%',
+      'System scan complete: 3 anomalies detected',
+      'User terminal_ghost uploaded a new post',
+      'District access protocols updated'
+    ];
+
+    activities.forEach(activity => {
+      const el = document.createElement('div');
+      el.className = 'activity-item';
+      el.innerHTML = `
+        <span class="activity-time">${new Date(Date.now() - Math.random() * 3600000).toLocaleTimeString()}</span>
+        <span class="activity-text">${activity}</span>
+      `;
+      activityFeed.appendChild(el);
+    });
+
+    // Terminal functionality is handled by terminal.js
+
+    // Toggle glitch effects
+    document.getElementById('toggle-glitch').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.body.classList.toggle('glitch-active');
+    });
+
+    // Debug navigation links
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add event listeners to main navigation links
+      const navLinks = {
+        'bleedstream-link': '/feed/bleedstream',
+        'crucible-link': '/glyph/crucible',
+        'whisper-link': '/whisper/board',
+        'scrapyard-link': '/forum/scrapyard'
+      };
+
+      for (const [id, url] of Object.entries(navLinks)) {
+        const link = document.getElementById(id);
+        if (link) {
+          link.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log(`Navigating to ${url}`);
+            window.location.href = url;
+          });
+        }
+      }
+
+      // Add login/register buttons to the header if not present
+      const userStatusEl = document.getElementById('user-status');
+      if (userStatusEl && !userStatusEl.innerText.trim()) {
+        console.log("User panel is empty, adding login buttons");
+        userStatusEl.innerHTML = `
+          <div class="logged-out">
+            <a href="/auth/login" class="win98-btn login-btn">LOGIN</a>
+            <a href="/auth/register" class="win98-btn register-btn">REGISTER</a>
+          </div>
+        `;
+      }
+    });
+  </script>
+</body>
+</html>

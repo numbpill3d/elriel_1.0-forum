@@ -1,0 +1,171 @@
+/* 
+ * ELRIEL - CYBERPUNK TERMINAL AESTHETICS
+ * A Web 1.0/TerminalOS/cyberpunk dreamworld styling system
+ * Designed to create the feeling of an underground internet cathedral:
+ * Part TempleOS, part Geocities, part industrial hacker shrine
+ */
+
+/* ===== BASE VARIABLES AND RESETS ===== */
+:root {
+  /* Terminal Color Palette */
+  --terminal-green: #00ff00;
+  --terminal-dim-green: #00aa00;
+  --terminal-blue: #00ccff;
+  --terminal-dim-blue: #0088aa;
+  --terminal-red: #ff0033;
+  --terminal-dim-red: #aa0000;
+  --terminal-purple: #cc00ff;
+  --terminal-dim-purple: #880088;
+  --terminal-yellow: #ffcc00;
+  --terminal-dim-yellow: #aa8800;
+  --terminal-cyan: #00ffff;
+  --terminal-dim-cyan: #00aaaa;
+  
+  /* Background and Text Colors */
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-panel: rgba(10, 0, 0, 0.85);
+  --bg-inset: rgba(0, 0, 0, 0.7);
+  --text-primary: var(--terminal-green);
+  --text-secondary: var(--terminal-dim-green);
+  --text-highlight: #ffffff;
+  --text-glitch: var(--terminal-red);
+  
+  /* Glow Effects */
+  --glow-strong: 0 0 10px rgba(0, 255, 0, 0.7), 0 0 20px rgba(0, 255, 0, 0.5);
+  --glow-medium: 0 0 8px rgba(0, 255, 0, 0.5);
+  --glow-weak: 0 0 5px rgba(0, 255, 0, 0.3);
+  --glow-red: 0 0 8px rgba(255, 0, 0, 0.6), 0 0 16px rgba(255, 0, 0, 0.4);
+  --glow-blue: 0 0 8px rgba(0, 170, 255, 0.6), 0 0 16px rgba(0, 170, 255, 0.4);
+  
+  /* Borders and Panels */
+  --border-primary: 1px solid var(--terminal-dim-green);
+  --border-secondary: 1px solid rgba(0, 255, 0, 0.3);
+  --border-glow: 2px solid var(--terminal-green);
+  --border-glitch: 2px solid var(--terminal-red);
+  
+  /* Fonts */
+  --font-terminal: 'VT323', 'Share Tech Mono', 'IBM Plex Mono', monospace;
+  --font-header: 'VT323', 'Share Tech Mono', monospace;
+  --font-body: 'IBM Plex Mono', 'Courier New', monospace;
+  
+  /* Spacing (based on 8px grid) */
+  --space-1: 0.25rem;  /* 4px */
+  --space-2: 0.5rem;   /* 8px */
+  --space-3: 1rem;     /* 16px */
+  --space-4: 1.5rem;   /* 24px */
+  --space-5: 2rem;     /* 32px */
+  --space-6: 3rem;     /* 48px */
+  
+  /* Animations */
+  --animation-slow: 4s;
+  --animation-medium: 2s;
+  --animation-fast: 0.5s;
+  
+  /* Z-index layers */
+  --z-background: -10;
+  --z-base: 1;
+  --z-above: 10;
+  --z-overlay: 50;
+  --z-modal: 100;
+  --z-tooltip: 1000;
+}
+
+/* ===== BASE ELEMENT STYLING ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23003300' fill-opacity='0.2' fill-rule='evenodd'%3E%3Cpath d='M0 20L20 0L40 20L20 40z' /%3E%3C/g%3E%3C/svg%3E");
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: rgba(0, 255, 0, 0.2);
+}
+
+body {
+  position: relative;
+  line-height: 1.5;
+}
+
+/* Apply terminal cursor to all interactive elements */
+input, textarea, [contenteditable="true"] {
+  caret-color: var(--terminal-green);
+  background-color: var(--bg-inset);
+  color: var(--text-highlight);
+  border: var(--border-primary);
+  padding: var(--space-2);
+  font-family: var(--font-terminal);
+  transition: all 0.2s ease;
+}
+
+input:focus, textarea:focus, [contenteditable="true"]:focus {
+  outline: none;
+  border-color: var(--terminal-green);
+  box-shadow: var(--glow-medium);
+}
+
+a {
+  color: var(--terminal-green);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+a:hover {
+  color: var(--text-highlight);
+  text-shadow: var(--glow-medium);
+}
+
+a:active {
+  transform: translateY(1px);
+}
+
+button, .button {
+  background-color: var(--bg-inset);
+  color: var(--terminal-green);
+  border: var(--border-secondary);
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-terminal);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+button:hover, .button:hover {
+  border-color: var(--terminal-green);
+  color: var(--text-highlight);
+  box-shadow: var(--glow-medium);
+  text-shadow: var(--glow-weak);
+}
+
+button:active, .button:active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-header);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
+  position: relative;
+}
+
+h1 {
+  font-size: 2.5rem;
+  text-shadow: var(--glow-medium);
+}
+
+h2 {
+  font-size: 2rem;
