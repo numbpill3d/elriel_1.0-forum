@@ -18,9 +18,6 @@ document.addEventListener('DOMContentLoaded', function() {
     '/terminal/numbpill',
     '/terminal/void',
     '/profile',
-    '/profile/edit',
-    '/profile/user',
-    '/profile/enhanced',
     '/auth/login',
     '/auth/register',
     '/auth/logout',
@@ -34,9 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
     '/forum',
     '/forum/scrapyard',
     '/forum/topic',
-    '/forum/scrapyard/new',
-    '/api/status',
-    '/crypto'
+    '/forum/scrapyard/new'
   ];
 
   const oldStylePaths = {
@@ -76,17 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Check if it's an unknown path
         const path = new URL(this.href, window.location.origin).pathname;
-
-        // Check if the path is known or matches a pattern
-        const isKnownPath = knownPaths.includes(path) ||
-                           path.startsWith('/static/') ||
-                           path.startsWith('/images/') ||
-                           path.startsWith('/forum/topic/') ||
-                           path.startsWith('/profile/user/') ||
-                           path.match(/^\/api\/.*/) ||
-                           path.match(/^\/uploads\/.*/);
-
-        if (!isKnownPath) {
+        if (!knownPaths.includes(path) && !path.startsWith('/static/') && !path.startsWith('/images/')) {
           console.warn("[NAV DEBUG] Potentially unknown path:", path);
 
           // Show error notification if available

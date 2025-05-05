@@ -530,7 +530,7 @@
             </div>
 
             <!-- Owner-only edit controls with Win98 styling -->
-            <div id="profile-owner-controls" class="hidden">
+            <div id="profile-owner-controls" style="display: none;">
               <a href="/profile/edit" class="edit-profile-btn">EDIT PROFILE</a>
 
               <div class="action-buttons">
@@ -641,8 +641,8 @@
 
     // Show edit profile link and controls if owner
     if (isOwner) {
-      document.getElementById('edit-profile-link').classList.remove('hidden');
-      document.getElementById('profile-owner-controls').classList.remove('hidden');
+      document.getElementById('edit-profile-link').style.display = 'list-item';
+      document.getElementById('profile-owner-controls').style.display = 'block';
     }
 
     // Update profile details

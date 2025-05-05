@@ -456,15 +456,9 @@ function activateEasterEgg() {
 
   // Play special glitch sound
   try {
-    // Use standard AudioContext
-    const audioContext = new (window.AudioContext || function() {
-      // Fallback for older browsers
-      return {
-        createOscillator: function() { return { connect: function() {}, start: function() {}, stop: function() {} } },
-        createGain: function() { return { connect: function() {}, gain: { value: 0 } } },
-        destination: {}
-      };
-    })();
+    // Use standard AudioContext with fallback for older browsers
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    const audioContext = new AudioContextClass();
 
     // Create multiple oscillators for a more complex sound
     for (let i = 0; i < 3; i++) {

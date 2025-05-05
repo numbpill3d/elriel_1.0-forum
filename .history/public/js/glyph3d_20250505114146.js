@@ -297,7 +297,7 @@ function createGlyphModel(svgElement) {
     });
 
     // Process circles as spheres
-    circles.forEach((circle) => {
+    circles.forEach((circle, index) => {
       const radius = parseFloat(circle.getAttribute('r')) * scale * 0.1;
       const geometry = new THREE.SphereGeometry(radius || 0.2, 16, 16);
       const material = new THREE.MeshPhongMaterial({
@@ -321,7 +321,7 @@ function createGlyphModel(svgElement) {
     });
 
     // Process lines as cylinders
-    lines.forEach((line) => {
+    lines.forEach((line, index) => {
       const x1 = parseFloat(line.getAttribute('x1')) * scale;
       const y1 = parseFloat(line.getAttribute('y1')) * scale;
       const x2 = parseFloat(line.getAttribute('x2')) * scale;

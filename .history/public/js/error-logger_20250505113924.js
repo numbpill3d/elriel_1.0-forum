@@ -31,7 +31,8 @@ function showErrorNotification(resource) {
       resource.includes('feed') || resource.includes('glyph') || resource.includes('whisper') ||
       resource.includes('terminal') || resource.includes('auth')) {
 
-    // Check if it's a navigation issue
+    // Try to fix the path if it's a navigation issue
+    let fixedResource = resource;
     let isNavigationIssue = false;
 
     // Check if it's a navigation path issue

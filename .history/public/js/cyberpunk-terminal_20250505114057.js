@@ -317,15 +317,9 @@ function initGlitchEffects() {
 function playGlitchSound() {
   // Create simple audio glitch effect using Web Audio API
   try {
-    // Use standard AudioContext
-    const audioContext = new (window.AudioContext || function() {
-      // Fallback for older browsers
-      return {
-        createOscillator: function() { return { connect: function() {}, start: function() {}, stop: function() {} } },
-        createGain: function() { return { connect: function() {}, gain: { value: 0 } } },
-        destination: {}
-      };
-    })();
+    // Use standard AudioContext with fallback for older browsers
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    const audioContext = new AudioContextClass();
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
 
@@ -456,15 +450,9 @@ function activateEasterEgg() {
 
   // Play special glitch sound
   try {
-    // Use standard AudioContext
-    const audioContext = new (window.AudioContext || function() {
-      // Fallback for older browsers
-      return {
-        createOscillator: function() { return { connect: function() {}, start: function() {}, stop: function() {} } },
-        createGain: function() { return { connect: function() {}, gain: { value: 0 } } },
-        destination: {}
-      };
-    })();
+    // Use standard AudioContext with fallback for older browsers
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+    const audioContext = new AudioContextClass();
 
     // Create multiple oscillators for a more complex sound
     for (let i = 0; i < 3; i++) {

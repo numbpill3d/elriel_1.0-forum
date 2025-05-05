@@ -321,7 +321,7 @@ function createGlyphModel(svgElement) {
     });
 
     // Process lines as cylinders
-    lines.forEach((line) => {
+    lines.forEach((line, index) => {
       const x1 = parseFloat(line.getAttribute('x1')) * scale;
       const y1 = parseFloat(line.getAttribute('y1')) * scale;
       const x2 = parseFloat(line.getAttribute('x2')) * scale;
