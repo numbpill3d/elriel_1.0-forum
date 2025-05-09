@@ -1,56 +1,15 @@
 // Elriel - A haunted terminal-based social network
 // Render deployment version - completely removes SQLite dependency
 
-// ==== RENDER SQLITE PREVENTION SYSTEM ====
-// Overwrite the require function to prevent any SQLite module from loading
-const originalRequire = module.require;
-module.require = function(id) {
-  if (id === 'better-sqlite3' || id === 'sqlite3' || id.includes('sqlite')) {
-    console.error(`❌ BLOCKED IMPORT: Attempted to require SQLite module: ${id}`);
-    console.error('This is prevented in the Render deployment version.');
-    // Return a mock object instead of actually loading SQLite
-    return {
-      verbose: () => ({}),
-      Database: function() {
-        return {
-          prepare: () => ({
-            get: () => ({}),
-            all: () => ([]),
-            run: () => ({})
-          }),
-          close: () => {}
-        };
-      }
-    };
-  }
-  return originalRequire.apply(this, arguments);
-};
-
-// Also patch the global require function
-const originalGlobalRequire = require;
-global.require = function(id) {
-  if (id === 'better-sqlite3' || id === 'sqlite3' || id.includes('sqlite')) {
-    console.error(`❌ BLOCKED IMPORT: Attempted to require SQLite module: ${id}`);
-    console.error('This is prevented in the Render deployment version.');
-    // Return a mock object instead of actually loading SQLite
-    return {
-      verbose: () => ({}),
-      Database: function() {
-        return {
-          prepare: () => ({
-            get: () => ({}),
-            all: () => ([]),
-            run: () => ({})
-          }),
-          close: () => {}
-        };
-      }
-    };
-  }
-  return originalGlobalRequire.apply(this, arguments);
-};
-
-console.log('✅ Render SQLite Prevention System active - all SQLite imports will be mocked');
+// Safety check to prevent accidental SQLite usage
+try {
+  require('better-sqlite3');
+  console.error('ERROR: better-sqlite3 was loaded. This should not happen in the Render version.');
+  process.exit(1);
+} catch (err) {
+  // This is expected - better-sqlite3 should not be available
+  console.log('Render deployment: SQLite dependency successfully excluded.');
+}
 
 require('dotenv').config();
 const express = require('express');

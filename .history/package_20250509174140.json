@@ -8,6 +8,7 @@
     "start:supabase": "node app_supabase.js",
     "dev": "nodemon app.js",
     "dev:supabase": "nodemon app_supabase.js",
+    "start:supabase": "node app_supabase.js",
     "init-db": "node db/init.js",
     "migrate-to-supabase": "node migrate-to-supabase.js",
     "migrate-improved": "node migrate-improved.js",
