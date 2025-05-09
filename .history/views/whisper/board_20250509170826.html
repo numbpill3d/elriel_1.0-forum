@@ -12,7 +12,6 @@
   <script src="/js/error-logger.js" defer></script>
   <script src="/js/glitch.js" defer></script>
   <script src="/js/navigation-debug.js" defer></script>
-  <script src="/js/sidebar-manager.js" defer></script>
 </head>
 <body class="terminal">
   <div class="noise-overlay"></div>
@@ -288,7 +287,26 @@
       document.body.classList.add('glitch-active');
     }
     
-    // Note: Sidebar navigation is now handled by sidebar-manager.js
+    // Mobile navigation toggle
+    const mobileNavToggle = document.getElementById('mobile-nav-toggle');
+    const sidebar = document.getElementById('main-sidebar');
+    
+    if (mobileNavToggle && sidebar) {
+      mobileNavToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('active');
+        this.textContent = sidebar.classList.contains('active') ? 'HIDE NAVIGATION' : 'SHOW NAVIGATION';
+        
+        // Store sidebar state in localStorage
+        localStorage.setItem('sidebar-active', sidebar.classList.contains('active') ? 'true' : 'false');
+      });
+      
+      // Set initial state on page load
+      const sidebarActive = localStorage.getItem('sidebar-active');
+      if (sidebarActive === 'true') {
+        sidebar.classList.add('active');
+        mobileNavToggle.textContent = 'HIDE NAVIGATION';
+      }
+    }
   </script>
 </body>
 </html>

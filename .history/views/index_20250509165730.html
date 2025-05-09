@@ -39,9 +39,7 @@
   <script src="/js/navigation-debug.js" defer></script>
   <script src="/js/mobile-enhancements.js" defer></script>
   <script src="/js/performance-fixes.js" defer></script>
-  <script src="/js/sidebar-manager.js" defer></script>
   <link rel="stylesheet" href="/css/responsive-fixes.css">
-  <link rel="stylesheet" href="/css/bleedstream-sidebar.css">
   <link rel="stylesheet" href="/css/bleedstream-sidebar.css">
 </head>
 <body class="terminal">
@@ -536,7 +534,26 @@ ${chars[6]}${chars[7]}${chars[7]}${chars[7]}${chars[6]}
         document.body.classList.add('glitch-active');
       }
       
-      // Note: Sidebar navigation is now handled by sidebar-manager.js
+      // Mobile navigation toggle
+      const mobileNavToggle = document.getElementById('mobile-nav-toggle');
+      const sidebar = document.getElementById('main-sidebar');
+      
+      if (mobileNavToggle && sidebar) {
+        mobileNavToggle.addEventListener('click', function() {
+          sidebar.classList.toggle('active');
+          this.textContent = sidebar.classList.contains('active') ? 'HIDE NAVIGATION' : 'SHOW NAVIGATION';
+          
+          // Store sidebar state in localStorage
+          localStorage.setItem('sidebar-active', sidebar.classList.contains('active') ? 'true' : 'false');
+        });
+        
+        // Set initial state on page load
+        const sidebarActive = localStorage.getItem('sidebar-active');
+        if (sidebarActive === 'true') {
+          sidebar.classList.add('active');
+          mobileNavToggle.textContent = 'HIDE NAVIGATION';
+        }
+      }
     }
 
     // Secret feature activation

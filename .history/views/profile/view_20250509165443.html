@@ -12,7 +12,6 @@
   <link rel="stylesheet" href="/css/bleedstream-sidebar.css">
   <script src="/js/glitch.js" defer></script>
   <script src="/js/win98.js" defer></script>
-  <script src="/js/sidebar-manager.js" defer></script>
   <style>
     /* Mystical hacker profile styles - Web 1.0/Geocities inspired with enhanced mystical elements */
     body.terminal {
@@ -988,17 +987,8 @@
     document.getElementById('toggle-glitch').addEventListener('click', function(e) {
       e.preventDefault();
       document.body.classList.toggle('glitch-active');
-      // Store preference in localStorage
-      localStorage.setItem('glitch-active', document.body.classList.contains('glitch-active') ? 'true' : 'false');
     });
-
-    // Check if glitch effects were previously enabled
-    const glitchActive = localStorage.getItem('glitch-active');
-    if (glitchActive === 'true') {
-      document.body.classList.add('glitch-active');
-    }
-
-    // Note: Sidebar navigation is now handled by sidebar-manager.js
   </script>
 </body>
 </html>
+

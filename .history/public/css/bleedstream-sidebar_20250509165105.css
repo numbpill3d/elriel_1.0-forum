@@ -1,0 +1,147 @@
+/* Bleedstream Sidebar Layout CSS */
+/* This file specifically handles the sidebar layout for the bleedstream and related pages */
+
+/* Basic layout structure */
+.content-wrapper {
+  display: flex;
+  min-height: calc(100vh - 150px);
+  position: relative;
+}
+
+/* Sidebar Styles - Desktop First */
+.sidebar {
+  width: 250px;
+  background-color: var(--sidebar-bg, rgba(8, 0, 10, 0.95));
+  padding: 1.5rem 1rem;
+  border-right: 2px solid rgba(255, 0, 0, 0.3);
+  box-shadow: 5px 0 15px rgba(0, 0, 0, 0.8);
+  position: sticky;
+  top: 0;
+  height: 100%;
+  overflow-y: auto;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+/* Main content area */
+.main-content {
+  flex: 1;
+  padding: 1.5rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  min-width: 0; /* Prevents flex items from overflowing */
+}
+
+/* Mobile navigation toggle button */
+.mobile-nav-toggle {
+  display: none;
+  width: 100%;
+  padding: 12px;
+  margin: 0 0 10px 0;
+  background-color: var(--panel-bg, rgba(15, 0, 20, 0.8));
+  color: var(--terminal-green, #8a2be2);
+  border: 1px solid var(--terminal-dim-green, #5e1c99);
+  text-align: center;
+  cursor: pointer;
+  font-family: var(--header-font, monospace);
+  font-size: 1rem;
+  letter-spacing: 2px;
+  transition: all 0.3s ease;
+}
+
+.mobile-nav-toggle:hover {
+  background-color: var(--terminal-dim-green, #5e1c99);
+  color: var(--terminal-bg, #0a0008);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .content-wrapper {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 1rem;
+    border-right: none;
+    border-bottom: 1px solid var(--terminal-dim-green, #5e1c99);
+    position: relative;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+  }
+  
+  .sidebar.active {
+    max-height: 1000px;
+    padding: 1rem;
+    overflow-y: auto;
+    border-bottom: 1px solid var(--terminal-green, #8a2be2);
+  }
+  
+  .mobile-nav-toggle {
+    display: block;
+  }
+  
+  .main-content {
+    width: 100%;
+    padding: 1rem;
+  }
+}
+
+/* Override any conflicting styles from responsive-fixes.css */
+@media (min-width: 769px) {
+  .sidebar {
+    max-height: none !important;
+    overflow: visible !important;
+    display: block !important;
+  }
+}
+
+/* Improve nav links styling */
+.nav-section {
+  margin-bottom: 1.5rem;
+}
+
+.nav-title {
+  font-family: var(--header-font, monospace);
+  color: var(--terminal-dim-green, #5e1c99);
+  font-size: 1.2rem;
+  margin-bottom: 0.8rem;
+  border-bottom: 1px solid var(--terminal-dim-green, #5e1c99);
+  padding-bottom: 0.5rem;
+  letter-spacing: 2px;
+}
+
+.nav-links {
+  list-style: none;
+}
+
+.nav-links li {
+  margin-bottom: 0.3rem;
+}
+
+.nav-links a {
+  display: block;
+  padding: 0.7rem 0.5rem;
+  color: var(--terminal-text, #d8b8ff);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border-left: 3px solid transparent;
+  font-family: var(--header-font, monospace);
+  letter-spacing: 1.5px;
+  position: relative;
+}
+
+.nav-links a:hover, .nav-links a.active {
+  color: var(--terminal-green, #8a2be2);
+  border-left-color: var(--terminal-green, #8a2be2);
+  background-color: rgba(255, 0, 0, 0.15);
+  text-shadow: 0 0 8px var(--glow-color, rgba(138, 43, 226, 0.5));
+}
+
+/* Better touch targets for mobile */
+@media (max-width: 768px) {
+  .nav-links a {
+    padding: 12px 10px;
+    margin-bottom: 5px;
+  }
+}
