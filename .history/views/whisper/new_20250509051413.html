@@ -103,26 +103,9 @@
 
   <script>
     // Inject data from server
-    let data, user, glyphs;
-    try {
-      data = JSON.parse('__DATA__'.replace(/\\n/g, "\\n")
-        .replace(/\\'/g, "\\'")
-        .replace(/\\"/g, '\\"')
-        .replace(/\\&/g, "\\&")
-        .replace(/\\r/g, "\\r")
-        .replace(/\\t/g, "\\t")
-        .replace(/\\b/g, "\\b")
-        .replace(/\\f/g, "\\f"));
-      user = data.user;
-      glyphs = data.glyphs || [];
-      console.log("Whisper data loaded successfully:", { hasUser: !!user, glyphCount: glyphs.length });
-    } catch (err) {
-      console.error("Error parsing injected data:", err);
-      // Set default values
-      data = {};
-      user = null;
-      glyphs = [];
-    }
+    const data = __DATA__;
+    const user = data.user;
+    const glyphs = data.glyphs;
     
     // Update user status in header
     const userStatusEl = document.getElementById('user-status');

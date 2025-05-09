@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NEW WHISPER | ELRIEL</title>
+  <title>NEW POST | ELRIEL</title>
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/glitch.css">
-  <link rel="stylesheet" href="/css/whisper.css">
+  <link rel="stylesheet" href="/css/feed.css">
   <script src="/js/glitch.js" defer></script>
 </head>
 <body class="terminal">
@@ -42,7 +42,7 @@
           <ul class="nav-links">
             <li><a href="/profile">DASHBOARD</a></li>
             <li><a href="/profile/edit">EDIT PROFILE</a></li>
-            <li><a href="/feed/new">CREATE POST</a></li>
+            <li><a href="/feed/new" class="active">CREATE POST</a></li>
           </ul>
         </div>
         <div class="nav-section">
@@ -55,20 +55,30 @@
       </nav>
 
       <main class="main-content">
-        <section class="new-whisper-panel">
+        <section class="new-post-panel">
           <div class="panel-header">
-            <h2>TRANSMIT WHISPER</h2>
-            <div class="status-indicator">ANONYMOUS</div>
+            <h2>CREATE NEW POST</h2>
+            <div class="status-indicator">TRANSMIT</div>
           </div>
-          <div class="new-whisper-content">
-            <form id="new-whisper-form">
+          <div class="new-post-content">
+            <form id="new-post-form">
+              <div class="form-group">
+                <label for="title">TITLE:</label>
+                <input type="text" id="title" name="title" required>
+              </div>
+              
               <div class="form-group">
                 <label for="content">CONTENT:</label>
                 <textarea id="content" name="content" required></textarea>
               </div>
               
-              <div class="form-group" id="glyph-selection-group" style="display: none;">
-                <label>ATTACH SIGIL (OPTIONAL - REQUIRES LOGIN):</label>
+              <div class="form-group">
+                <label for="tags">TAGS (COMMA SEPARATED):</label>
+                <input type="text" id="tags" name="tags">
+              </div>
+              
+              <div class="form-group">
+                <label>ATTACH SIGIL (OPTIONAL):</label>
                 <div class="glyph-selection" id="glyph-selection">
                   <!-- User's glyphs will be injected here -->
                 </div>
@@ -77,10 +87,10 @@
               
               <div class="form-group">
                 <input type="checkbox" id="is-encrypted" name="isEncrypted" value="1">
-                <label for="is-encrypted">ENCRYPT WHISPER?</label>
+                <label for="is-encrypted">ENCRYPT POST?</label>
               </div>
               
-              <button type="submit">TRANSMIT WHISPER</button>
+              <button type="submit">TRANSMIT TO BLEEDSTREAM</button>
             </form>
             
             <div id="message" style="color: var(--terminal-green); margin-top: 1rem;"></div>
@@ -103,26 +113,9 @@
 
   <script>
     // Inject data from server
-    let data, user, glyphs;
-    try {
-      data = JSON.parse('__DATA__'.replace(/\\n/g, "\\n")
-        .replace(/\\'/g, "\\'")
-        .replace(/\\"/g, '\\"')
-        .replace(/\\&/g, "\\&")
-        .replace(/\\r/g, "\\r")
-        .replace(/\\t/g, "\\t")
-        .replace(/\\b/g, "\\b")
-        .replace(/\\f/g, "\\f"));
-      user = data.user;
-      glyphs = data.glyphs || [];
-      console.log("Whisper data loaded successfully:", { hasUser: !!user, glyphCount: glyphs.length });
-    } catch (err) {
-      console.error("Error parsing injected data:", err);
-      // Set default values
-      data = {};
-      user = null;
-      glyphs = [];
-    }
+    const data = __DATA__;
+    const user = data.user;
+    const glyphs = data.glyphs;
     
     // Update user status in header
     const userStatusEl = document.getElementById('user-status');
@@ -136,8 +129,6 @@
           </div>
         </div>
       `;
-      // Show glyph selection if logged in
-      document.getElementById('glyph-selection-group').style.display = 'block';
     } else {
       userStatusEl.innerHTML = `
         <div class="logged-out">
@@ -147,9 +138,9 @@
       `;
     }
     
-    // Display user's glyphs for selection (only if logged in)
+    // Display user's glyphs for selection
     const glyphSelectionEl = document.getElementById('glyph-selection');
-    if (user && glyphs && glyphs.length > 0) {
+    if (glyphs && glyphs.length > 0) {
       glyphs.forEach(glyph => {
         const glyphItem = document.createElement('div');
         glyphItem.className = 'glyph-item';
@@ -169,15 +160,17 @@
         
         glyphSelectionEl.appendChild(glyphItem);
       });
-    } else if (user) {
+    } else {
       glyphSelectionEl.innerHTML = '<span>NO SAVED SIGILS. VISIT THE GLYPH CRUCIBLE TO GENERATE SOME.</span>';
     }
     
     // Handle form submission
-    document.getElementById('new-whisper-form').addEventListener('submit', async (e) => {
+    document.getElementById('new-post-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       
+      const title = document.getElementById('title').value;
       const content = document.getElementById('content').value;
+      const tags = document.getElementById('tags').value;
       const glyphId = document.getElementById('selected-glyph-id').value;
       const isEncrypted = document.getElementById('is-encrypted').checked;
       
@@ -189,12 +182,12 @@
       encryptionKeyMessageEl.textContent = '';
       
       try {
-        const response = await fetch('/whisper/create', {
+        const response = await fetch('/feed/create', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ content, glyphId, isEncrypted })
+          body: JSON.stringify({ title, content, tags, glyphId, isEncrypted })
         });
         
         const data = await response.json();
@@ -204,16 +197,16 @@
           if (data.encryptionKey) {
             encryptionKeyMessageEl.textContent = `ENCRYPTION KEY: ${data.encryptionKey}`;
           }
-          // Optionally redirect after successful whisper
+          // Optionally redirect after successful post
           // setTimeout(() => {
-          //   window.location.href = '/whisper/board';
+          //   window.location.href = '/feed/bleedstream';
           // }, 2000);
         } else {
-          errorMessageEl.textContent = data.message || 'Whisper transmission failed. Unknown error.';
+          errorMessageEl.textContent = data.message || 'Post creation failed. Unknown error.';
         }
       } catch (error) {
-        console.error('Whisper creation error:', error);
-        errorMessageEl.textContent = 'System error. Could not transmit whisper.';
+        console.error('Post creation error:', error);
+        errorMessageEl.textContent = 'System error. Could not transmit post.';
       }
     });
     

@@ -91,26 +91,9 @@
 
   <script>
     // Inject data from server
-    let data, whisper, user;
-    try {
-      data = JSON.parse('__DATA__'.replace(/\\n/g, "\\n")
-        .replace(/\\'/g, "\\'")
-        .replace(/\\"/g, '\\"')
-        .replace(/\\&/g, "\\&")
-        .replace(/\\r/g, "\\r")
-        .replace(/\\t/g, "\\t")
-        .replace(/\\b/g, "\\b")
-        .replace(/\\f/g, "\\f"));
-      whisper = data.whisper;
-      user = data.user;
-      console.log("Whisper data loaded successfully:", { hasWhisper: !!whisper });
-    } catch (err) {
-      console.error("Error parsing injected data:", err);
-      // Set default values
-      data = {};
-      whisper = {};
-      user = null;
-    }
+    const data = __DATA__;
+    const whisper = data.whisper;
+    const user = data.user;
     
     // Update user status in header
     const userStatusEl = document.getElementById('user-status');

@@ -98,7 +98,12 @@ router.get('/crucible-3d', (req, res) => {
 
     // Inject data into the HTML
     let html = fs.readFileSync(path.join(__dirname, '../views/glyph/crucible-enhanced.html'), 'utf8');
-    html = html.replace('__DATA__', JSON.stringify(data));
+    const safeData = JSON.stringify(data).replace(/</g, '\\u003c')
+                                         .replace(/>/g, '\\u003e')
+                                         .replace(/&/g, '\\u0026')
+                                         .replace(/'/g, '\\u0027')
+                                         .replace(/"/g, '\\"');
+    html = html.replace('__DATA__', safeData);
 
     res.send(html);
   } catch (err) {
@@ -246,7 +251,12 @@ router.get('/view/:id', (req, res) => {
 
     // Inject data into the HTML
     let html = fs.readFileSync(path.join(__dirname, '../views/glyph/view.html'), 'utf8');
-    html = html.replace('__DATA__', JSON.stringify(data));
+    const safeData = JSON.stringify(data).replace(/</g, '\\u003c')
+                                         .replace(/>/g, '\\u003e')
+                                         .replace(/&/g, '\\u0026')
+                                         .replace(/'/g, '\\u0027')
+                                         .replace(/"/g, '\\"');
+    html = html.replace('__DATA__', safeData);
 
     res.send(html);
   } catch (err) {
