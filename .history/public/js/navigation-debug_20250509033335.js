@@ -116,44 +116,12 @@ document.addEventListener('DOMContentLoaded', function() {
                            path.startsWith('/forum/topic/') ||
                            path.startsWith('/profile/user/') ||
                            path.match(/^\/api\/.*/) ||
-                           path.match(/^\/uploads\/.*/) ||
-                           path.match(/^\/css\/.*/) ||
-                           path.match(/^\/js\/.*/);
+                           path.match(/^\/uploads\/.*/);
 
         if (!isKnownPath) {
           console.warn("[NAV DEBUG] Potentially unknown path:", path);
 
-          // Try to fix the path
-          let fixedPath = null;
-
-          // Check if it's a direct match in oldStylePaths
-          if (window.oldStylePaths && window.oldStylePaths[path]) {
-            fixedPath = window.oldStylePaths[path];
-          }
-          // If not a direct match, try to find a pattern match
-          else {
-            // Check if it's a path with parameters like /forum/topic/123
-            const pathParts = path.split('/').filter(part => part);
-            if (pathParts.length >= 2) {
-              const basePath = '/' + pathParts[0];
-              if (window.oldStylePaths && window.oldStylePaths[basePath]) {
-                fixedPath = window.oldStylePaths[basePath];
-                // Append the rest of the path
-                if (pathParts.length > 1) {
-                  fixedPath += '/' + pathParts.slice(1).join('/');
-                }
-              }
-            }
-          }
-
-          if (fixedPath) {
-            console.log("[NAV DEBUG] Fixing path:", path, "->", fixedPath);
-            e.preventDefault();
-            window.location.href = fixedPath;
-            return;
-          }
-
-          // Show error notification if available and no fix was found
+          // Show error notification if available
           if (typeof showErrorNotification === 'function') {
             e.preventDefault();
             showErrorNotification(path);

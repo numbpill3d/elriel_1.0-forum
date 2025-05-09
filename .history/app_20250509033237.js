@@ -78,17 +78,11 @@ app.use('/api', apiRoutes);
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  console.error('Error URL:', req.originalUrl);
-  console.error('Error Method:', req.method);
-  console.error('Error Headers:', JSON.stringify(req.headers, null, 2));
   res.status(500).sendFile(path.join(__dirname, 'views', 'error.html'));
 });
 
 // 404 handler - with ARG-style mysterious error page
 app.use((req, res) => {
-  console.warn('404 Not Found:', req.originalUrl);
-  console.warn('Referrer:', req.get('Referrer') || 'None');
-  console.warn('User Agent:', req.get('User-Agent') || 'None');
   res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
 });
 
@@ -96,8 +90,6 @@ app.use((req, res) => {
 app.listen(PORT, () => {
   console.log(`Elriel network node activated on port ${PORT}`);
   console.log(`Terminal access: http://localhost:${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`Using Supabase database: ${process.env.SUPABASE_URL}`);
 });
 
 module.exports = app;

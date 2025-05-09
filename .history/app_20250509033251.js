@@ -96,8 +96,6 @@ app.use((req, res) => {
 app.listen(PORT, () => {
   console.log(`Elriel network node activated on port ${PORT}`);
   console.log(`Terminal access: http://localhost:${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`Using Supabase database: ${process.env.SUPABASE_URL}`);
 });
 
 module.exports = app;
