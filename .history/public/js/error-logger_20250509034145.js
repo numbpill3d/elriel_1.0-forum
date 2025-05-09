@@ -314,89 +314,19 @@ function showErrorNotification(resource) {
   }
 }
 
-/**
- * Suggest relevant links based on the current URL
- */
-function suggestRelevantLinks() {
-  const currentPath = window.location.pathname;
-  const suggestionsList = document.getElementById('suggestions-list');
-
-  if (!suggestionsList) return;
-
-  // Common pages to suggest
-  const commonSuggestions = [
-    { url: '/', title: 'Home Page' },
-    { url: '/feed/bleedstream', title: 'Bleedstream' },
-    { url: '/glyph/crucible', title: 'Glyph Crucible' },
-    { url: '/whisper/board', title: 'Whisperboard' },
-    { url: '/forum/scrapyard', title: 'Scrapyard Forum' }
-  ];
-
-  // Add specific suggestions based on the URL
-  let specificSuggestions = [];
-
-  // Check for patterns in the URL to make relevant suggestions
-  if (currentPath.includes('feed') || currentPath.includes('bleed')) {
-    specificSuggestions.push({ url: '/feed/bleedstream', title: 'Bleedstream Feed' });
-  }
-
-  if (currentPath.includes('glyph') || currentPath.includes('crucible')) {
-    specificSuggestions.push({ url: '/glyph/crucible', title: 'Glyph Crucible' });
-  }
-
-  if (currentPath.includes('whisper') || currentPath.includes('board')) {
-    specificSuggestions.push({ url: '/whisper/board', title: 'Whisperboard' });
-  }
-
-  if (currentPath.includes('forum') || currentPath.includes('scrap')) {
-    specificSuggestions.push({ url: '/forum/scrapyard', title: 'Scrapyard Forum' });
-  }
-
-  if (currentPath.includes('profile') || currentPath.includes('user')) {
-    specificSuggestions.push({ url: '/profile', title: 'User Profile' });
-    specificSuggestions.push({ url: '/auth/login', title: 'Login Page' });
-  }
-
-  // Combine and deduplicate suggestions
-  const allSuggestions = [...specificSuggestions];
-
-  // Add common suggestions if we don't have enough specific ones
-  if (specificSuggestions.length < 3) {
-    commonSuggestions.forEach(suggestion => {
-      if (!allSuggestions.some(s => s.url === suggestion.url)) {
-        allSuggestions.push(suggestion);
-      }
-    });
-  }
-
-  // Limit to 5 suggestions
-  const limitedSuggestions = allSuggestions.slice(0, 5);
-
-  // Add to the page
-  limitedSuggestions.forEach(suggestion => {
-    const li = document.createElement('li');
-    const a = document.createElement('a');
-    a.href = suggestion.url;
-    a.textContent = suggestion.title;
-    li.appendChild(a);
-    suggestionsList.appendChild(li);
-  });
-}
-
 // Log when document is fully loaded
 document.addEventListener('DOMContentLoaded', function() {
   console.log('Document loaded successfully');
 
   // Check for visible cursors
-  const { styleSheets } = document;
+  const styleSheets = document.styleSheets;
   let cursorStylesFound = false;
 
   try {
     for (let i = 0; i < styleSheets.length; i++) {
       const sheet = styleSheets[i];
       try {
-        // Use cssRules (sheet.rules is deprecated)
-        const rules = sheet.cssRules;
+        const rules = sheet.cssRules || sheet.rules;
         for (let j = 0; j < rules.length; j++) {
           if (rules[j].cssText && rules[j].cssText.includes('cursor')) {
             cursorStylesFound = true;
@@ -415,4 +345,4 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-console.log('[ERROR LOGGER] Enhanced error logger initialized');
+console.log('Error logger initialized');

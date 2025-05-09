@@ -27,35 +27,14 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /**
- * Detect device capabilities and apply appropriate optimizations
+ * Detect low-end devices and apply optimizations
  */
-function detectDeviceCapabilities() {
+function detectLowEndDevice() {
   // Check if device is low-end
   const isLowEnd = isLowEndDevice();
 
-  // Check if we're on a mobile device
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
-
-  // Check if we're on a slow connection
-  const isSlowConnection = navigator.connection ?
-    (navigator.connection.saveData ||
-    ['slow-2g', '2g', '3g'].includes(navigator.connection.effectiveType)) :
-    false;
-
-  // Check if user prefers reduced motion
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  // Store these flags globally
-  window.elrielDeviceCapabilities = {
-    isLowEnd,
-    isMobile,
-    isSlowConnection,
-    prefersReducedMotion
-  };
-
-  // Apply performance mode if needed
-  if (isLowEnd || isSlowConnection || prefersReducedMotion) {
-    console.log('[PERFORMANCE] Low-end device or slow connection detected, applying performance optimizations');
+  if (isLowEnd) {
+    console.log('Low-end device detected, applying performance optimizations');
     document.body.classList.add('low-performance-device');
 
     // Add styles to reduce animation complexity
@@ -92,13 +71,6 @@ function detectDeviceCapabilities() {
 
     document.head.appendChild(reducedAnimationStyles);
   }
-
-  // Apply mobile optimizations if needed
-  if (isMobile) {
-    document.body.classList.add('mobile-device');
-  }
-
-  return window.elrielDeviceCapabilities;
 }
 
 /**
@@ -106,13 +78,17 @@ function detectDeviceCapabilities() {
  */
 function isLowEndDevice() {
   // Check for low memory
-  if ('deviceMemory' in navigator && navigator.deviceMemory < 4) {
-    return true;
+  if ('deviceMemory' in navigator) {
+    if (navigator.deviceMemory < 4) {
+      return true;
+    }
   }
 
   // Check for slow CPU
-  if ('hardwareConcurrency' in navigator && navigator.hardwareConcurrency < 4) {
-    return true;
+  if ('hardwareConcurrency' in navigator) {
+    if (navigator.hardwareConcurrency < 4) {
+      return true;
+    }
   }
 
   // Check for mobile device
@@ -227,105 +203,11 @@ function setupEventDebouncing() {
   });
 }
 
-/**
- * Defer non-critical resources
- */
-function deferNonCriticalResources() {
-  // Check if we're on a low-end device or slow connection
-  const { isLowEnd, isSlowConnection } = window.elrielDeviceCapabilities || {};
-
-  if (!isLowEnd && !isSlowConnection) {
-    return; // Only defer resources on low-end devices or slow connections
-  }
-
-  // List of non-critical resources to defer
-  const nonCriticalResources = [
-    { type: 'script', src: '/js/glitch.js' },
-    { type: 'script', src: '/js/terminal-effects.js' },
-    { type: 'script', src: '/js/ascii-art.js' }
-  ];
-
-  // Defer loading of non-critical scripts
-  nonCriticalResources.forEach(resource => {
-    if (resource.type === 'script') {
-      const existingScript = document.querySelector(`script[src="${resource.src}"]`);
-
-      // If the script is already loaded with defer or async, leave it alone
-      if (existingScript && (existingScript.defer || existingScript.async)) {
-        return;
-      }
-
-      // If the script exists but isn't deferred, remove it
-      if (existingScript) {
-        existingScript.remove();
-      }
-
-      // Create a new deferred script
-      const script = document.createElement('script');
-      script.src = resource.src;
-      script.defer = true;
-
-      // Add to the document
-      document.body.appendChild(script);
-      console.log('[PERFORMANCE] Deferred loading of:', resource.src);
-    }
-  });
-}
-
-/**
- * Set up lazy loading for heavy elements
- */
-function setupLazyLoading() {
-  // Check if Intersection Observer is supported
-  if (!('IntersectionObserver' in window)) {
-    return;
-  }
-
-  // Create an observer for lazy loading
-  const lazyLoadObserver = new IntersectionObserver((entries, observer) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const element = entry.target;
-
-        // Handle different types of lazy-loaded content
-        if (element.classList.contains('lazy-image')) {
-          const src = element.dataset.src;
-          if (src) {
-            element.src = src;
-            element.classList.remove('lazy-image');
-            observer.unobserve(element);
-          }
-        } else if (element.classList.contains('lazy-background')) {
-          const src = element.dataset.background;
-          if (src) {
-            element.style.backgroundImage = `url(${src})`;
-            element.classList.remove('lazy-background');
-            observer.unobserve(element);
-          }
-        } else if (element.classList.contains('lazy-load')) {
-          element.classList.add('loaded');
-          observer.unobserve(element);
-        }
-      }
-    });
-  }, {
-    rootMargin: '100px',
-    threshold: 0.1
-  });
-
-  // Observe all elements with lazy loading classes
-  document.querySelectorAll('.lazy-image, .lazy-background, .lazy-load').forEach(element => {
-    lazyLoadObserver.observe(element);
-  });
-}
-
 // Expose functions globally
 window.elrielPerformance = {
-  detectDeviceCapabilities,
+  detectLowEndDevice,
   isLowEndDevice,
   optimizeImages,
   optimizeMobileAnimations,
-  setupEventDebouncing,
-  deferNonCriticalResources,
-  setupLazyLoading
+  setupEventDebouncing
 };
