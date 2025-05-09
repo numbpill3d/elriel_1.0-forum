@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BLEEDSTREAM | ELRIEL</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/glitch.css">
+  <link rel="stylesheet" href="/css/feed.css">
+  <script src="/js/glitch.js" defer></script>
+  <script src="/js/navigation-debug.js" defer></script>
+</head>
+<body class="terminal">
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">TERMINAL ACCESS v1.0</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream" class="active">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+            <li><a href="/forum/scrapyard">SCRAPYARD</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">PROFILE</h3>
+          <ul class="nav-links">
+            <li><a href="/profile">DASHBOARD</a></li>
+            <li><a href="/profile/edit">EDIT PROFILE</a></li>
+            <li><a href="/feed/new">CREATE POST</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <section class="feed-panel">
+          <div class="panel-header">
+            <h2>BLEEDSTREAM</h2>
+            <div class="status-indicator">LIVE FEED</div>
+          </div>
+          <div class="feed-content">
+            <div class="feed-controls">
+              <div class="form-group">
+                <label for="tag-filter">FILTER BY TAG:</label>
+                <select id="tag-filter">
+                  <option value="">ALL TAGS</option>
+                  <!-- Tags will be injected here -->
+                </select>
+              </div>
+              <div class="form-group">
+                <a href="/feed/new" class="new-post-btn">CREATE POST</a>
+              </div>
+            </div>
+
+            <div id="post-list" class="bleedstream-grid">
+              <!-- Posts will be injected here -->
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="main-footer">
+      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+      <div class="footer-glyphs">
+        <span class="glyph">⌘</span>
+        <span class="glyph">⍟</span>
+        <span class="glyph">⎔</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Add error handling for data injection
+    let data, user, posts = [], tags = [], currentTag = null;
+    try {
+      // Inject data from server
+      data = __DATA__;
+      user = data.user;
+      posts = data.posts || [];
+      tags = data.tags || [];
+      currentTag = data.currentTag;
+      console.log("Data loaded successfully:", {
+        hasUser: !!user,
+        postCount: posts.length,
+        tagCount: tags.length
+      });
+    } catch (err) {
+      console.error("Error parsing injected data:", err);
+      // Set default values
+      data = {};
+      user = null;
+      posts = [];
+      tags = [];
+    }
+
+    // Update user status in header
+    const userStatusEl = document.getElementById('user-status');
+    if (user) {
+      userStatusEl.innerHTML = `
+        <div class="logged-in">
+          <span class="username">${user.username}</span>
+          <div class="user-links">
+            <a href="/profile" class="win98-btn">PROFILE</a>
+            <a href="/auth/logout" class="win98-btn">LOGOUT</a>
+          </div>
+        </div>
+      `;
+    } else {
+      userStatusEl.innerHTML = `
+        <div class="logged-out">
+          <a href="/auth/login" class="win98-btn login-btn">LOGIN</a>
+          <a href="/auth/register" class="win98-btn register-btn">REGISTER</a>
+        </div>
+      `;
+    }
+
+    // Populate tag filter dropdown
+    const tagFilterSelect = document.getElementById('tag-filter');
+    tags.forEach(tag => {
+      const option = document.createElement('option');
+      option.value = tag;
+      option.textContent = tag.toUpperCase();
+      tagFilterSelect.appendChild(option);
+    });
+
+    // Set current tag filter
+    if (currentTag) {
+      tagFilterSelect.value = currentTag;
+    }
+
+    // Handle tag filter change
+    tagFilterSelect.addEventListener('change', (e) => {
+      const selectedTag = e.target.value;
+      if (selectedTag) {
+        window.location.href = `/feed/bleedstream?tag=${selectedTag}`;
+      } else {
+        window.location.href = '/feed/bleedstream';
+      }
+    });
+
+    // Display posts
+    const postListEl = document.getElementById('post-list');
+
+    // Create a grid container for the bleedstream items
+    postListEl.className = 'bleedstream-grid';
+
+    if (posts.length > 0) {
+      posts.forEach(post => {
+        const postEl = document.createElement('div');
+        postEl.className = 'bleedstream-item';
+
+        // Create background element if there's a glyph
+        let backgroundStyle = '';
+        if (post.glyph_svg) {
+          backgroundStyle = `style="background-image: url('data:image/svg+xml;base64,${btoa(post.glyph_svg)}');"`;
+        }
+
+        let tagsHtml = '';
+        if (post.tags) {
+          tagsHtml = post.tags.split(',').map(tag =>
+            `<a href="/feed/bleedstream?tag=${tag.trim()}" class="bleedstream-tag">${tag.trim().toUpperCase()}</a>`
+          ).join('');
+        }
+
+        postEl.innerHTML = `
+          <div class="bleedstream-background" ${backgroundStyle}></div>
+          <div class="bleedstream-content">
+            <div class="bleedstream-title"><a href="/feed/post/${post.id}">${post.title}</a></div>
+            <div class="bleedstream-author">BY: <a href="/profile/user/${post.username}">${post.username}</a></div>
+            <div class="bleedstream-text">
+              ${post.content ? post.content.substring(0, 150) + '...' : 'No content available'}
+            </div>
+          </div>
+          <div class="bleedstream-footer">
+            <div class="bleedstream-time">${new Date(post.created_at).toLocaleString()}</div>
+            <div class="bleedstream-actions">
+              <a href="/feed/post/${post.id}" class="bleedstream-action">VIEW</a>
+              ${post.is_encrypted ? '<span class="post-encrypted">ENCRYPTED</span>' : ''}
+            </div>
+          </div>
+        `;
+        postListEl.appendChild(postEl);
+      });
+    } else {
+      postListEl.innerHTML = '<div class="no-posts-message">NO POSTS FOUND IN THE BLEEDSTREAM.</div>';
+    }
+
+    // Toggle glitch effects
+    document.getElementById('toggle-glitch').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.body.classList.toggle('glitch-active');
+    });
+  </script>
+</body>
+</html>

@@ -504,31 +504,6 @@ ${chars[6]}${chars[7]}${chars[7]}${chars[7]}${chars[6]}
       });
     }
 
-    // Initialize toggle glitch functionality
-    function initToggleGlitch() {
-      const toggleGlitchBtn = document.getElementById('toggle-glitch');
-      if (toggleGlitchBtn) {
-        toggleGlitchBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          document.body.classList.toggle('glitch-active');
-
-          // Store preference in localStorage
-          localStorage.setItem('glitch-active', document.body.classList.contains('glitch-active') ? 'true' : 'false');
-
-          // Use the terminal glitch sound if available
-          if (window.elrielTerminal && window.elrielTerminal.playGlitchSound) {
-            window.elrielTerminal.playGlitchSound();
-          }
-        });
-      }
-
-      // Check if glitch effects were previously enabled
-      const glitchActive = localStorage.getItem('glitch-active');
-      if (glitchActive === 'true') {
-        document.body.classList.add('glitch-active');
-      }
-    }
-
     // Secret feature activation
     function activateSecretFeature() {
       console.log("Secret feature activated");

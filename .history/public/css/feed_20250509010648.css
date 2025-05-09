@@ -382,13 +382,6 @@
   background: linear-gradient(to bottom, transparent, rgba(8, 0, 15, 0.8));
 }
 
-.bleedstream-tags {
-  margin-top: 0.5rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.3rem;
-}
-
 .bleedstream-footer {
   display: flex;
   justify-content: space-between;
@@ -994,32 +987,6 @@
 @media (max-width: 768px) {
   .bleedstream-grid {
     grid-template-columns: 1fr;
-    gap: 1rem;
-    padding: 0.5rem;
-  }
-
-  .feed-controls {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .form-group {
-    width: 100%;
-    margin-bottom: 0.75rem;
-  }
-
-  .form-group select {
-    width: 100%;
-  }
-
-  .new-post-btn {
-    width: 100%;
-    text-align: center;
-  }
-
-  .bleedstream-item {
-    height: auto;
-    min-height: 200px;
   }
 
   .form-row {
