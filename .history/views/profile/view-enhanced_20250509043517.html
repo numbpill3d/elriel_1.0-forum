@@ -10,7 +10,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="/js/glyph3d.js" defer></script>
   <script src="/js/glitch.js" defer></script>
-  <script src="/js/profile-themes.js" defer></script>
   <style>
     /* Enhanced Profile Styles */
     .light-theme {
@@ -258,165 +257,6 @@
       background-color: rgba(0, 255, 0, 0.3);
       border-color: var(--terminal-green);
     }
-
-    /* Activity Log Styles */
-    .profile-activity-log {
-      margin-top: 2rem;
-    }
-
-    .activity-log-content {
-      padding: 1rem;
-    }
-
-    .activity-timeline {
-      position: relative;
-      padding-left: 2rem;
-      margin-top: 1rem;
-    }
-
-    .activity-timeline::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0.5rem;
-      width: 2px;
-      background-color: var(--terminal-dim-green);
-    }
-
-    .activity-item {
-      position: relative;
-      margin-bottom: 1.5rem;
-      padding-bottom: 1.5rem;
-      border-bottom: 1px dashed rgba(0, 255, 0, 0.2);
-    }
-
-    .activity-item::before {
-      content: '';
-      position: absolute;
-      top: 0.5rem;
-      left: -2rem;
-      width: 1rem;
-      height: 1rem;
-      border-radius: 50%;
-      background-color: var(--terminal-green);
-      box-shadow: 0 0 10px var(--glow-color);
-    }
-
-    .activity-item:last-child {
-      border-bottom: none;
-    }
-
-    .activity-date {
-      font-family: var(--header-font);
-      color: var(--terminal-dim-green);
-      font-size: 0.8rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .activity-title {
-      font-family: var(--header-font);
-      color: var(--terminal-green);
-      font-size: 1.1rem;
-      margin: 0 0 0.5rem 0;
-    }
-
-    .activity-description {
-      color: var(--terminal-text);
-      margin-bottom: 0.5rem;
-    }
-
-    .activity-meta {
-      display: flex;
-      gap: 1rem;
-      font-size: 0.8rem;
-      color: var(--terminal-dim);
-    }
-
-    .activity-type {
-      padding: 0.2rem 0.5rem;
-      background-color: rgba(0, 0, 0, 0.3);
-      border-radius: 3px;
-    }
-
-    .activity-type-profile {
-      border-left: 3px solid #00ff00;
-    }
-
-    .activity-type-post {
-      border-left: 3px solid #ff9900;
-    }
-
-    .activity-type-glyph {
-      border-left: 3px solid #00ffff;
-    }
-
-    .activity-type-forum {
-      border-left: 3px solid #ff00ff;
-    }
-
-    .activity-type-system {
-      border-left: 3px solid #ffffff;
-    }
-
-    .view-all-activity {
-      margin-top: 1.5rem;
-      text-align: center;
-    }
-
-    .view-all-btn {
-      display: inline-block;
-      padding: 0.5rem 1rem;
-      background-color: rgba(0, 255, 0, 0.1);
-      border: 1px solid var(--terminal-dim-green);
-      color: var(--terminal-text);
-      text-decoration: none;
-      transition: all 0.3s ease;
-    }
-
-    .view-all-btn:hover {
-      background-color: rgba(0, 255, 0, 0.2);
-      border-color: var(--terminal-green);
-    }
-
-    /* Container controls */
-    .container-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .container-controls {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .container-edit-btn, .container-delete-btn {
-      width: 24px;
-      height: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: rgba(0, 0, 0, 0.5);
-      border: 1px solid var(--terminal-dim-green);
-      color: var(--terminal-text);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-size: 1rem;
-      text-decoration: none;
-    }
-
-    .container-edit-btn:hover {
-      background-color: rgba(0, 255, 0, 0.2);
-      border-color: var(--terminal-green);
-      color: var(--terminal-green);
-    }
-
-    .container-delete-btn:hover {
-      background-color: rgba(255, 0, 0, 0.2);
-      border-color: #ff0000;
-      color: #ff0000;
-    }
   </style>
 </head>
 <body class="terminal light-theme">
@@ -478,7 +318,6 @@
               <a href="#posts" class="profile-nav-item">POSTS</a>
               <a href="#activity" class="profile-nav-item">ACTIVITY</a>
               <a href="#containers" class="profile-nav-item">CONTAINERS</a>
-              ${isOwner ? `<a href="/profile/activity" class="profile-nav-item">FULL ACTIVITY LOG</a>` : ''}
             </div>
             <!-- Profile header with background -->
             <div class="profile-view-header" id="profile-view-header">
@@ -573,11 +412,6 @@
     const userContainers = data.containers || [];
     const userRewards = data.rewards || [];
     let glyph3DRenderer = null;
-
-    // Apply profile theme if set
-    if (profile.theme_template) {
-      window.profileThemes.apply(profile.theme_template);
-    }
 
     // Update user status in header
     const userStatusEl = document.getElementById('user-status');
@@ -711,23 +545,15 @@
 
         let containerContent = '';
 
-        // Create container header with edit/delete buttons for owner
-        let containerHeader = `
+        // Create container header
+        containerEl.innerHTML = `
           <div class="container-header">
             <h3 class="container-title">${container.title || 'UNTITLED'}</h3>
-            ${isOwner ? `
-              <div class="container-controls">
-                <a href="/profile/container/edit/${container.id}" class="container-edit-btn" title="Edit Container">✎</a>
-                <button class="container-delete-btn" data-id="${container.id}" title="Delete Container">×</button>
-              </div>
-            ` : ''}
           </div>
           <div class="container-content container-${container.container_type}">
             ${generateContainerContent(container)}
           </div>
         `;
-
-        containerEl.innerHTML = containerHeader;
 
         profileContainersEl.appendChild(containerEl);
       });
@@ -823,44 +649,6 @@
       userPostsContentEl.innerHTML = '<span>NO POSTS FOUND IN ARCHIVE.</span>';
     }
 
-    // Create a simple activity section
-    const activitySection = document.createElement('section');
-    activitySection.className = 'profile-activity-log panel';
-    activitySection.innerHTML = `
-      <div class="panel-header">
-        <h2>RECENT ACTIVITY</h2>
-        <div class="status-indicator">LOG</div>
-      </div>
-      <div class="activity-log-content">
-        <div class="activity-timeline" id="activity-timeline">
-          <div class="activity-item activity-type-profile">
-            <div class="activity-date">${new Date().toLocaleString()}</div>
-            <h3 class="activity-title">Profile Viewed</h3>
-            <div class="activity-description">User profile was accessed.</div>
-            <div class="activity-meta">
-              <span class="activity-type activity-type-profile">PROFILE</span>
-            </div>
-          </div>
-          <div class="activity-item activity-type-system">
-            <div class="activity-date">${new Date(Date.now() - 86400000).toLocaleString()}</div>
-            <h3 class="activity-title">System Login</h3>
-            <div class="activity-description">User logged into the system.</div>
-            <div class="activity-meta">
-              <span class="activity-type activity-type-system">SYSTEM</span>
-            </div>
-          </div>
-          ${isOwner ? `
-            <div class="view-all-activity">
-              <a href="/profile/activity" class="view-all-btn">VIEW FULL ACTIVITY LOG</a>
-            </div>
-          ` : ''}
-        </div>
-      </div>
-    `;
-
-    // Add activity section to the main content after posts
-    document.querySelector('.main-content').appendChild(activitySection);
-
     // Add profile navigation functionality
     document.querySelectorAll('.profile-nav-item').forEach(navItem => {
       navItem.addEventListener('click', function(e) {
@@ -901,45 +689,6 @@
 
       if (targetNav) {
         targetNav.click();
-      }
-    }
-
-    // Add event listeners for container delete buttons
-    document.addEventListener('click', function(e) {
-      if (e.target.classList.contains('container-delete-btn')) {
-        const containerId = e.target.getAttribute('data-id');
-        if (containerId) {
-          if (confirm('Are you sure you want to delete this container?')) {
-            deleteContainer(containerId);
-          }
-        }
-      }
-    });
-
-    // Function to delete a container
-    async function deleteContainer(containerId) {
-      try {
-        const response = await fetch(`/profile/container/${containerId}`, {
-          method: 'DELETE'
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-          // Remove the container from the DOM
-          const containerEl = document.querySelector(`.container-delete-btn[data-id="${containerId}"]`).closest('.profile-container');
-          if (containerEl) {
-            containerEl.remove();
-          }
-
-          // Show success message
-          alert('Container deleted successfully');
-        } else {
-          alert(result.message || 'Failed to delete container');
-        }
-      } catch (error) {
-        console.error('Error deleting container:', error);
-        alert('System error. Could not connect to server.');
       }
     }
 

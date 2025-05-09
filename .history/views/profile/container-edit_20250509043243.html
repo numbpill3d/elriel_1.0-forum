@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EDIT CONTAINER | ELRIEL</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/glitch.css">
+  <link rel="stylesheet" href="/css/profile.css">
+  <link rel="stylesheet" href="/css/win98.css">
+  <link rel="stylesheet" href="/css/responsive-fixes.css">
+  <script src="/js/glitch.js" defer></script>
+  <script src="/js/win98.js" defer></script>
+  <script src="/js/responsive-fixes.js" defer></script>
+  <style>
+    /* Container Editor Styles */
+    .container-editor {
+      background-color: var(--panel-bg);
+      border: var(--panel-border);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .container-preview {
+      margin-top: 2rem;
+      border: 2px dashed var(--terminal-dim-green);
+      padding: 1rem;
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+    
+    .container-preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem 1rem;
+      background-color: rgba(0, 0, 0, 0.3);
+      border-bottom: var(--panel-border);
+      margin-bottom: 1rem;
+    }
+    
+    .container-preview-title {
+      font-family: var(--header-font);
+      color: var(--terminal-green);
+      font-size: 1.1rem;
+      margin: 0;
+    }
+    
+    .container-preview-content {
+      padding: 1rem;
+      min-height: 100px;
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+    
+    .container-type-options {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .container-type-option {
+      padding: 1rem;
+      background-color: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--terminal-dim-green);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .container-type-option:hover {
+      background-color: rgba(0, 255, 0, 0.1);
+      border-color: var(--terminal-green);
+    }
+    
+    .container-type-option.selected {
+      background-color: rgba(0, 255, 0, 0.2);
+      border-color: var(--terminal-green);
+      box-shadow: 0 0 10px var(--glow-color);
+    }
+    
+    .container-type-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+      color: var(--terminal-green);
+    }
+    
+    .container-type-label {
+      font-family: var(--header-font);
+      color: var(--terminal-text);
+    }
+    
+    .dynamic-form-fields {
+      margin-top: 1.5rem;
+    }
+    
+    .image-gallery-items {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    
+    .gallery-item {
+      position: relative;
+      border: 1px solid var(--terminal-dim-green);
+      padding: 0.5rem;
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+    
+    .gallery-item img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    
+    .gallery-item-caption {
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      color: var(--terminal-dim);
+    }
+    
+    .gallery-item-remove {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      width: 20px;
+      height: 20px;
+      background-color: rgba(255, 0, 0, 0.7);
+      color: white;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+    }
+    
+    .add-gallery-item {
+      margin-top: 1rem;
+      padding: 0.5rem;
+      background-color: rgba(0, 255, 0, 0.1);
+      border: 1px dashed var(--terminal-green);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .add-gallery-item:hover {
+      background-color: rgba(0, 255, 0, 0.2);
+    }
+    
+    .list-items {
+      margin-top: 1rem;
+    }
+    
+    .list-item {
+      display: flex;
+      margin-bottom: 0.5rem;
+    }
+    
+    .list-item input {
+      flex: 1;
+    }
+    
+    .list-item-remove {
+      margin-left: 0.5rem;
+      background-color: rgba(255, 0, 0, 0.7);
+      color: white;
+      border: none;
+      cursor: pointer;
+      width: 30px;
+    }
+    
+    .add-list-item {
+      margin-top: 0.5rem;
+      padding: 0.5rem;
+      background-color: rgba(0, 255, 0, 0.1);
+      border: 1px dashed var(--terminal-green);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .add-list-item:hover {
+      background-color: rgba(0, 255, 0, 0.2);
+    }
+    
+    .position-control {
+      display: flex;
+      align-items: center;
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background-color: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--terminal-dim-green);
+    }
+    
+    .position-label {
+      margin-right: 1rem;
+      color: var(--terminal-text);
+    }
+    
+    .position-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .position-button {
+      padding: 0.5rem 1rem;
+      background-color: rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--terminal-dim-green);
+      color: var(--terminal-text);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .position-button:hover {
+      background-color: rgba(0, 255, 0, 0.1);
+      border-color: var(--terminal-green);
+    }
+  </style>
+</head>
+<body class="terminal">
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">TERMINAL ACCESS v1.0</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+            <li><a href="/forum">FORUMS</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">PROFILE</h3>
+          <ul class="nav-links">
+            <li><a href="/profile">DASHBOARD</a></li>
+            <li><a href="/profile/edit">EDIT PROFILE</a></li>
+            <li><a href="/profile/enhanced">ENHANCED VIEW</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <section class="panel">
+          <div class="panel-header">
+            <h2 id="container-editor-title">CREATE CONTAINER</h2>
+            <div class="status-indicator">CONFIG</div>
+          </div>
+          <div class="panel-content">
+            <form id="container-form">
+              <div class="form-group">
+                <label for="container-title">CONTAINER TITLE:</label>
+                <input type="text" id="container-title" name="title" maxlength="50" placeholder="Enter container title...">
+              </div>
+              
+              <div class="form-group">
+                <label>CONTAINER TYPE:</label>
+                <div class="container-type-options">
+                  <div class="container-type-option selected" data-type="paragraph">
+                    <div class="container-type-icon">¶</div>
+                    <div class="container-type-label">TEXT</div>
+                  </div>
+                  <div class="container-type-option" data-type="list">
+                    <div class="container-type-icon">•</div>
+                    <div class="container-type-label">LIST</div>
+                  </div>
+                  <div class="container-type-option" data-type="image-gallery">
+                    <div class="container-type-icon">🖼</div>
+                    <div class="container-type-label">GALLERY</div>
+                  </div>
+                  <div class="container-type-option" data-type="code">
+                    <div class="container-type-icon">&lt;/&gt;</div>
+                    <div class="container-type-label">CODE</div>
+                  </div>
+                  <div class="container-type-option" data-type="iframe">
+                    <div class="container-type-icon">⧉</div>
+                    <div class="container-type-label">IFRAME</div>
+                  </div>
+                  <div class="container-type-option" data-type="audio">
+                    <div class="container-type-icon">♪</div>
+                    <div class="container-type-label">AUDIO</div>
+                  </div>
+                </div>
+                <input type="hidden" id="container-type" name="containerType" value="paragraph">
+              </div>
+              
+              <div class="dynamic-form-fields">
+                <!-- Dynamic form fields will be injected here based on container type -->
+              </div>
+              
+              <div class="position-control">
+                <div class="position-label">CONTAINER POSITION:</div>
+                <div class="position-buttons">
+                  <button type="button" class="position-button" data-position="0">TOP</button>
+                  <button type="button" class="position-button" data-position="5">MIDDLE</button>
+                  <button type="button" class="position-button" data-position="10">BOTTOM</button>
+                </div>
+                <input type="hidden" id="container-position" name="position" value="0">
+              </div>
+              
+              <div class="container-preview">
+                <div class="container-preview-header">
+                  <h3 class="container-preview-title" id="preview-title">CONTAINER PREVIEW</h3>
+                </div>
+                <div class="container-preview-content" id="preview-content">
+                  <!-- Preview content will be injected here -->
+                </div>
+              </div>
+              
+              <div class="form-actions">
+                <button type="submit" class="submit-btn">SAVE CONTAINER</button>
+                <a href="/profile/enhanced" class="cancel-btn">CANCEL</a>
+              </div>
+            </form>
+            
+            <div id="message" style="color: var(--terminal-green); margin-top: 1rem;"></div>
+            <div id="error-message" style="color: var(--terminal-red); margin-top: 1rem;"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="main-footer">
+      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+      <div class="footer-glyphs">
+        <span class="glyph">⌘</span>
+        <span class="glyph">⍟</span>
+        <span class="glyph">⎔</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Inject data from server
+    const data = __DATA__;
+    const user = data.user;
+    const container = data.container || null;
+    const isEdit = !!container;
+    
+    // Update page title based on whether we're creating or editing
+    if (isEdit) {
+      document.getElementById('container-editor-title').textContent = 'EDIT CONTAINER';
+    }
+    
+    // Update user status in header
+    const userStatusEl = document.getElementById('user-status');
+    if (user) {
+      userStatusEl.innerHTML = `
+        <div class="logged-in">
+          <span class="username">${user.username}</span>
+          <div class="user-links">
+            <a href="/profile">PROFILE</a>
+            <a href="/auth/logout">LOGOUT</a>
+          </div>
+        </div>
+      `;
+    } else {
+      userStatusEl.innerHTML = `
+        <div class="logged-out">
+          <a href="/auth/login" class="login-btn">LOGIN</a>
+          <a href="/auth/register" class="register-btn">REGISTER</a>
+        </div>
+      `;
+    }
+    
+    // Toggle glitch effects
+    document.getElementById('toggle-glitch').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.body.classList.toggle('glitch-active');
+    });
+  </script>
+</body>
+</html>

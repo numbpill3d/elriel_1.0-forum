@@ -450,33 +450,6 @@
       }
     });
 
-    // Initialize theme selector
-    const themeTemplateSelect = document.getElementById('theme-template');
-    const themePreview = document.getElementById('theme-preview');
-
-    // Set initial theme value from profile
-    if (profile.theme_template) {
-      themeTemplateSelect.value = profile.theme_template;
-    }
-
-    // Update theme preview when selection changes
-    themeTemplateSelect.addEventListener('change', function() {
-      updateThemePreview(this.value);
-    });
-
-    // Function to update theme preview
-    function updateThemePreview(themeName) {
-      // Get available themes
-      const themes = window.profileThemes.getAll();
-      const selectedTheme = themes.find(theme => theme.id === themeName) || themes[0];
-
-      // Update preview
-      themePreview.innerHTML = `<img src="${selectedTheme.preview}" alt="${selectedTheme.name}" class="theme-preview-image">`;
-    }
-
-    // Initialize theme preview
-    updateThemePreview(themeTemplateSelect.value);
-
     // Toggle glitch effects
     document.getElementById('toggle-glitch').addEventListener('click', function(e) {
       e.preventDefault();

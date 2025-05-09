@@ -188,49 +188,6 @@ router.get('/enhanced', isAuthenticated, (req, res) => {
   res.redirect(`/profile/user/${req.session.user.username}?enhanced=1`);
 });
 
-// Activity log page
-router.get('/activity', isAuthenticated, (req, res) => {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const perPage = 10;
-    const offset = (page - 1) * perPage;
-
-    // Get total count for pagination
-    const totalCount = db.prepare(`
-      SELECT COUNT(*) as count FROM user_activity_logs
-      WHERE user_id = ?
-    `).get(req.session.user.id).count;
-
-    const totalPages = Math.ceil(totalCount / perPage);
-
-    // Get activities for current page
-    const activities = db.prepare(`
-      SELECT * FROM user_activity_logs
-      WHERE user_id = ?
-      ORDER BY created_at DESC
-      LIMIT ? OFFSET ?
-    `).all(req.session.user.id, perPage, offset);
-
-    // Pass data to the frontend
-    const data = {
-      activities,
-      totalPages,
-      currentPage: page,
-      username: req.session.user.username,
-      user: req.session.user
-    };
-
-    // Inject data into the HTML
-    let html = fs.readFileSync(path.join(__dirname, '../views/profile/activity.html'), 'utf8');
-    html = html.replace('__DATA__', JSON.stringify(data));
-
-    res.send(html);
-  } catch (err) {
-    console.error('Error loading activity log:', err);
-    res.status(500).sendFile(path.join(__dirname, '../views/error.html'));
-  }
-});
-
 // Container edit page
 router.get('/container/edit/:id?', isAuthenticated, (req, res) => {
   try {
