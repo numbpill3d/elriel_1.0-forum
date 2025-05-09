@@ -69,27 +69,17 @@ function generateGlyphSVG(seed, complexity) {
   svg += `<circle cx="${centerX}" cy="${centerY}" r="${centerX - 10}" fill="none" stroke="#333" stroke-width="2" />`;
 
   // Add lines
-  for (let i = 0; i < numLines && points.length > 0; i++) {
-    const startPointIndex = Math.floor(random() * points.length);
-    const endPointIndex = Math.floor(random() * points.length);
-    
-    const startPoint = points[startPointIndex];
-    const endPoint = points[endPointIndex];
-    
-    if (startPoint && endPoint) {
-      svg += `<line x1="${startPoint.x}" y1="${startPoint.y}" x2="${endPoint.x}" y2="${endPoint.y}" stroke="#c0c0c0" stroke-width="1.5" />`;
-    }
+  for (let i = 0; i < numLines; i++) {
+    const startPoint = points[Math.floor(random() * points.length)];
+    const endPoint = points[Math.floor(random() * points.length)];
+    svg += `<line x1="${startPoint.x}" y1="${startPoint.y}" x2="${endPoint.x}" y2="${endPoint.y}" stroke="#c0c0c0" stroke-width="1.5" />`;
   }
 
   // Add circles
-  for (let i = 0; i < numCircles && points.length > 0; i++) {
-    const centerPointIndex = Math.floor(random() * points.length);
-    const centerPoint = points[centerPointIndex];
-    
-    if (centerPoint) {
-      const radius = 5 + random() * 20;
-      svg += `<circle cx="${centerPoint.x}" cy="${centerPoint.y}" r="${radius}" fill="none" stroke="#a0a0a0" stroke-width="1" />`;
-    }
+  for (let i = 0; i < numCircles; i++) {
+    const centerPoint = points[Math.floor(random() * points.length)];
+    const radius = 5 + random() * 20;
+    svg += `<circle cx="${centerPoint.x}" cy="${centerPoint.y}" r="${radius}" fill="none" stroke="#a0a0a0" stroke-width="1" />`;
   }
 
   // Add points

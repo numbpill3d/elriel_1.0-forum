@@ -82,14 +82,10 @@ function generateGlyphSVG(seed, complexity) {
   }
 
   // Add circles
-  for (let i = 0; i < numCircles && points.length > 0; i++) {
-    const centerPointIndex = Math.floor(random() * points.length);
-    const centerPoint = points[centerPointIndex];
-    
-    if (centerPoint) {
-      const radius = 5 + random() * 20;
-      svg += `<circle cx="${centerPoint.x}" cy="${centerPoint.y}" r="${radius}" fill="none" stroke="#a0a0a0" stroke-width="1" />`;
-    }
+  for (let i = 0; i < numCircles; i++) {
+    const centerPoint = points[Math.floor(random() * points.length)];
+    const radius = 5 + random() * 20;
+    svg += `<circle cx="${centerPoint.x}" cy="${centerPoint.y}" r="${radius}" fill="none" stroke="#a0a0a0" stroke-width="1" />`;
   }
 
   // Add points
