@@ -1,5 +1,5 @@
 // Elriel - A haunted terminal-based social network
-// Main application entry point
+// Main application entry point - Supabase Version
 
 require('dotenv').config();
 const express = require('express');
@@ -16,9 +16,25 @@ const PORT = process.env.PORT || 3000;
 // Configure middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+// Configure static file serving with multiple paths for better compatibility
 const publicPath = path.join(__dirname, 'public');
-console.log('Serving static files from:', publicPath);
+console.log('Serving static files from primary path:', publicPath);
 app.use(express.static(publicPath));
+
+// Also serve files directly from the root for compatibility with some paths
+app.use('/public', express.static(publicPath));
+
+// Add cache control for static assets
+app.use((req, res, next) => {
+  // If the request is for a static asset
+  if (req.url.match(/\.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot)$/)) {
+    // Set cache headers
+    res.setHeader('Cache-Control', 'public, max-age=86400'); // 1 day
+    res.setHeader('Expires', new Date(Date.now() + 86400000).toUTCString());
+  }
+  next();
+});
 
 // Add CORS headers for development
 app.use((req, res, next) => {
@@ -48,7 +64,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Create uploads directory if it doesn't exist
-const fs = require('fs');
 if (!fs.existsSync('./public/uploads')) {
   fs.mkdirSync('./public/uploads', { recursive: true });
 }
@@ -61,9 +76,9 @@ const glyphRoutes = require('./routes/glyph');
 const feedRoutes = require('./routes/feed_supabase'); // Using Supabase feed
 const whisperRoutes = require('./routes/whisper');
 const forumRoutes = require('./routes/forum_supabase'); // Using Supabase forum
+const scrapyardRoutes = require('./routes/scrapyard_supabase'); // Using Supabase scrapyard
 const cryptoRoutes = require('./routes/crypto');
 const apiRoutes = require('./routes/api');
-const scrapyardRoutes = require('./routes/scrapyard'); // Scrapyard marketplace
 
 // Use routes
 app.use('/', indexRoutes);
@@ -75,7 +90,6 @@ app.use('/whisper', whisperRoutes);
 app.use('/forum', forumRoutes);
 app.use('/crypto', cryptoRoutes);
 app.use('/api', apiRoutes);
-app.use('/scrapyard', scrapyardRoutes); // Add scrapyard routes
 
 // Error handling middleware
 app.use((err, req, res, next) => {

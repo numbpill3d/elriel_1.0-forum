@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UPLOAD ASSET | Digital Wasteland Terminal</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="ELRIEL Scrapyard - Upload your digital assets to the cyberpunk marketplace">
+  <meta name="keywords" content="ELRIEL, Scrapyard, Junker, digital assets, upload, cyberpunk, retro, glitch, digital art marketplace">
+
+  <!-- Open Graph / Social Media -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://elriel.network/scrapyard/upload">
+  <meta property="og:title" content="UPLOAD ASSET | Digital Wasteland Terminal">
+  <meta property="og:description" content="Share your digital creations in the cyberpunk wasteland marketplace.">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/css/cyberpunk-terminal.css">
+  <link rel="stylesheet" href="/css/forum.css">
+
+  <!-- Scripts -->
+  <script src="/js/error-logger.js" defer></script>
+  <script src="/js/cyberpunk-terminal.js" defer></script>
+  <script src="/js/navigation-debug.js" defer></script>
+  <script src="/js/mobile-enhancements.js" defer></script>
+  <script src="/js/performance-fixes.js" defer></script>
+  <link rel="stylesheet" href="/css/responsive-fixes.css">
+  <link rel="stylesheet" href="/css/bleedstream-sidebar.css">
+  
+  <style>
+    /* Additional styles for upload form */
+    .asset-upload-form {
+      background: rgba(0, 10, 20, 0.7);
+      padding: 20px;
+      border: 1px solid var(--terminal-border);
+      margin-bottom: 20px;
+    }
+    
+    .asset-preview {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 180px;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px dashed var(--terminal-border);
+      margin-bottom: 15px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .asset-preview img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+    
+    .asset-preview .preview-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: var(--terminal-muted);
+      font-size: 14px;
+      pointer-events: none;
+    }
+    
+    .upload-row {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .upload-col {
+      flex: 1;
+    }
+    
+    .file-input-group {
+      margin-bottom: 15px;
+    }
+    
+    .file-input-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    
+    .file-input-button {
+      display: inline-block;
+      background-color: var(--terminal-bg-dark);
+      color: var(--terminal-green);
+      padding: 8px 15px;
+      cursor: pointer;
+      border: 1px solid var(--terminal-green);
+      text-align: center;
+      width: 100%;
+      transition: all 0.3s ease;
+    }
+    
+    .file-input-button:hover {
+      background-color: rgba(0, 255, 100, 0.1);
+    }
+    
+    .file-input {
+      display: none;
+    }
+    
+    .file-name-display {
+      margin-top: 5px;
+      font-size: 12px;
+      color: var(--terminal-muted);
+      word-break: break-all;
+      height: 16px;
+      overflow: hidden;
+    }
+    
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+      margin-top: 5px;
+    }
+    
+    .category-option {
+      display: flex;
+      align-items: center;
+    }
+    
+    .category-option input {
+      margin-right: 5px;
+    }
+    
+    /* Animation for uploads */
+    @keyframes uploadProgress {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
+    
+    .upload-progress {
+      height: 2px;
+      background-color: var(--terminal-green);
+      width: 0%;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+    }
+    
+    .uploading .upload-progress {
+      animation: uploadProgress 2s ease-in-out forwards;
+    }
+  </style>
+</head>
+<body class="terminal">
+  <!-- Screen Effects -->
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  <div class="crt-effect"></div>
+
+  <!-- Main Container -->
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">DIGITAL WASTELAND v1.3.7</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <button class="mobile-nav-toggle" id="mobile-nav-toggle">TOGGLE NAVIGATION</button>
+      <nav class="sidebar" id="main-sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+            <li><a href="/forum/scrapyard" class="active">SCRAPYARD</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">PROFILE</h3>
+          <ul class="nav-links">
+            <li><a href="/profile">DASHBOARD</a></li>
+            <li><a href="/profile/edit">EDIT PROFILE</a></li>
+            <li><a href="/feed/new">CREATE POST</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <!-- Upload Asset Panel -->
+        <section class="panel">
+          <div class="scanner-line"></div>
+          <div class="panel-header">
+            <h2>UPLOAD ASSET</h2>
+            <div class="status-indicator alert">JUNKER ACCESS</div>
+          </div>
+          <div class="panel-content">
+            <div class="upload-intro">
+              <p>Share your digital creations with the wasteland. Assets you upload will be available for other users to download and use in their own projects.</p>
+            </div>
+
+            <form id="asset-upload-form" class="asset-upload-form" enctype="multipart/form-data">
+              <div class="upload-row">
+                <div class="upload-col">
+                  <div class="form-group">
+                    <label for="asset-title">ASSET TITLE <span class="required">*</span></label>
+                    <input type="text" id="asset-title" name="title" required maxlength="100" placeholder="Name your creation...">
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="asset-type">ASSET TYPE <span class="required">*</span></label>
+                    <select id="asset-type" name="asset_type" required>
+                      <option value="">-- Select Type --</option>
+                      <option value="image">Image (GIF/PNG/JPG)</option>
+                      <option value="font">Font (TTF/OTF/WOFF)</option>
+                      <option value="template">Template (HTML/CSS)</option>
+                      <option value="code">Code Snippet</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="asset-category">CATEGORY <span class="required">*</span></label>
+                    <div id="category-options" class="categories-grid">
+                      <!-- Categories will be injected here -->
+                    </div>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label for="asset-tags">TAGS (COMMA SEPARATED)</label>
+                    <input type="text" id="asset-tags" name="tags" maxlength="200" placeholder="cyberpunk, neon, button, etc...">
+                    <div class="form-note">Tags help others find your asset.</div>
+                  </div>
+                </div>
+                
+                <div class="upload-col">
+                  <div class="asset-preview" id="asset-preview">
+                    <div class="preview-text">Preview will appear here</div>
+                    <div class="upload-progress"></div>
+                  </div>
+                  
+                  <div class="file-input-group">
+                    <label>ASSET FILE <span class="required">*</span></label>
+                    <label for="asset-file" class="file-input-button">SELECT ASSET FILE</label>
+                    <input type="file" id="asset-file" name="asset" class="file-input" required>
+                    <div id="asset-file-name" class="file-name-display">No file selected</div>
+                    <div class="form-note">Max size: 5MB. Supported formats depend on asset type.</div>
+                  </div>
+                  
+                  <div class="file-input-group">
+                    <label>THUMBNAIL IMAGE</label>
+                    <label for="thumbnail-file" class="file-input-button">SELECT THUMBNAIL</label>
+                    <input type="file" id="thumbnail-file" name="thumbnail" class="file-input" accept="image/*">
+                    <div id="thumbnail-file-name" class="file-name-display">No file selected</div>
+                    <div class="form-note">Optional. Image to represent your asset.</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="asset-description">ASSET DESCRIPTION <span class="required">*</span></label>
+                <textarea id="asset-description" name="description" required rows="5" placeholder="Describe your asset, how to use it, and any other relevant information..."></textarea>
+              </div>
+              
+              <div class="form-group">
+                <label for="asset-is-free">ASSET AVAILABILITY</label>
+                <div class="option-group">
+                  <input type="radio" id="asset-is-free-yes" name="is_free" value="true" checked>
+                  <label for="asset-is-free-yes">FREE FOR ALL</label>
+                  
+                  <input type="radio" id="asset-is-free-no" name="is_free" value="false">
+                  <label for="asset-is-free-no">CREDIT REQUIRED</label>
+                </div>
+              </div>
+              
+              <div class="form-actions">
+                <button type="submit" class="button hover-glow">UPLOAD ASSET</button>
+                <a href="/scrapyard" class="button">CANCEL</a>
+              </div>
+            </form>
+            <div id="upload-message" class="upload-message" style="display: none;"></div>
+          </div>
+        </section>
+
+        <!-- Asset Guidelines Panel -->
+        <section class="panel ascii-panel">
+          <div class="scanner-line"></div>
+          <div class="panel-header">
+            <h2>UPLOAD GUIDELINES</h2>
+            <div class="status-indicator">INFO</div>
+          </div>
+          <div class="panel-content ascii-content">
+            <pre class="ascii-art">
+  .-----------------.
+ /                   \
+( QUALITY OVER QUANTITY )
+ \                   /
+  '-----------------'
+            </pre>
+            <div class="guidelines-list">
+              <div class="guideline-item">
+                <div class="guideline-icon">✓</div>
+                <div class="guideline-text">Upload only assets you created or have rights to distribute</div>
+              </div>
+              <div class="guideline-item">
+                <div class="guideline-icon">✓</div>
+                <div class="guideline-text">Provide accurate descriptions and tags</div>
+              </div>
+              <div class="guideline-item">
+                <div class="guideline-icon">✓</div>
+                <div class="guideline-text">Choose appropriate categories for easier discovery</div>
+              </div>
+              <div class="guideline-item">
+                <div class="guideline-icon">✓</div>
+                <div class="guideline-text">Include clear usage instructions in your description</div>
+              </div>
+              <div class="guideline-item">
+                <div class="guideline-icon">✗</div>
+                <div class="guideline-text">Do not upload malicious files or executable code</div>
+              </div>
+              <div class="guideline-item">
+                <div class="guideline-icon">✗</div>
+                <div class="guideline-text">Avoid duplicate submissions of identical assets</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="main-footer">
+      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+      <div class="footer-glyphs">
+        <span class="glyph" data-symbol="command">⌘</span>
+        <span class="glyph" data-symbol="star">⍟</span>
+        <span class="glyph" data-symbol="node">⎔</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('[ASSET UPLOAD] Initializing terminal interface...');
+
+      // Initialize components
+      initBootstrapSequence();
+      initData();
+      initFileInputs();
+
+      // Add event listeners
+      addEventListeners();
+
+      // Dispatch system ready event
+      setTimeout(() => {
+        console.log('[ASSET UPLOAD] All systems operational.');
+        document.dispatchEvent(new CustomEvent('assetUploadReady'));
+      }, 1000);
+    });
+
+    /**
+     * Bootstrap sequence - initial loading animation
+     */
+    function initBootstrapSequence() {
+      // Create a visual effect when entering the upload page
+      const bootstrapEffect = () => {
+        document.body.classList.add('glitch-active');
+        setTimeout(() => {
+          document.body.classList.remove('glitch-active');
+        }, 500);
+      };
+
+      // Add delayed bootstrap visual effect
+      setTimeout(bootstrapEffect, 300);
+      setTimeout(bootstrapEffect, 1200);
+    }
+
+    /**
+     * Initialize data from server
+     */
+    function initData() {
+      // Parse injected data with error handling
+      let data = {};
+      try {
+        // Inject data from server
+        data = __DATA__;
+        console.log("[ASSET UPLOAD] Data loaded successfully");
+      } catch (err) {
+        console.error("[ASSET UPLOAD] Error parsing injected data:", err);
+        data = { user: null, categories: [] };
+      }
+
+      window.uploadData = data;
+
+      // Update user status in header
+      const userStatusEl = document.getElementById('user-status');
+      if (data.user) {
+        userStatusEl.innerHTML = `
+          <div class="logged-in">
+            <span class="username">${data.user.username}</span>
+            <div class="user-links">
+              <a href="/profile" class="button">PROFILE</a>
+              <a href="/auth/logout" class="button">LOGOUT</a>
+            </div>
+          </div>
+        `;
+      } else {
+        userStatusEl.innerHTML = `
+          <div class="logged-out">
+            <a href="/auth/login" class="button login-btn">LOGIN</a>
+            <a href="/auth/register" class="button register-btn">REGISTER</a>
+          </div>
+        `;
+      }
+
+      // Populate categories
+      populateCategories(data.categories);
+    }
+
+    /**
+     * Populate categories list
+     */
+    function populateCategories(categories) {
+      if (!categories || categories.length === 0) {
+        // Fallback categories if none provided from server
+        categories = [
+          { name: 'favicon', display_name: 'FAVICON' },
+          { name: 'divider', display_name: 'DIVIDER' },
+          { name: 'background', display_name: 'BACKGROUND' },
+          { name: 'template', display_name: 'TEMPLATE' },
+          { name: 'widget', display_name: 'WIDGET' },
+          { name: 'image', display_name: 'IMAGE/GIF' },
+          { name: 'font', display_name: 'FONT' },
+          { name: 'button', display_name: 'BUTTON' },
+          { name: 'blinkie', display_name: 'BLINKIE' },
+          { name: 'cursor', display_name: 'CURSOR' },
+          { name: 'other', display_name: 'OTHER' }
+        ];
+      }
+
+      const categoriesContainer = document.getElementById('category-options');
+      categoriesContainer.innerHTML = '';
+
+      categories.forEach((category, index) => {
+        const categoryOption = document.createElement('div');
+        categoryOption.className = 'category-option';
+        categoryOption.innerHTML = `
+          <input type="radio" id="category-${category.name}" name="category" value="${category.name}" ${index === 0 ? 'checked' : ''}>
+          <label for="category-${category.name}">${category.display_name}</label>
+        `;
+        categoriesContainer.appendChild(categoryOption);
+      });
+    }
+
+    /**
+     * Initialize file input handlers
+     */
+    function initFileInputs() {
+      // Asset file input
+      const assetFileInput = document.getElementById('asset-file');
+      const assetFileNameDisplay = document.getElementById('asset-file-name');
+      const assetPreview = document.getElementById('asset-preview');
+
+      assetFileInput.addEventListener('change', function(e) {
+        const fileName = e.target.files[0]?.name || 'No file selected';
+        assetFileNameDisplay.textContent = fileName;
+
+        // Show preview for image files
+        const file = e.target.files[0];
+        if (file && file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            assetPreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+          };
+          reader.readAsDataURL(file);
+        } else {
+          assetPreview.innerHTML = `
+            <div class="preview-text">
+              ${file ? file.name : 'No preview available'}
+            </div>
+            <div class="upload-progress"></div>
+          `;
+        }
+      });
+
+      // Thumbnail file input
+      const thumbnailFileInput = document.getElementById('thumbnail-file');
+      const thumbnailFileNameDisplay = document.getElementById('thumbnail-file-name');
+
+      thumbnailFileInput.addEventListener('change', function(e) {
+        const fileName = e.target.files[0]?.name || 'No file selected';
+        thumbnailFileNameDisplay.textContent = fileName;
+
+        // Update preview with thumbnail if no asset is an image
+        const assetFile = assetFileInput.files[0];
+        const thumbnailFile = e.target.files[0];
+
+        if (thumbnailFile && (!assetFile || !assetFile.type.startsWith('image/'))) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            assetPreview.innerHTML = `<img src="${e.target.result}" alt="Thumbnail">`;
+          };
+          reader.readAsDataURL(thumbnailFile);
+        }
+      });
+    }
+
+    /**
+     * Add event listeners
+     */
+    function addEventListeners() {
+      // Upload form submission
+      const uploadForm = document.getElementById('asset-upload-form');
+      uploadForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Validate form
+        const title = document.getElementById('asset-title').value.trim();
+        const description = document.getElementById('asset-description').value.trim();
+        const assetType = document.getElementById('asset-type').value;
+        const assetFile = document.getElementById('asset-file').files[0];
+        const category = document.querySelector('input[name="category"]:checked')?.value;
+
+        if (!title || !description || !assetType || !assetFile || !category) {
+          alert('Please fill out all required fields and select an asset file.');
+          return;
+        }
+
+        try {
+          // Show loading state
+          document.body.classList.add('loading');
+          document.getElementById('asset-preview').classList.add('uploading');
+          
+          // Create form data
+          const formData = new FormData();
+          formData.append('title', title);
+          formData.append('description', description);
+          formData.append('asset_type', assetType);
+          formData.append('category', category);
+          formData.append('tags', document.getElementById('asset-tags').value.trim());
+          formData.append('is_free', document.querySelector('input[name="is_free"]:checked').value);
+          formData.append('asset', assetFile);
+
+          // Add thumbnail if selected
+          const thumbnailFile = document.getElementById('thumbnail-file').files[0];
+          if (thumbnailFile) {
+            formData.append('thumbnail', thumbnailFile);
+          }
+
+          const response = await fetch('/scrapyard/upload', {
+            method: 'POST',
+            body: formData
+          });
+
+          const result = await response.json();
+
+          // Handle response
+          if (result.success) {
+            uploadForm.style.display = 'none';
+            const messageEl = document.getElementById('upload-message');
+            messageEl.style.display = 'block';
+            messageEl.innerHTML = `
+              <div class="success-message">
+                <h3>UPLOAD COMPLETE</h3>
+                <p>${result.message}</p>
+                <div class="loading-indicator">Processing asset data...</div>
+              </div>
+            `;
+
+            // Redirect after delay
+            setTimeout(() => {
+              window.location.href = result.redirect || '/scrapyard';
+            }, 2000);
+          } else {
+            alert(result.message || 'Upload failed. Please try again.');
+          }
+        } catch (err) {
+          console.error('Error uploading asset:', err);
+          alert('System error. Upload failed. Try again later.');
+        } finally {
+          document.body.classList.remove('loading');
+          document.getElementById('asset-preview').classList.remove('uploading');
+        }
+      });
+
+      // Toggle glitch effects
+      const glitchToggle = document.getElementById('toggle-glitch');
+      if (glitchToggle) {
+        glitchToggle.addEventListener('click', function(e) {
+          e.preventDefault();
+          document.body.classList.toggle('glitch-active');
+          
+          // Store preference in localStorage
+          localStorage.setItem('glitch-active', document.body.classList.contains('glitch-active') ? 'true' : 'false');
+        });
+      }
+      
+      // Check if glitch effects were previously enabled
+      const glitchActive = localStorage.getItem('glitch-active');
+      if (glitchActive === 'true') {
+        document.body.classList.add('glitch-active');
+      }
+      
+      // Mobile navigation toggle
+      const mobileNavToggle = document.getElementById('mobile-nav-toggle');
+      const sidebar = document.getElementById('main-sidebar');
+      
+      if (mobileNavToggle && sidebar) {
+        mobileNavToggle.addEventListener('click', function() {
+          sidebar.classList.toggle('active');
+          this.textContent = sidebar.classList.contains('active') ? 'HIDE NAVIGATION' : 'SHOW NAVIGATION';
+          
+          // Store sidebar state in localStorage
+          localStorage.setItem('sidebar-active', sidebar.classList.contains('active') ? 'true' : 'false');
+        });
+        
+        // Set initial state on page load
+        const sidebarActive = localStorage.getItem('sidebar-active');
+        if (sidebarActive === 'true') {
+          sidebar.classList.add('active');
+          mobileNavToggle.textContent = 'HIDE NAVIGATION';
+        }
+      }
+    }
+  </script>
+</body>
+</html>

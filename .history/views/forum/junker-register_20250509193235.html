@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>REGISTER AS JUNKER | Digital Wasteland Terminal</title>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="ELRIEL Scrapyard - Register as a Junker to upload and share your digital assets in the cyberpunk marketplace">
+  <meta name="keywords" content="ELRIEL, Scrapyard, Junker, digital assets, cyberpunk, retro, glitch, digital art marketplace">
+
+  <!-- Open Graph / Social Media -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://elriel.network/scrapyard/register">
+  <meta property="og:title" content="REGISTER AS JUNKER | Digital Wasteland Terminal">
+  <meta property="og:description" content="Become a Junker and share your digital assets in the cyberpunk wasteland marketplace.">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&family=IBM+Plex+Mono&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/css/cyberpunk-terminal.css">
+  <link rel="stylesheet" href="/css/forum.css">
+
+  <!-- Scripts -->
+  <script src="/js/error-logger.js" defer></script>
+  <script src="/js/cyberpunk-terminal.js" defer></script>
+  <script src="/js/navigation-debug.js" defer></script>
+  <script src="/js/mobile-enhancements.js" defer></script>
+  <script src="/js/performance-fixes.js" defer></script>
+  <link rel="stylesheet" href="/css/responsive-fixes.css">
+  <link rel="stylesheet" href="/css/bleedstream-sidebar.css">
+</head>
+<body class="terminal">
+  <!-- Screen Effects -->
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  <div class="crt-effect"></div>
+
+  <!-- Main Container -->
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">DIGITAL WASTELAND v1.3.7</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
+        </div>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <button class="mobile-nav-toggle" id="mobile-nav-toggle">TOGGLE NAVIGATION</button>
+      <nav class="sidebar" id="main-sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+            <li><a href="/forum/scrapyard" class="active">SCRAPYARD</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">PROFILE</h3>
+          <ul class="nav-links">
+            <li><a href="/profile">DASHBOARD</a></li>
+            <li><a href="/profile/edit">EDIT PROFILE</a></li>
+            <li><a href="/feed/new">CREATE POST</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <!-- Junker Registration Panel -->
+        <section class="panel">
+          <div class="scanner-line"></div>
+          <div class="panel-header">
+            <h2>JUNKER REGISTRATION</h2>
+            <div class="status-indicator alert">RESTRICTED</div>
+          </div>
+          <div class="panel-content">
+            <div class="junker-intro">
+              <div class="junker-icon">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="50" cy="50" r="45" fill="none" stroke="#33dd77" stroke-width="2"/>
+                  <path d="M30,70 L70,30" stroke="#33dd77" stroke-width="2"/>
+                  <path d="M30,30 L70,70" stroke="#33dd77" stroke-width="2"/>
+                  <circle cx="50" cy="50" r="20" fill="none" stroke="#33dd77" stroke-width="1"/>
+                  <text x="38" y="55" font-family="monospace" font-size="12" fill="#33dd77">JNK</text>
+                </svg>
+              </div>
+              <div class="junker-description">
+                <h2 class="glitch-effect" data-text="BECOME A JUNKER">BECOME A JUNKER</h2>
+                <p>Junkers are the backbone of the SCRAPYARD marketplace. They salvage and create digital assets from the wasteland, sharing them with the community. Register to begin uploading your creations and build your reputation as a digital artisan.</p>
+              </div>
+            </div>
+
+            <form id="junker-registration-form" class="junker-form">
+              <div class="form-group">
+                <label for="junker-name">JUNKER NAME <span class="required">*</span></label>
+                <input type="text" id="junker-name" name="junkerName" required maxlength="30" placeholder="Your alias in the scrapyard...">
+                <div class="form-note">This is how other users will identify you in the marketplace.</div>
+              </div>
+
+              <div class="form-group">
+                <label for="junker-bio">JUNKER BIO</label>
+                <textarea id="junker-bio" name="bio" maxlength="500" placeholder="Tell others about your digital salvaging specialties..."></textarea>
+                <div class="form-note">Share your skills, creations, and the type of assets you create.</div>
+              </div>
+
+              <div class="junker-confirmation">
+                <p>By registering as a JUNKER, you agree to:</p>
+                <ul>
+                  <li>Share only assets you have created or have the rights to distribute</li>
+                  <li>Properly categorize and tag your uploads</li>
+                  <li>Contribute to the SCRAPYARD community ethically</li>
+                  <li>Accept that all shared assets become part of the digital wasteland</li>
+                </ul>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="button hover-glow">REGISTER AS JUNKER</button>
+                <a href="/forum/scrapyard" class="button">CANCEL</a>
+              </div>
+            </form>
+            <div id="registration-message" class="registration-message" style="display: none;"></div>
+          </div>
+        </section>
+
+        <!-- Explanation Panel -->
+        <section class="panel ascii-panel">
+          <div class="scanner-line"></div>
+          <div class="panel-header">
+            <h2>JUNKER PRIVILEGES</h2>
+            <div class="status-indicator">INFO</div>
+          </div>
+          <div class="panel-content ascii-content">
+            <pre class="ascii-art">
+  .---.    .---.    .---.    .---.    .---.    .---.
+ /     \  /     \  /     \  /     \  /     \  /     \
+( ASSET )( ASSET )( ASSET )( ASSET )( ASSET )( ASSET )
+ \_____/  \_____/  \_____/  \_____/  \_____/  \_____/
+            </pre>
+            <div class="privilege-list">
+              <div class="privilege-item">
+                <div class="privilege-icon">⇧</div>
+                <div class="privilege-text">Upload digital assets to the SCRAPYARD marketplace</div>
+              </div>
+              <div class="privilege-item">
+                <div class="privilege-icon">⚙</div>
+                <div class="privilege-text">Categorize your assets for easier discovery</div>
+              </div>
+              <div class="privilege-item">
+                <div class="privilege-icon">✦</div>
+                <div class="privilege-text">Build reputation through downloads & favorites</div>
+              </div>
+              <div class="privilege-item">
+                <div class="privilege-icon">⌘</div>
+                <div class="privilege-text">Establish yourself as a recognized creator</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer class="main-footer">
+      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+      <div class="footer-glyphs">
+        <span class="glyph" data-symbol="command">⌘</span>
+        <span class="glyph" data-symbol="star">⍟</span>
+        <span class="glyph" data-symbol="node">⎔</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('[JUNKER REGISTRATION] Initializing terminal interface...');
+
+      // Initialize components
+      initBootstrapSequence();
+      initUserStatus();
+
+      // Add event listeners
+      addEventListeners();
+
+      // Dispatch system ready event
+      setTimeout(() => {
+        console.log('[JUNKER REGISTRATION] All systems operational.');
+        document.dispatchEvent(new CustomEvent('junkerRegistrationReady'));
+      }, 1000);
+    });
+
+    /**
+     * Bootstrap sequence - initial loading animation
+     */
+    function initBootstrapSequence() {
+      // Create a visual effect when entering the registration
+      const bootstrapEffect = () => {
+        document.body.classList.add('glitch-active');
+        setTimeout(() => {
+          document.body.classList.remove('glitch-active');
+        }, 500);
+      };
+
+      // Add delayed bootstrap visual effect
+      setTimeout(bootstrapEffect, 300);
+      setTimeout(bootstrapEffect, 1200);
+    }
+
+    /**
+     * Initialize user status
+     */
+    function initUserStatus() {
+      // Parse injected data with error handling
+      let data = {};
+      try {
+        // Inject data from server
+        data = __DATA__;
+        console.log("[JUNKER REGISTRATION] Data loaded successfully");
+      } catch (err) {
+        console.error("[JUNKER REGISTRATION] Error parsing injected data:", err);
+        data = { user: null };
+      }
+
+      // Update user status in header
+      const userStatusEl = document.getElementById('user-status');
+      if (data.user) {
+        userStatusEl.innerHTML = `
+          <div class="logged-in">
+            <span class="username">${data.user.username}</span>
+            <div class="user-links">
+              <a href="/profile" class="button">PROFILE</a>
+              <a href="/auth/logout" class="button">LOGOUT</a>
+            </div>
+          </div>
+        `;
+      } else {
+        userStatusEl.innerHTML = `
+          <div class="logged-out">
+            <a href="/auth/login" class="button login-btn">LOGIN</a>
+            <a href="/auth/register" class="button register-btn">REGISTER</a>
+          </div>
+        `;
+      }
+    }
+
+    /**
+     * Add event listeners
+     */
+    function addEventListeners() {
+      // Registration form submission
+      const registrationForm = document.getElementById('junker-registration-form');
+      registrationForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const junkerName = document.getElementById('junker-name').value.trim();
+        const bio = document.getElementById('junker-bio').value.trim();
+
+        if (!junkerName) {
+          alert('Junker name is required.');
+          return;
+        }
+
+        try {
+          // Show loading state
+          document.body.classList.add('loading');
+          
+          const response = await fetch('/scrapyard/register', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ junkerName, bio })
+          });
+
+          const result = await response.json();
+
+          // Handle response
+          if (result.success) {
+            registrationForm.style.display = 'none';
+            const messageEl = document.getElementById('registration-message');
+            messageEl.style.display = 'block';
+            messageEl.innerHTML = `
+              <div class="success-message">
+                <h3>REGISTRATION COMPLETE</h3>
+                <p>${result.message}</p>
+                <div class="loading-indicator">Initializing Junker protocols...</div>
+              </div>
+            `;
+
+            // Redirect after delay
+            setTimeout(() => {
+              window.location.href = result.redirect || '/scrapyard';
+            }, 2000);
+          } else {
+            alert(result.message || 'Registration failed. Please try again.');
+          }
+        } catch (err) {
+          console.error('Error registering as junker:', err);
+          alert('System error. Registration failed. Try again later.');
+        } finally {
+          document.body.classList.remove('loading');
+        }
+      });
+
+      // Toggle glitch effects
+      const glitchToggle = document.getElementById('toggle-glitch');
+      if (glitchToggle) {
+        glitchToggle.addEventListener('click', function(e) {
+          e.preventDefault();
+          document.body.classList.toggle('glitch-active');
+          
+          // Store preference in localStorage
+          localStorage.setItem('glitch-active', document.body.classList.contains('glitch-active') ? 'true' : 'false');
+        });
+      }
+      
+      // Check if glitch effects were previously enabled
+      const glitchActive = localStorage.getItem('glitch-active');
+      if (glitchActive === 'true') {
+        document.body.classList.add('glitch-active');
+      }
+      
+      // Mobile navigation toggle
+      const mobileNavToggle = document.getElementById('mobile-nav-toggle');
+      const sidebar = document.getElementById('main-sidebar');
+      
+      if (mobileNavToggle && sidebar) {
+        mobileNavToggle.addEventListener('click', function() {
+          sidebar.classList.toggle('active');
+          this.textContent = sidebar.classList.contains('active') ? 'HIDE NAVIGATION' : 'SHOW NAVIGATION';
+          
+          // Store sidebar state in localStorage
+          localStorage.setItem('sidebar-active', sidebar.classList.contains('active') ? 'true' : 'false');
+        });
+        
+        // Set initial state on page load
+        const sidebarActive = localStorage.getItem('sidebar-active');
+        if (sidebarActive === 'true') {
+          sidebar.classList.add('active');
+          mobileNavToggle.textContent = 'HIDE NAVIGATION';
+        }
+      }
+    }
+  </script>
+</body>
+</html>
