@@ -29,14 +29,8 @@
     }
 
     @keyframes panel-pulse {
-      0% {
-        box-shadow: 0 0 20px var(--glow-color), inset 0 0 10px rgba(255, 0, 0, 0.2);
-        will-change: box-shadow;
-      }
-      100% {
-        box-shadow: 0 0 30px var(--glow-color), inset 0 0 20px rgba(255, 0, 0, 0.4);
-        will-change: box-shadow;
-      }
+      0% { box-shadow: 0 0 20px var(--glow-color), inset 0 0 10px rgba(255, 0, 0, 0.2); }
+      100% { box-shadow: 0 0 30px var(--glow-color), inset 0 0 20px rgba(255, 0, 0, 0.4); }
     }
 
     .profile-view-panel::before {
@@ -113,14 +107,8 @@
     }
 
     @keyframes scan {
-      0% {
-        transform: translateY(0);
-        will-change: transform;
-      }
-      100% {
-        transform: translateY(100%);
-        will-change: transform;
-      }
+      0% { top: 0; }
+      100% { top: 100%; }
     }
 
     .profile-view-avatar {
@@ -410,14 +398,8 @@
     }
 
     @keyframes divider-shine {
-      0% {
-        transform: translateX(-100%);
-        will-change: transform;
-      }
-      100% {
-        transform: translateX(200%);
-        will-change: transform;
-      }
+      0% { left: -100%; }
+      100% { left: 200%; }
     }
 
     .web1-marquee {
@@ -438,14 +420,8 @@
     }
 
     @keyframes marquee {
-      0% {
-        transform: translateX(100%);
-        will-change: transform;
-      }
-      100% {
-        transform: translateX(-100%);
-        will-change: transform;
-      }
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
     }
 
     .blink-text {
@@ -453,30 +429,15 @@
     }
 
     @keyframes blink {
-      0%, 49% {
-        opacity: 1;
-        will-change: opacity;
-      }
-      50%, 100% {
-        opacity: 0;
-        will-change: opacity;
-      }
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
     }
 
     /* Animation for text glitching */
     @keyframes glowing {
-      0% {
-        filter: drop-shadow(0 0 5px var(--glow-color));
-        will-change: filter;
-      }
-      50% {
-        filter: drop-shadow(0 0 20px var(--glow-color)) drop-shadow(0 0 30px var(--glow-color));
-        will-change: filter;
-      }
-      100% {
-        filter: drop-shadow(0 0 5px var(--glow-color));
-        will-change: filter;
-      }
+      0% { text-shadow: 0 0 5px var(--glow-color); }
+      50% { text-shadow: 0 0 20px var(--glow-color), 0 0 30px var(--glow-color); }
+      100% { text-shadow: 0 0 5px var(--glow-color); }
     }
 
     /* Profile Windows section */

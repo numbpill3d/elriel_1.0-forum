@@ -410,14 +410,8 @@
     }
 
     @keyframes divider-shine {
-      0% {
-        transform: translateX(-100%);
-        will-change: transform;
-      }
-      100% {
-        transform: translateX(200%);
-        will-change: transform;
-      }
+      0% { left: -100%; }
+      100% { left: 200%; }
     }
 
     .web1-marquee {
@@ -465,18 +459,9 @@
 
     /* Animation for text glitching */
     @keyframes glowing {
-      0% {
-        filter: drop-shadow(0 0 5px var(--glow-color));
-        will-change: filter;
-      }
-      50% {
-        filter: drop-shadow(0 0 20px var(--glow-color)) drop-shadow(0 0 30px var(--glow-color));
-        will-change: filter;
-      }
-      100% {
-        filter: drop-shadow(0 0 5px var(--glow-color));
-        will-change: filter;
-      }
+      0% { text-shadow: 0 0 5px var(--glow-color); }
+      50% { text-shadow: 0 0 20px var(--glow-color), 0 0 30px var(--glow-color); }
+      100% { text-shadow: 0 0 5px var(--glow-color); }
     }
 
     /* Profile Windows section */

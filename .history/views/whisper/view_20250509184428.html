@@ -20,10 +20,6 @@
       margin-left: 10px;
       text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
     }
-    .view-whisper-encrypted.visible,
-    .view-whisper-glyph.visible {
-      display: block;
-    }
   </style>
 </head>
 <body class="terminal">
@@ -79,12 +75,12 @@
           </div>
           <div class="view-whisper-content">
             <div class="view-whisper-header">
-              <div class="view-whisper-glyph" id="whisper-glyph">
+              <div class="view-whisper-glyph" id="whisper-glyph" style="display: none;">
                 <!-- Whisper glyph will be injected here -->
               </div>
               <div class="view-whisper-meta">
                 <span class="view-whisper-date" id="whisper-date"></span>
-                <span class="view-whisper-encrypted" id="whisper-encrypted">ENCRYPTED</span>
+                <span class="view-whisper-encrypted" id="whisper-encrypted" style="display: none;">ENCRYPTED</span>
               </div>
             </div>
 
@@ -155,19 +151,19 @@
     document.getElementById('whisper-date').textContent = new Date(whisper.created_at).toLocaleString();
 
     if (whisper.is_encrypted) {
-      document.getElementById('whisper-encrypted').classList.add('visible');
+      document.getElementById('whisper-encrypted').style.display = 'inline';
     }
 
     // Display whisper glyph if it exists
     const whisperGlyphEl = document.getElementById('whisper-glyph');
     if (whisper.glyph_svg) {
       whisperGlyphEl.innerHTML = whisper.glyph_svg;
-      whisperGlyphEl.classList.add('visible');
+      whisperGlyphEl.style.display = 'block';
     } else {
       // Generate a random anonymous glyph if none is attached (client-side simulation)
       const randomSeed = whisper.id + whisper.created_at; // Use whisper data for deterministic random
       whisperGlyphEl.innerHTML = generateAnonGlyphSVG(randomSeed);
-      whisperGlyphEl.classList.add('visible');
+      whisperGlyphEl.style.display = 'block';
     }
 
     // Helper function to generate SVG data for an anonymous glyph (client-side simulation)

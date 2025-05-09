@@ -410,14 +410,8 @@
     }
 
     @keyframes divider-shine {
-      0% {
-        transform: translateX(-100%);
-        will-change: transform;
-      }
-      100% {
-        transform: translateX(200%);
-        will-change: transform;
-      }
+      0% { left: -100%; }
+      100% { left: 200%; }
     }
 
     .web1-marquee {
