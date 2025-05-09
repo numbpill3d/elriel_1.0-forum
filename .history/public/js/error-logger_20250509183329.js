@@ -115,7 +115,7 @@ window.addEventListener('error', function(e) {
  * Try to fix a broken resource path
  */
 function tryFixResourcePath(element, resource) {
-  if (!resource || !element) return false;
+  if (!resource || !element) return;
 
   try {
     // Check if it's a navigation path issue
@@ -193,103 +193,6 @@ function tryFixResourcePath(element, resource) {
   }
 
   return false;
-}
-
-/**
- * Try alternative paths for a resource that failed to load
- */
-function tryAlternativeResourcePaths(element, resource) {
-  if (!resource || !element) return false;
-
-  try {
-    const resourceUrl = new URL(resource, window.location.origin);
-    const resourcePath = resourceUrl.pathname;
-
-    // List of alternative path patterns to try
-    const alternativePaths = [];
-
-    // Check if it's a static asset
-    if (resourcePath.match(/\.(css|js|jpg|jpeg|png|gif|svg)$/)) {
-      // Try with /public prefix
-      if (!resourcePath.startsWith('/public/')) {
-        alternativePaths.push('/public' + resourcePath);
-      }
-
-      // Try without /public prefix
-      if (resourcePath.startsWith('/public/')) {
-        alternativePaths.push(resourcePath.replace(/^\/public/, ''));
-      }
-
-      // Try with /static prefix
-      if (!resourcePath.startsWith('/static/')) {
-        alternativePaths.push('/static' + resourcePath);
-      }
-    }
-
-    // For CSS files
-    if (resourcePath.endsWith('.css')) {
-      if (!resourcePath.includes('/css/')) {
-        const filename = resourcePath.split('/').pop();
-        alternativePaths.push('/css/' + filename);
-        alternativePaths.push('/public/css/' + filename);
-      }
-    }
-
-    // For JS files
-    if (resourcePath.endsWith('.js')) {
-      if (!resourcePath.includes('/js/')) {
-        const filename = resourcePath.split('/').pop();
-        alternativePaths.push('/js/' + filename);
-        alternativePaths.push('/public/js/' + filename);
-      }
-    }
-
-    // For images
-    if (resourcePath.match(/\.(jpg|jpeg|png|gif|svg)$/)) {
-      if (!resourcePath.includes('/images/')) {
-        const filename = resourcePath.split('/').pop();
-        alternativePaths.push('/images/' + filename);
-        alternativePaths.push('/public/images/' + filename);
-      }
-    }
-
-    console.log('[ERROR LOGGER] Trying alternative paths for:', resourcePath);
-    console.log('[ERROR LOGGER] Alternatives:', alternativePaths);
-
-    // Try each alternative path
-    for (const altPath of alternativePaths) {
-      const fullAltUrl = new URL(altPath, window.location.origin).toString();
-
-      // Create a test element to check if the resource exists
-      if (element.tagName === 'IMG') {
-        const testImg = new Image();
-        testImg.onload = function() {
-          console.log('[ERROR LOGGER] Alternative image path works:', altPath);
-          element.src = fullAltUrl;
-        };
-        testImg.src = fullAltUrl;
-      } else if (element.tagName === 'LINK') {
-        // For CSS, we'll just try to set it directly
-        element.href = fullAltUrl;
-        console.log('[ERROR LOGGER] Trying alternative CSS path:', altPath);
-      } else if (element.tagName === 'SCRIPT') {
-        // For scripts, create a new script element
-        const newScript = document.createElement('script');
-        newScript.src = fullAltUrl;
-        newScript.async = element.async;
-        newScript.defer = element.defer;
-        newScript.onload = function() {
-          console.log('[ERROR LOGGER] Alternative script path works:', altPath);
-        };
-        document.head.appendChild(newScript);
-      }
-    }
-
-    return true; // We've attempted fixes
-  } catch (error) {
-    console.error('[ERROR LOGGER] Error trying alternative paths:', error);
-    return false;
-  }
 }
 
 // Create a user-friendly error notification
