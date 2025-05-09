@@ -327,56 +327,6 @@ function setupLazyLoading() {
   });
 }
 
-/**
- * Fix resource paths that might be broken in production
- */
-function fixResourcePaths() {
-  // Check all CSS links
-  document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
-    const href = link.getAttribute('href');
-    if (href && href.startsWith('/css/')) {
-      // Add error handling
-      link.addEventListener('error', function() {
-        console.error('[PERFORMANCE] Failed to load CSS:', href);
-        // Try alternative path
-        const altHref = href.replace(/^\/css\//, '/public/css/');
-        console.log('[PERFORMANCE] Trying alternative CSS path:', altHref);
-        link.href = altHref;
-      });
-    }
-  });
-
-  // Check all script sources
-  document.querySelectorAll('script[src]').forEach(script => {
-    const src = script.getAttribute('src');
-    if (src && src.startsWith('/js/')) {
-      // Add error handling
-      script.addEventListener('error', function() {
-        console.error('[PERFORMANCE] Failed to load script:', src);
-        // Try alternative path
-        const altSrc = src.replace(/^\/js\//, '/public/js/');
-        console.log('[PERFORMANCE] Trying alternative script path:', altSrc);
-        script.src = altSrc;
-      });
-    }
-  });
-
-  // Check all images
-  document.querySelectorAll('img[src]').forEach(img => {
-    const src = img.getAttribute('src');
-    if (src && (src.startsWith('/images/') || src.startsWith('/uploads/'))) {
-      // Add error handling
-      img.addEventListener('error', function() {
-        console.error('[PERFORMANCE] Failed to load image:', src);
-        // Try alternative path
-        const altSrc = src.replace(/^\/(images|uploads)\//, '/public/$1/');
-        console.log('[PERFORMANCE] Trying alternative image path:', altSrc);
-        img.src = altSrc;
-      });
-    }
-  });
-}
-
 // Expose functions globally
 window.elrielPerformance = {
   detectDeviceCapabilities,
@@ -385,6 +335,5 @@ window.elrielPerformance = {
   optimizeMobileAnimations,
   setupEventDebouncing,
   deferNonCriticalResources,
-  setupLazyLoading,
-  fixResourcePaths
+  setupLazyLoading
 };
