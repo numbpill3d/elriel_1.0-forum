@@ -142,12 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         try {
           // Check if it's an unknown path
-          const url = new URL(this.href, window.location.origin);
-          const path = url.pathname;
-
-          // Log the full URL for debugging
-          console.log("[NAV DEBUG] Full URL:", url.toString());
-          console.log("[NAV DEBUG] Path component:", path);
+          const path = new URL(this.href, window.location.origin).pathname;
 
           // Check if the path is known or matches a pattern
           const isKnownPath = knownPaths.includes(path) ||
@@ -170,62 +165,38 @@ document.addEventListener('DOMContentLoaded', function() {
             // Check if it's a direct match in oldStylePaths
             if (window.oldStylePaths && window.oldStylePaths[path]) {
               fixedPath = window.oldStylePaths[path];
-              console.log("[NAV DEBUG] Found direct path match:", fixedPath);
             }
             // If not a direct match, try to find a pattern match
             else {
               // Check if it's a path with parameters like /forum/topic/123
               const pathParts = path.split('/').filter(part => part);
-              console.log("[NAV DEBUG] Path parts:", pathParts);
-
               if (pathParts.length >= 2) {
                 const basePath = '/' + pathParts[0];
-                console.log("[NAV DEBUG] Checking base path:", basePath);
-
                 if (window.oldStylePaths && window.oldStylePaths[basePath]) {
                   fixedPath = window.oldStylePaths[basePath];
                   // Append the rest of the path
                   if (pathParts.length > 1) {
                     fixedPath += '/' + pathParts.slice(1).join('/');
                   }
-                  console.log("[NAV DEBUG] Fixed using base path:", fixedPath);
                 }
 
                 // Check for common section patterns
                 const sectionPath = '/' + pathParts[0] + '/' + pathParts[1];
-                console.log("[NAV DEBUG] Checking section path:", sectionPath);
-
                 if (!fixedPath && window.oldStylePaths && window.oldStylePaths[sectionPath]) {
                   fixedPath = window.oldStylePaths[sectionPath];
                   // Append the rest of the path if any
                   if (pathParts.length > 2) {
                     fixedPath += '/' + pathParts.slice(2).join('/');
                   }
-                  console.log("[NAV DEBUG] Fixed using section path:", fixedPath);
                 }
               }
             }
 
             if (fixedPath) {
               console.log("[NAV DEBUG] Fixing path:", path, "->", fixedPath);
-
-              // Preserve query parameters and hash
-              if (url.search) {
-                fixedPath += url.search;
-              }
-              if (url.hash) {
-                fixedPath += url.hash;
-              }
-
-              // Use the full URL with the fixed path
-              const fixedUrl = new URL(fixedPath, window.location.origin).toString();
-              console.log("[NAV DEBUG] Final fixed URL:", fixedUrl);
-
               e.preventDefault();
-              window.location.href = fixedUrl;
+              window.location.href = fixedPath;
               return;
-            } else {
-              console.log("[NAV DEBUG] No fix found for path:", path);
             }
 
             // Show error notification if available and no fix was found
@@ -262,113 +233,39 @@ document.addEventListener('DOMContentLoaded', function() {
   window.addEventListener('error', function(e) {
     if (e.target.tagName === 'IMG' || e.target.tagName === 'SCRIPT' || e.target.tagName === 'LINK') {
       const resource = e.target.src || e.target.href;
-      if (!resource) {
-        return;
-      }
+      if (!resource) return;
 
       console.warn('[NAV DEBUG] Resource failed to load:', resource);
 
-      try {
-        // Parse the resource URL
-        const resourceUrl = new URL(resource, window.location.origin);
-        const resourcePath = resourceUrl.pathname;
+      // Check if it's a navigation path issue
+      if (resource.includes('/feed/') ||
+          resource.includes('/glyph/') ||
+          resource.includes('/whisper/') ||
+          resource.includes('/terminal/') ||
+          resource.includes('/auth/') ||
+          resource.includes('/forum/') ||
+          resource.includes('/profile/') ||
+          resource.includes('/api/')) {
 
-        console.log('[NAV DEBUG] Resource path:', resourcePath);
-
-        // Check if it's a navigation path issue
-        if (resourcePath.includes('/feed/') ||
-            resourcePath.includes('/glyph/') ||
-            resourcePath.includes('/whisper/') ||
-            resourcePath.includes('/terminal/') ||
-            resourcePath.includes('/auth/') ||
-            resourcePath.includes('/forum/') ||
-            resourcePath.includes('/profile/') ||
-            resourcePath.includes('/api/')) {
-
+        try {
           // Try to fix the path using oldStylePaths
+          const resourcePath = new URL(resource, window.location.origin).pathname;
+
+          // Check if we have a fix for this path
           if (window.oldStylePaths && window.oldStylePaths[resourcePath]) {
             const fixedPath = window.oldStylePaths[resourcePath];
             console.log('[NAV DEBUG] Found fixed path:', fixedPath, 'for', resourcePath);
 
             // For images and CSS, we can try to fix them directly
             if (e.target.tagName === 'IMG') {
-              const newSrc = resource.replace(resourcePath, fixedPath);
-              console.log('[NAV DEBUG] Fixing image src:', resource, '->', newSrc);
-              e.target.src = newSrc;
+              e.target.src = e.target.src.replace(resourcePath, fixedPath);
             } else if (e.target.tagName === 'LINK') {
-              const newHref = resource.replace(resourcePath, fixedPath);
-              console.log('[NAV DEBUG] Fixing link href:', resource, '->', newHref);
-              e.target.href = newHref;
-            } else if (e.target.tagName === 'SCRIPT') {
-              const newSrc = resource.replace(resourcePath, fixedPath);
-              console.log('[NAV DEBUG] Fixing script src:', resource, '->', newSrc);
-
-              // For scripts, we need to create a new script element
-              const newScript = document.createElement('script');
-              newScript.src = newSrc;
-              newScript.async = e.target.async;
-              newScript.defer = e.target.defer;
-
-              // Replace the old script with the new one
-              e.target.parentNode.replaceChild(newScript, e.target);
-            }
-          } else {
-            // Try to fix common path patterns
-            const pathParts = resourcePath.split('/').filter(part => part);
-
-            if (pathParts.length >= 2) {
-              // Check if the first part is a known section
-              const basePath = '/' + pathParts[0];
-              if (window.oldStylePaths && window.oldStylePaths[basePath]) {
-                const fixedBasePath = window.oldStylePaths[basePath];
-                const remainingPath = '/' + pathParts.slice(1).join('/');
-                const fixedPath = fixedBasePath + remainingPath;
-
-                console.log('[NAV DEBUG] Fixed resource path using base:', resourcePath, '->', fixedPath);
-
-                // Apply the fix
-                if (e.target.tagName === 'IMG') {
-                  e.target.src = resource.replace(resourcePath, fixedPath);
-                } else if (e.target.tagName === 'LINK') {
-                  e.target.href = resource.replace(resourcePath, fixedPath);
-                } else if (e.target.tagName === 'SCRIPT') {
-                  const newSrc = resource.replace(resourcePath, fixedPath);
-                  const newScript = document.createElement('script');
-                  newScript.src = newSrc;
-                  newScript.async = e.target.async;
-                  newScript.defer = e.target.defer;
-                  e.target.parentNode.replaceChild(newScript, e.target);
-                }
-              }
+              e.target.href = e.target.href.replace(resourcePath, fixedPath);
             }
           }
-        } else if (resourcePath.startsWith('/css/') ||
-                  resourcePath.startsWith('/js/') ||
-                  resourcePath.startsWith('/images/')) {
-          // Handle static assets with potential path issues
-          console.log('[NAV DEBUG] Checking static asset path:', resourcePath);
-
-          // Try prepending /public if it's missing
-          if (!resourcePath.includes('/public/')) {
-            const fixedPath = resourcePath.replace(/^\/(css|js|images)\//, '/public/$1/');
-            console.log('[NAV DEBUG] Trying with /public prefix:', fixedPath);
-
-            if (e.target.tagName === 'IMG') {
-              e.target.src = resource.replace(resourcePath, fixedPath);
-            } else if (e.target.tagName === 'LINK') {
-              e.target.href = resource.replace(resourcePath, fixedPath);
-            } else if (e.target.tagName === 'SCRIPT') {
-              const newSrc = resource.replace(resourcePath, fixedPath);
-              const newScript = document.createElement('script');
-              newScript.src = newSrc;
-              newScript.async = e.target.async;
-              newScript.defer = e.target.defer;
-              e.target.parentNode.replaceChild(newScript, e.target);
-            }
-          }
+        } catch (error) {
+          console.error('[NAV DEBUG] Error fixing resource path:', error);
         }
-      } catch (error) {
-        console.error('[NAV DEBUG] Error fixing resource path:', error);
       }
     }
   }, true);
