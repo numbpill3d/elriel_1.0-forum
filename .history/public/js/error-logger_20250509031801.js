@@ -106,18 +106,6 @@ function showErrorNotification(resource) {
           opacity: 0.9;
         }
 
-        .error-fix-link {
-          color: #ffffff;
-          text-decoration: underline;
-          font-weight: bold;
-          display: inline-block;
-          margin-top: 5px;
-        }
-
-        .error-fix-link:hover {
-          color: #ffcc00;
-        }
-
         .error-notification-close {
           position: absolute;
           top: 5px;

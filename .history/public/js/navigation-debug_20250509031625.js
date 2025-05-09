@@ -39,8 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
     '/crypto'
   ];
 
-  // Make oldStylePaths available globally for other scripts
-  window.oldStylePaths = {
+  const oldStylePaths = {
     '/bleedstream.html': '/feed/bleedstream',
     '/glyph-crucible.html': '/glyph/crucible',
     '/whisperboard.html': '/whisper/board',

@@ -57,13 +57,7 @@ function showErrorNotification(resource) {
       <div class="error-notification-content">
         <div class="error-notification-title">${isNavigationIssue ? 'Navigation Error' : 'Resource Error'}</div>
         <div class="error-notification-message">Failed to load: ${resource.split('/').pop()}</div>
-        ${isNavigationIssue ?
-          `<div class="error-notification-help">
-            ${fixedPath ?
-              `<a href="${fixedPath}" class="error-fix-link">Click here to navigate to the correct path</a>` :
-              'Try refreshing the page or returning to the home page.'}
-          </div>` :
-          ''}
+        ${isNavigationIssue ? '<div class="error-notification-help">Try refreshing the page or returning to the home page.</div>' : ''}
         <div class="error-notification-close">×</div>
       </div>
     `;
@@ -104,18 +98,6 @@ function showErrorNotification(resource) {
           margin-top: 8px;
           margin-bottom: 5px;
           opacity: 0.9;
-        }
-
-        .error-fix-link {
-          color: #ffffff;
-          text-decoration: underline;
-          font-weight: bold;
-          display: inline-block;
-          margin-top: 5px;
-        }
-
-        .error-fix-link:hover {
-          color: #ffcc00;
         }
 
         .error-notification-close {
