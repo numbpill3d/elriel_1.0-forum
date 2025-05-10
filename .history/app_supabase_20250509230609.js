@@ -76,7 +76,7 @@ const glyphRoutes = require('./routes/glyph');
 const feedRoutes = require('./routes/feed_supabase'); // Using Supabase feed
 const whisperRoutes = require('./routes/whisper');
 const forumRoutes = require('./routes/forum_supabase'); // Using Supabase forum
-// const scrapyardRoutes = require('./routes/scrapyard_supabase'); // Using Supabase scrapyard - now handled by forum routes
+const scrapyardRoutes = require('./routes/scrapyard_supabase'); // Using Supabase scrapyard
 const cryptoRoutes = require('./routes/crypto');
 const apiRoutes = require('./routes/api');
 
