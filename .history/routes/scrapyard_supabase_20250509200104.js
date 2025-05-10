@@ -710,6 +710,7 @@ router.post('/asset/:id/favorite', isAuthenticated, async (req, res) => {
       throw favoriteError;
     }
 
+    let result;
     let action;
 
     if (favorite) {

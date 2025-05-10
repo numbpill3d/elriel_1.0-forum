@@ -145,8 +145,8 @@
                 <h2 class="glitch-effect" data-text="SCRAPYARD">SCRAPYARD</h2>
                 <p>Welcome to the digital junkyard—a wasteland collection point for discarded code, forgotten artifacts, and broken tech from the digital ruins. Here, scavengers exchange and catalog the debris of the network—each piece with its own history and hidden power.</p>
                 <div id="scrapyard-controls">
-                  <a href="/scrapyard" class="button hover-glow">SCAN YARD</a>
-                  <a href="/scrapyard/upload" class="button hover-glow">DEPOSIT ARTIFACT</a>
+                  <a href="/forum/scrapyard" class="button hover-glow">SCAN YARD</a>
+                  <a href="/forum/scrapyard/new" class="button hover-glow">DEPOSIT ARTIFACT</a>
                 </div>
               </div>
             </div>
@@ -548,9 +548,9 @@
      */
     function updateRegistryStats(data) {
       // Store statistics
-      const artifactCount = data.assetCount || (data.assets ? data.assets.length : 0);
-      const scrapCount = data.assets ? data.assets.reduce((sum, asset) => sum + (asset.comment_count || 0), 0) : 0;
-      const activeScavengers = data.junkerCount || Math.floor(Math.random() * 10) + 5; // Fallback to random
+      const artifactCount = data.items ? data.items.length : 0;
+      const scrapCount = data.items ? data.items.reduce((sum, item) => sum + (item.comment_count || 0), 0) : 0;
+      const activeScavengers = data.activeUsers || Math.floor(Math.random() * 10) + 5; // Fallback to random
 
       // Store in global data
       if (!window.scrapyardData) window.scrapyardData = {};

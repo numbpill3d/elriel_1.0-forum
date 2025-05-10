@@ -312,13 +312,15 @@ router.post('/register', isAuthenticated, async (req, res) => {
     }
 
     // Register as junker
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('junkers')
       .insert({
         user_id: req.session.user.id,
         junker_name: junkerName,
         bio: bio || ''
-      });
+      })
+      .select()
+      .single();
 
     if (error) {
       throw error;
@@ -710,6 +712,7 @@ router.post('/asset/:id/favorite', isAuthenticated, async (req, res) => {
       throw favoriteError;
     }
 
+    let result;
     let action;
 
     if (favorite) {

@@ -145,8 +145,8 @@
                 <h2 class="glitch-effect" data-text="SCRAPYARD">SCRAPYARD</h2>
                 <p>Welcome to the digital junkyard—a wasteland collection point for discarded code, forgotten artifacts, and broken tech from the digital ruins. Here, scavengers exchange and catalog the debris of the network—each piece with its own history and hidden power.</p>
                 <div id="scrapyard-controls">
-                  <a href="/scrapyard" class="button hover-glow">SCAN YARD</a>
-                  <a href="/scrapyard/upload" class="button hover-glow">DEPOSIT ARTIFACT</a>
+                  <a href="/forum/scrapyard" class="button hover-glow">SCAN YARD</a>
+                  <a href="/forum/scrapyard/new" class="button hover-glow">DEPOSIT ARTIFACT</a>
                 </div>
               </div>
             </div>
@@ -297,7 +297,7 @@
 
       // Delay to show the animation
       setTimeout(() => {
-        if (data.assets && data.assets.length > 0) {
+        if (data.items && data.items.length > 0) {
           // Create a document fragment for better performance
           const fragment = document.createDocumentFragment();
 
@@ -309,9 +309,9 @@
           grid.className = 'scrapyard-grid';
 
           // Add each item with staggered animation
-          data.assets.forEach((asset, index) => {
-            const itemDate = new Date(asset.created_at).toLocaleDateString();
-            const lastActivity = asset.updated_at ? new Date(asset.updated_at).toLocaleDateString() : itemDate;
+          data.items.forEach((item, index) => {
+            const itemDate = new Date(item.created_at).toLocaleDateString();
+            const lastActivity = item.last_activity ? new Date(item.last_activity).toLocaleDateString() : itemDate;
 
             // Create item element
             const itemEl = document.createElement('div');
@@ -319,40 +319,39 @@
             itemEl.style.animationDelay = `${index * 0.15}s`;
 
             // Create artifact SVG mark
-            const artifactId = (asset.id % 1000).toString().padStart(3, '0');
+            const artifactId = (item.id % 1000).toString().padStart(3, '0');
 
             // Item HTML
             itemEl.innerHTML = `
               <div class="scanner-line"></div>
               <div class="panel-header">
-                <h3>${asset.title}</h3>
+                <h3>${item.title}</h3>
                 <div class="artifact-id">#${artifactId}</div>
               </div>
               <div class="panel-content">
                 <div class="artifact-pattern">
                   <svg viewBox="0 0 100 100" class="artifact-symbol">
                     <circle cx="50" cy="50" r="40" fill="none" stroke="var(--terminal-green)" stroke-width="1" />
-                    <path d="M${20 + (asset.id % 30)} ${20 + (asset.id % 20)} L${50 + (asset.id % 20)} ${70 - (asset.id % 30)}" stroke="var(--terminal-green)" stroke-width="1" />
-                    <path d="M${80 - (asset.id % 25)} ${30 + (asset.id % 15)} L${30 + (asset.id % 25)} ${60 + (asset.id % 10)}" stroke="var(--terminal-green)" stroke-width="1" />
+                    <path d="M${20 + (item.id % 30)} ${20 + (item.id % 20)} L${50 + (item.id % 20)} ${70 - (item.id % 30)}" stroke="var(--terminal-green)" stroke-width="1" />
+                    <path d="M${80 - (item.id % 25)} ${30 + (item.id % 15)} L${30 + (item.id % 25)} ${60 + (item.id % 10)}" stroke="var(--terminal-green)" stroke-width="1" />
                     <text x="40" y="55" font-family="monospace" font-size="10" fill="var(--terminal-green)">${artifactId}</text>
                   </svg>
                 </div>
                 <div class="artifact-info">
                   <div class="scrapyard-item-meta">
-                    <span class="artifact-founder">FOUNDER: ${asset.username}</span>
+                    <span class="artifact-founder">FOUNDER: ${item.username}</span>
                     <span class="artifact-date">DISCOVERED: ${itemDate}</span>
                   </div>
                   <div class="scrapyard-item-description">
-                    ${asset.description.substring(0, 100)}${asset.description.length > 100 ? '...' : ''}
+                    ${item.content.substring(0, 100)}...
                   </div>
                 </div>
                 <div class="scrapyard-item-footer">
                   <div class="artifact-stats">
-                    <span class="comment-count">ANALYSES: ${asset.comment_count || 0}</span>
-                    <span class="download-count">DOWNLOADS: ${asset.download_count || 0}</span>
+                    <span class="comment-count">ANALYSES: ${item.comment_count}</span>
                     <span class="last-activity">LAST SIGNAL: ${lastActivity}</span>
                   </div>
-                  <a href="/scrapyard/asset/${asset.id}" class="button hover-glow">EXAMINE</a>
+                  <a href="/forum/topic/${item.id}" class="button hover-glow">EXAMINE</a>
                 </div>
               </div>
             `;
@@ -367,7 +366,7 @@
                 // Add glitch effect when clicking
                 itemEl.classList.add('glitch-text');
                 setTimeout(() => {
-                  window.location.href = `/scrapyard/asset/${asset.id}`;
+                  window.location.href = `/forum/topic/${item.id}`;
                 }, 300);
               }
             });
@@ -548,9 +547,9 @@
      */
     function updateRegistryStats(data) {
       // Store statistics
-      const artifactCount = data.assetCount || (data.assets ? data.assets.length : 0);
-      const scrapCount = data.assets ? data.assets.reduce((sum, asset) => sum + (asset.comment_count || 0), 0) : 0;
-      const activeScavengers = data.junkerCount || Math.floor(Math.random() * 10) + 5; // Fallback to random
+      const artifactCount = data.items ? data.items.length : 0;
+      const scrapCount = data.items ? data.items.reduce((sum, item) => sum + (item.comment_count || 0), 0) : 0;
+      const activeScavengers = data.activeUsers || Math.floor(Math.random() * 10) + 5; // Fallback to random
 
       // Store in global data
       if (!window.scrapyardData) window.scrapyardData = {};
