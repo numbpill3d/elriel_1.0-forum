@@ -22,10 +22,3 @@ services:
         sync: false
       - key: SUPABASE_SERVICE_KEY
         sync: false
-      - key: NODE_OPTIONS
-        value: "--max-old-space-size=384"
-    autoDeploy: true
-    disk:
-      name: tmp
-      mountPath: /tmp
-      sizeGB: 0.5

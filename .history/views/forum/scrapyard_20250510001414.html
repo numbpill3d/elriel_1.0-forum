@@ -287,21 +287,17 @@
     }
 
     /**
-     * Populate scrapyard items with staggered animation - optimized for memory usage
+     * Populate scrapyard items with staggered animation
      */
     function populateScrapyardItems(data) {
       const scrapyardItems = document.getElementById('scrapyard-items');
-      if (!scrapyardItems) return;
 
       // Show loading first
       scrapyardItems.innerHTML = `<div class="loading-indicator">INITIALIZING ARTIFACT SCAN</div>`;
 
-      // Use items array from data, with fallback to empty array
-      const items = data.items || [];
-
-      // Delay to show the animation - reduced delay time
+      // Delay to show the animation
       setTimeout(() => {
-        if (items && items.length > 0) {
+        if (data.assets && data.assets.length > 0) {
           // Create a document fragment for better performance
           const fragment = document.createDocumentFragment();
 
@@ -312,94 +308,77 @@
           const grid = document.createElement('div');
           grid.className = 'scrapyard-grid';
 
-          // Limit the number of items to display to reduce memory usage
-          const limitedItems = items.slice(0, 10);
-
           // Add each item with staggered animation
-          limitedItems.forEach((item, index) => {
-            const itemDate = new Date(item.created_at).toLocaleDateString();
-            const lastActivity = item.updated_at ? new Date(item.updated_at).toLocaleDateString() : itemDate;
+          data.assets.forEach((asset, index) => {
+            const itemDate = new Date(asset.created_at).toLocaleDateString();
+            const lastActivity = asset.updated_at ? new Date(asset.updated_at).toLocaleDateString() : itemDate;
 
             // Create item element
             const itemEl = document.createElement('div');
             itemEl.className = 'scrapyard-item';
-            itemEl.style.animationDelay = `${index * 0.1}s`; // Reduced delay
+            itemEl.style.animationDelay = `${index * 0.15}s`;
 
-            // Create artifact SVG mark - simplified
-            const artifactId = (item.id % 1000).toString().padStart(3, '0');
+            // Create artifact SVG mark
+            const artifactId = (asset.id % 1000).toString().padStart(3, '0');
 
-            // Item HTML - simplified
+            // Item HTML
             itemEl.innerHTML = `
               <div class="scanner-line"></div>
               <div class="panel-header">
-                <h3>${item.title}</h3>
+                <h3>${asset.title}</h3>
                 <div class="artifact-id">#${artifactId}</div>
               </div>
               <div class="panel-content">
                 <div class="artifact-pattern">
                   <svg viewBox="0 0 100 100" class="artifact-symbol">
                     <circle cx="50" cy="50" r="40" fill="none" stroke="var(--terminal-green)" stroke-width="1" />
-                    <path d="M30 30 L70 70" stroke="var(--terminal-green)" stroke-width="1" />
-                    <path d="M70 30 L30 70" stroke="var(--terminal-green)" stroke-width="1" />
+                    <path d="M${20 + (asset.id % 30)} ${20 + (asset.id % 20)} L${50 + (asset.id % 20)} ${70 - (asset.id % 30)}" stroke="var(--terminal-green)" stroke-width="1" />
+                    <path d="M${80 - (asset.id % 25)} ${30 + (asset.id % 15)} L${30 + (asset.id % 25)} ${60 + (asset.id % 10)}" stroke="var(--terminal-green)" stroke-width="1" />
                     <text x="40" y="55" font-family="monospace" font-size="10" fill="var(--terminal-green)">${artifactId}</text>
                   </svg>
                 </div>
                 <div class="artifact-info">
                   <div class="scrapyard-item-meta">
-                    <span class="artifact-founder">FOUNDER: ${item.username}</span>
+                    <span class="artifact-founder">FOUNDER: ${asset.username}</span>
                     <span class="artifact-date">DISCOVERED: ${itemDate}</span>
                   </div>
                   <div class="scrapyard-item-description">
-                    ${item.content ? item.content.substring(0, 80) + (item.content.length > 80 ? '...' : '') : 'No description available'}
+                    ${asset.description.substring(0, 100)}${asset.description.length > 100 ? '...' : ''}
                   </div>
                 </div>
                 <div class="scrapyard-item-footer">
                   <div class="artifact-stats">
-                    <span class="comment-count">ANALYSES: ${item.comment_count || 0}</span>
+                    <span class="comment-count">ANALYSES: ${asset.comment_count || 0}</span>
+                    <span class="download-count">DOWNLOADS: ${asset.download_count || 0}</span>
                     <span class="last-activity">LAST SIGNAL: ${lastActivity}</span>
                   </div>
-                  <a href="/forum/topic/${item.id}" class="button hover-glow">EXAMINE</a>
+                  <a href="/scrapyard/asset/${asset.id}" class="button hover-glow">EXAMINE</a>
                 </div>
               </div>
             `;
 
-            // Add simplified interactive effects - using event delegation
+            // Add interactive effects
+            itemEl.addEventListener('mouseover', function() {
+              addScrapLog(`Scanning artifact #${artifactId}`);
+            });
+
+            itemEl.addEventListener('click', function(e) {
+              if (e.target.tagName !== 'A') {
+                // Add glitch effect when clicking
+                itemEl.classList.add('glitch-text');
+                setTimeout(() => {
+                  window.location.href = `/scrapyard/asset/${asset.id}`;
+                }, 300);
+              }
+            });
+
+            // Add to grid
             grid.appendChild(itemEl);
-          });
-
-          // Add event delegation to reduce memory usage
-          grid.addEventListener('mouseover', function(e) {
-            const itemEl = e.target.closest('.scrapyard-item');
-            if (itemEl) {
-              const artifactId = itemEl.querySelector('.artifact-id')?.textContent.replace('#', '') || '';
-              if (artifactId) {
-                addScrapLog(`Scanning artifact #${artifactId}`);
-              }
-            }
-          });
-
-          grid.addEventListener('click', function(e) {
-            if (e.target.tagName !== 'A') {
-              const itemEl = e.target.closest('.scrapyard-item');
-              if (itemEl) {
-                const linkEl = itemEl.querySelector('a.button');
-                if (linkEl) {
-                  // Add glitch effect when clicking
-                  itemEl.classList.add('glitch-text');
-                  setTimeout(() => {
-                    window.location.href = linkEl.href;
-                  }, 300);
-                }
-              }
-            }
           });
 
           // Add grid to document
           fragment.appendChild(grid);
           scrapyardItems.appendChild(fragment);
-
-          // Clear references to help garbage collection
-          limitedItems.length = 0;
 
         } else {
           // Show empty state
@@ -411,7 +390,7 @@
             </div>
           `;
         }
-      }, 1000); // Reduced delay for better performance
+      }, 1500); // Delay for dramatic effect
     }
 
     /**
