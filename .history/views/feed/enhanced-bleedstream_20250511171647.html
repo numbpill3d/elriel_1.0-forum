@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BLEEDSTREAM | ELRIEL</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/glitch.css">
+  <link rel="stylesheet" href="/css/feed.css">
+  <link rel="stylesheet" href="/css/bleedstream-sidebar.css">
+  <!-- New stylesheet for enhanced features -->
+  <link rel="stylesheet" href="/css/bleedstream-enhanced.css">
+  <script src="/js/error-logger.js" defer></script>
+  <script src="/js/glitch.js" defer></script>
+  <script src="/js/navigation-debug.js" defer></script>
+  <script src="/js/sidebar-manager.js" defer></script>
+  <!-- New script for real-time functionality -->
+  <script src="/js/bleedstream-realtime.js" defer></script>
+</head>
+<body class="terminal">
+  <div class="noise-overlay"></div>
+  <div class="scan-lines"></div>
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">TERMINAL ACCESS v2.0</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
+        </div>
+      </div>
+    </header>
+
+    <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle">TOGGLE NAVIGATION</button>
+
+    <div class="content-wrapper">
+      <nav class="sidebar" id="main-sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream" class="active">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+            <li><a href="/forum/scrapyard">SCRAPYARD</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">PROFILE</h3>
+          <ul class="nav-links">
+            <li><a href="/profile">DASHBOARD</a></li>
+            <li><a href="/profile/edit">EDIT PROFILE</a></li>
+            <li><a href="/feed/new">CREATE POST</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">PREFERENCES</h3>
+          <ul class="nav-links">
+            <li><a href="#" id="customize-feed">CUSTOMIZE FEED</a></li>
+            <li><a href="#" id="toggle-theme">THEME OPTIONS</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <!-- Connection status indicator -->
+        <div id="realtime-status" class="realtime-status offline">
+          <span class="status-icon"></span>
+          <span class="status-text">DISCONNECTED</span>
+        </div>
+        
+        <!-- Main feed panel -->
+        <section class="feed-panel">
+          <div class="panel-header">
+            <h2>BLEEDSTREAM</h2>
+            <div class="status-indicator">LIVE FEED</div>
+          </div>
+          
+          <!-- New personalized feed controls -->
+          <div class="feed-personalization">
+            <div class="feed-mode-toggle">
+              <button class="feed-mode-btn active" data-mode="personalized">PERSONALIZED</button>
+              <button class="feed-mode-btn" data-mode="global">GLOBAL</button>
+              <button class="feed-mode-btn" data-mode="activity">ACTIVITY</button>
+            </div>
+          </div>
+          
+          <div class="feed-content">
+            <div class="feed-controls">
+              <div class="form-group">
+                <label for="tag-filter">FILTER BY TAG:</label>
+                <select id="tag-filter">
+                  <option value="">ALL TAGS</option>
+                  <!-- Tags will be injected here -->
+                </select>
+              </div>
+              <div class="form-group">
+                <a href="/feed/new" class="new-post-btn">CREATE POST</a>
+              </div>
+            </div>
+
+            <div id="post-list" class="bleedstream-grid">
+              <!-- Posts will be injected here -->
+            </div>
+            
+            <!-- Activity feed (hidden by default) -->
+            <div id="activity-feed" class="activity-feed" style="display: none;">
+              <div class="activity-header">
+                <h3>NEURAL NETWORK ACTIVITY</h3>
+              </div>
+              <div id="activity-list" class="activity-list">
+                <!-- Activity items will be injected here -->
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- Customization modal (hidden by default) -->
+        <div id="customize-modal" class="modal">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3>CUSTOMIZE BLEEDSTREAM</h3>
+              <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+              <div class="settings-section">
+                <h4>VISUAL PREFERENCES</h4>
+                <div class="form-group">
+                  <label for="theme-select">THEME:</label>
+                  <select id="theme-select">
+                    <option value="default">DEFAULT TERMINAL</option>
+                    <option value="cyberpunk">CYBERPUNK NEON</option>
+                    <option value="win98">WINDOWS 98</option>
+                    <option value="glitch">GLITCH</option>
+                    <option value="vaporwave">VAPORWAVE</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="font-size">FONT SIZE:</label>
+                  <select id="font-size">
+                    <option value="small">SMALL</option>
+                    <option value="medium">MEDIUM</option>
+                    <option value="large">LARGE</option>
+                    <option value="x-large">EXTRA LARGE</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="font-color">TEXT COLOR:</label>
+                  <input type="color" id="font-color" value="#00ff00">
+                </div>
+                <div class="form-group">
+                  <label for="background-image">BACKGROUND IMAGE:</label>
+                  <input type="file" id="background-image" accept="image/jpeg,image/png,image/gif">
+                </div>
+              </div>
+              
+              <div class="settings-section">
+                <h4>CONTENT PREFERENCES</h4>
+                <div class="interest-tags">
+                  <label>INTEREST TAGS:</label>
+                  <div id="tag-checkboxes" class="tag-checkboxes">
+                    <!-- Tag checkboxes will be injected here -->
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="district-select">PREFERRED DISTRICT:</label>
+                  <select id="district-select">
+                    <option value="">NO PREFERENCE</option>
+                    <!-- Districts will be injected here -->
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="glyph-select">FEATURED GLYPH:</label>
+                  <select id="glyph-select">
+                    <option value="">NO PREFERENCE</option>
+                    <!-- Glyphs will be injected here -->
+                  </select>
+                </div>
+              </div>
+              
+              <div class="modal-actions">
+                <button id="save-preferences" class="save-btn">SAVE PREFERENCES</button>
+                <button id="cancel-preferences" class="cancel-btn">CANCEL</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <footer class="main-footer">
+      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+      <div class="footer-glyphs">
+        <span class="glyph">⌘</span>
+        <span class="glyph">⍟</span>
+        <span class="glyph">⎔</span>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Add error handling for data injection
+    let data, user, posts = [], tags = [], currentTag = null;
+    let preferences = {};
+    let activities = [];
+    
+    try {
+      // Inject data from server
+      data = JSON.parse('__DATA__'.replace(/\\n/g, "\\n")
+          .replace(/\\'/g, "\\'")
+          .replace(/\\"/g, '\\"')
+          .replace(/\\&/g, "\\&")
+          .replace(/\\r/g, "\\r")
+          .replace(/\\t/g, "\\t")
+          .replace(/\\b/g, "\\b")
+          .replace(/\\f/g, "\\f"));
+      
+      user = data.user;
+      posts = data.posts || [];
+      tags = data.tags || [];
+      currentTag = data.currentTag;
+      preferences = data.preferences || {};
+      activities = data.activities || [];
+      
+      console.log("Data loaded successfully:", {
+        hasUser: !!user,
+        postCount: posts.length,
+        tagCount: tags.length,
+        hasPreferences: Object.keys(preferences).length > 0,
+        activityCount: activities.length
+      });
+    } catch (err) {
+      console.error("Error parsing injected data:", err);
+      // Set default values
+      data = {};
+      user = null;
+      posts = [];
+      tags = [];
+      preferences = {};
+      activities = [];
+    }
+
+    // Update user status in header
+    const userStatusEl = document.getElementById('user-status');
+    if (userStatusEl) {
+      if (user) {
+        userStatusEl.innerHTML = `
+          <div class="logged-in">
+            <span class="username">${user.username}</span>
+            <div class="user-links">
+              <a href="/profile" class="win98-btn">PROFILE</a>
+              <a href="/auth/logout" class="win98-btn">LOGOUT</a>
+            </div>
+          </div>
+        `;
+      } else {
+        userStatusEl.innerHTML = `
+          <div class="logged-out">
+            <a href="/auth/login" class="win98-btn login-btn">LOGIN</a>
+            <a href="/auth/register" class="win98-btn register-btn">REGISTER</a>
+          </div>
+        `;
+      }
+    }
+
+    // Populate tag filter dropdown
+    const tagFilterSelect = document.getElementById('tag-filter');
+    if (tagFilterSelect && tags.length > 0) {
+      tags.forEach(tag => {
+        if (tag && tag.trim()) {
+          const option = document.createElement('option');
+          option.value = tag;
+          option.textContent = tag.toUpperCase();
+          tagFilterSelect.appendChild(option);
+        }
+      });
+
+      // Set current tag filter
+      if (currentTag) {
+        tagFilterSelect.value = currentTag;
+      }
+
+      // Handle tag filter change
+      tagFilterSelect.addEventListener('change', (e) => {
+        const selectedTag = e.target.value;
+        if (selectedTag) {
+          window.location.href = `/feed/bleedstream?tag=${encodeURIComponent(selectedTag)}`;
+        } else {
+          window.location.href = '/feed/bleedstream';
+        }
+      });
+    }
+
+    // Display posts (simplified version - details in bleedstream-realtime.js)
+    const displayPosts = (postsToDisplay = posts) => {
+      const postListEl = document.getElementById('post-list');
+      if (!postListEl) return;
+      
+      // Clear any existing content
+      postListEl.innerHTML = '';
+
+      if (postsToDisplay.length > 0) {
+        postsToDisplay.forEach(post => {
+          if (!post) return; // Skip invalid posts
+          
+          // Post rendering logic moved to bleedstream-realtime.js
+          // This is just a stub to be compatible with the original code
+          window.renderPost(post, postListEl);
+        });
+      } else {
+        postListEl.innerHTML = '<div class="no-posts-message">NO POSTS FOUND IN THE BLEEDSTREAM.</div>';
+      }
+    };
+    
+    // Display activities
+    const displayActivities = (activitiesToDisplay = activities) => {
+      const activityListEl = document.getElementById('activity-list');
+      if (!activityListEl) return;
+      
+      // Clear any existing content
+      activityListEl.innerHTML = '';
+
+      if (activitiesToDisplay.length > 0) {
+        activitiesToDisplay.forEach(activity => {
+          if (!activity) return; // Skip invalid activities
+          
+          // Activity rendering logic in bleedstream-realtime.js
+          window.renderActivity(activity, activityListEl);
+        });
+      } else {
+        activityListEl.innerHTML = '<div class="no-activities-message">NO NEURAL NETWORK ACTIVITY DETECTED.</div>';
+      }
+    };
+    
+    // Toggle feed mode (personalized, global, activity)
+    const feedModeBtns = document.querySelectorAll('.feed-mode-btn');
+    if (feedModeBtns.length) {
+      feedModeBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          // Remove active class from all buttons
+          feedModeBtns.forEach(b => b.classList.remove('active'));
+          // Add active class to clicked button
+          this.classList.add('active');
+          
+          const mode = this.dataset.mode;
+          const postList = document.getElementById('post-list');
+          const activityFeed = document.getElementById('activity-feed');
+          
+          switch (mode) {
+            case 'personalized':
+              postList.style.display = 'grid';
+              activityFeed.style.display = 'none';
+              // Trigger personalized feed load via WebSocket
+              window.bleedstreamSocket.requestPersonalizedFeed();
+              break;
+            case 'global':
+              postList.style.display = 'grid';
+              activityFeed.style.display = 'none';
+              // Display all posts without personalization
+              displayPosts(posts);
+              break;
+            case 'activity':
+              postList.style.display = 'none';
+              activityFeed.style.display = 'block';
+              // Display activity feed
+              displayActivities(activities);
+              break;
+          }
+        });
+      });
+    }
+    
+    // Customize feed modal
+    const customizeFeedBtn = document.getElementById('customize-feed');
+    const customizeModal = document.getElementById('customize-modal');
+    const closeModalBtn = document.querySelector('.close-modal');
+    const cancelPreferencesBtn = document.getElementById('cancel-preferences');
+    
+    if (customizeFeedBtn && customizeModal) {
+      customizeFeedBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        customizeModal.style.display = 'block';
+        // Load current preferences
+        loadPreferences();
+      });
+      
+      // Close modal handlers
+      if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', function() {
+          customizeModal.style.display = 'none';
+        });
+      }
+      
+      if (cancelPreferencesBtn) {
+        cancelPreferencesBtn.addEventListener('click', function() {
+          customizeModal.style.display = 'none';
+        });
+      }
+      
+      // Close modal when clicking outside of it
+      window.addEventListener('click', function(e) {
+        if (e.target === customizeModal) {
+          customizeModal.style.display = 'none';
+        }
+      });
+    }
+    
+    // Save preferences
+    const savePreferencesBtn = document.getElementById('save-preferences');
+    if (savePreferencesBtn) {
+      savePreferencesBtn.addEventListener('click', function() {
+        // Gather preferences from form
+        const theme = document.getElementById('theme-select').value;
+        const fontSize = document.getElementById('font-size').value;
+        const fontColor = document.getElementById('font-color').value;
+        
+        // Save preferences via API (implemented in bleedstream-realtime.js)
+        window.saveUserPreferences({
+          theme,
+          fontSize,
+          fontColor
+        });
+        
+        // Save interest tags
+        const selectedTags = [];
+        document.querySelectorAll('#tag-checkboxes input:checked').forEach(checkbox => {
+          selectedTags.push(checkbox.value);
+        });
+        
+        const districtId = document.getElementById('district-select').value;
+        const glyphId = document.getElementById('glyph-select').value;
+        
+        // Save interests via API
+        window.saveUserInterests({
+          tags: selectedTags,
+          districtId,
+          glyphId
+        });
+        
+        // Handle background image upload separately
+        const backgroundImageInput = document.getElementById('background-image');
+        if (backgroundImageInput.files.length > 0) {
+          window.uploadBackgroundImage(backgroundImageInput.files[0]);
+        }
+        
+        // Close modal
+        customizeModal.style.display = 'none';
+      });
+    }
+    
+    // Load user preferences into form
+    function loadPreferences() {
+      // This will be called when the customize modal is opened
+      // Implemented in bleedstream-realtime.js
+      if (window.loadUserPreferencesForm) {
+        window.loadUserPreferencesForm(preferences);
+      }
+    }
+    
+    // Toggle theme directly
+    const toggleThemeBtn = document.getElementById('toggle-theme');
+    if (toggleThemeBtn) {
+      toggleThemeBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        // Simple theme cycling
+        const themes = ['default', 'cyberpunk', 'win98', 'glitch', 'vaporwave'];
+        const currentTheme = document.body.dataset.theme || 'default';
+        const currentIndex = themes.indexOf(currentTheme);
+        const nextIndex = (currentIndex + 1) % themes.length;
+        const nextTheme = themes[nextIndex];
+        
+        // Update theme
+        document.body.dataset.theme = nextTheme;
+        document.body.className = `terminal theme-${nextTheme}`;
+        
+        // Save preference if user is logged in
+        if (user && window.saveUserPreferences) {
+          window.saveUserPreferences({ theme: nextTheme });
+        }
+      });
+    }
+
+    // Set initial theme if available
+    if (preferences.theme) {
+      document.body.dataset.theme = preferences.theme;
+      document.body.classList.add(`theme-${preferences.theme}`);
+    }
+    
+    // Toggle glitch effects
+    const toggleGlitchBtn = document.getElementById('toggle-glitch');
+    if (toggleGlitchBtn) {
+      toggleGlitchBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.body.classList.toggle('glitch-active');
+        // Store preference in localStorage
+        localStorage.setItem('glitch-active', document.body.classList.contains('glitch-active') ? 'true' : 'false');
+      });
+    }
+
+    // Check if glitch effects were previously enabled
+    const glitchActive = localStorage.getItem('glitch-active');
+    if (glitchActive === 'true') {
+      document.body.classList.add('glitch-active');
+    }
+  </script>
+</body>
+</html>
