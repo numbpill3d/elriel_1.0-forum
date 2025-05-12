@@ -315,19 +315,19 @@ router.post('/upload', isJunker, upload.fields([
   { name: 'asset', maxCount: 1 },
   { name: 'thumbnail', maxCount: 1 }
 ]), (req, res) => {
-  const startTime = Date.now();
-  try {
-    const { title, description, category, tags, asset_type, is_free } = req.body;
- 
-     // Log file sizes
-     if (req.files && req.files.asset) {
-       console.log('Uploaded asset size:', req.files.asset[0].size, 'bytes');
-     }
-     if (req.files && req.files.thumbnail) {
-       console.log('Uploaded thumbnail size:', req.files.thumbnail[0].size, 'bytes');
-     }
- 
-     // Validate input
+ const startTime = Date.now();
+ try {
+   const { title, description, category, tags, asset_type, is_free } = req.body;
+
+   // Log file sizes
+   if (req.files && req.files.asset) {
+     console.log('Uploaded asset size:', req.files.asset[0].size, 'bytes');
+   }
+   if (req.files && req.files.thumbnail) {
+     console.log('Uploaded thumbnail size:', req.files.thumbnail[0].size, 'bytes');
+   }
+
+   // Validate input
     if (!title || !description || !category || !asset_type) {
       // Remove uploaded files
       if (req.files.asset) {
@@ -390,10 +390,6 @@ router.post('/upload', isJunker, upload.fields([
     });
   } catch (err) {
     console.error('Error uploading asset:', err);
-  } finally {
-    const endTime = Date.now();
-    const processingTime = endTime - startTime;
-    console.log('Asset upload processing time:', processingTime, 'ms');
     res.status(500).json({
       error: 'System error',
       message: 'Terminal connection unstable. Try again later.'
