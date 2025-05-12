@@ -11,7 +11,6 @@
   <script src="/js/glitch.js" defer></script>
   <script src="/js/win98.js" defer></script>
   <script src="/js/profile-themes.js" defer></script>
-  <script src="/js/profile-widgets.js" defer></script>
 </head>
 <body class="terminal">
   <div class="noise-overlay"></div>
@@ -190,6 +189,29 @@
                   <textarea id="custom-css" name="customCss" maxlength="10000" placeholder="/* Add your custom CSS here */"></textarea>
                   <p class="help-text">Custom CSS will be applied to your profile page.</p>
                 </div>
+  
+                <!-- Widgets/Cards Section -->
+                <div id="widgets" class="edit-section">
+                  <h3 class="section-header">PROFILE WIDGETS</h3>
+                  <div class="widget-manager">
+                    <div class="form-group">
+                      <label>ADD NEW WIDGET:</label>
+                      <select id="widget-type" class="widget-type-select">
+                        <option value="">-- Select Widget Type --</option>
+                        <option value="text">Text Block</option>
+                        <option value="image">Image Gallery</option>
+                        <option value="video">Video</option>
+                        <option value="iframe">Embedded Content/iframe</option>
+                      </select>
+                      <button type="button" id="add-widget-btn" class="control-btn">ADD WIDGET</button>
+                    </div>
+  
+                    <div class="widgets-container" id="widgets-container">
+                      <!-- Widget items will be added dynamically here -->
+                      <div class="empty-widget-message">No widgets added yet. Use the controls above to add widgets to your profile.</div>
+                    </div>
+                  </div>
+                </div>
 
                 <div class="form-group">
                   <label for="custom-html">CUSTOM HTML:</label>
@@ -197,27 +219,52 @@
                   <p class="help-text">Custom HTML will be displayed in your profile's custom code section.</p>
                 </div>
               </div>
-              
-              <!-- Widgets/Cards Section -->
-              <div id="widgets" class="edit-section">
-                <h3 class="section-header">PROFILE WIDGETS</h3>
-                <div class="widget-manager">
-                  <div class="form-group">
-                    <label for="widget-type">ADD NEW WIDGET:</label>
-                    <select id="widget-type" class="widget-type-select" aria-label="Select widget type">
-                      <option value="">-- Select Widget Type --</option>
-                      <option value="text">Text Block</option>
-                      <option value="image">Image Gallery</option>
-                      <option value="video">Video</option>
-                      <option value="iframe">Embedded Content/iframe</option>
-                    </select>
-                    <button type="button" id="add-widget-btn" class="control-btn">ADD WIDGET</button>
-                  </div>
 
-                  <div class="widgets-container" id="widgets-container">
-                    <!-- Widget items will be added dynamically here -->
-                    <div class="empty-widget-message">No widgets added yet. Use the controls above to add widgets to your profile.</div>
+              <div class="form-group">
+                <label>PROFILE SIGIL:</label>
+                <div id="current-glyph-preview" class="current-glyph-preview">
+                  <!-- Current glyph preview will be injected here -->
+                </div>
+                <div class="glyph-selection" id="glyph-selection">
+                  <!-- User's glyphs will be injected here -->
+                </div>
+                <input type="hidden" id="selected-glyph-id" name="glyphId">
+              </div>
+
+              <div class="form-group">
+                <label for="theme-template">THEME TEMPLATE:</label>
+                <p class="help-text">Choose a pre-designed theme for your profile page.</p>
+                <select id="theme-template" name="themeTemplate">
+                  <option value="terminal">Terminal (Default)</option>
+                  <option value="cyberpunk">Cyberpunk</option>
+                  <option value="win98">Windows 98</option>
+                  <option value="vaporwave">Vaporwave</option>
+                  <option value="minimal">Minimal</option>
+                </select>
+
+                <div id="theme-preview-container" class="theme-preview-container">
+                  <h4>Theme Preview</h4>
+                  <div id="theme-preview" class="theme-preview">
+                    <!-- Theme preview will be shown here -->
                   </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>PROFILE WINDOWS:</label>
+                <p class="help-text">Create Windows 98-style popup windows for your profile page.</p>
+                <div id="profile-windows-manager" class="win98-preview">
+                  <div class="windows-preview">
+                    <div class="win98-window" style="position: static; margin: 10px auto; width: 250px; height: 150px;">
+                      <div class="win98-titlebar">
+                        <div class="win98-titlebar-text">Sample Window</div>
+                      </div>
+                      <div class="win98-content">
+                        <p>Windows 98 style windows will appear on your profile page.</p>
+                      </div>
+                    </div>
+                  </div>
+                  <p class="coming-soon-message">Windows 98 profile feature coming soon!</p>
                 </div>
               </div>
 
@@ -300,17 +347,6 @@
       currentBackgroundPreview.appendChild(img);
     } else {
       currentBackgroundPreview.innerHTML = '<span>NO BACKGROUND SET</span>';
-    }
-    
-    // Display current header image preview if it exists
-    const currentHeaderPreview = document.getElementById('current-header-preview');
-    if (profile.header_image) {
-      const img = document.createElement('img');
-      img.src = profile.header_image;
-      img.className = 'current-header-preview';
-      currentHeaderPreview.appendChild(img);
-    } else {
-      currentHeaderPreview.innerHTML = '<span>NO HEADER IMAGE SET</span>';
     }
 
     // Display current glyph preview
@@ -468,15 +504,11 @@
       const selectedTheme = themes.find(theme => theme.id === themeName) || themes[0];
 
       // Update preview
-      if (themePreview) {
-        themePreview.innerHTML = `<img src="${selectedTheme.preview}" alt="${selectedTheme.name}" class="theme-preview-image">`;
-      }
+      themePreview.innerHTML = `<img src="${selectedTheme.preview}" alt="${selectedTheme.name}" class="theme-preview-image">`;
     }
 
     // Initialize theme preview
-    if (themePreview) {
-      updateThemePreview(themeTemplateSelect.value);
-    }
+    updateThemePreview(themeTemplateSelect.value);
 
     // Toggle glitch effects
     document.getElementById('toggle-glitch').addEventListener('click', function(e) {

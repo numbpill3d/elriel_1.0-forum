@@ -337,12 +337,9 @@ router.get('/edit', isAuthenticated, (req, res) => {
 });
 
 // Update profile
-router.post('/update', isAuthenticated, upload.fields([
-  { name: 'background', maxCount: 1 },
-  { name: 'headerImage', maxCount: 1 }
-]), (req, res) => {
+router.post('/update', isAuthenticated, upload.single('background'), (req, res) => {
   try {
-    const { status, customCss, customHtml, themeTemplate, blogLayout, districtId, widgets } = req.body;
+    const { status, customCss, customHtml, themeTemplate, blogLayout, districtId } = req.body;
 
     // Sanitize inputs (basic sanitization, would use a proper library in production)
     const sanitizedStatus = status ? escapeHTML(status.slice(0, 100)) : null;
@@ -401,28 +398,9 @@ router.post('/update', isAuthenticated, upload.fields([
     }
 
     // Handle background image upload
-    if (req.files && req.files.background && req.files.background[0]) {
+    if (req.file) {
       updateFields.push('background_image = ?');
-      updateParams.push('/uploads/backgrounds/' + req.files.background[0].filename);
-    }
-    
-    // Handle header image upload
-    if (req.files && req.files.headerImage && req.files.headerImage[0]) {
-      updateFields.push('header_image = ?');
-      updateParams.push('/uploads/backgrounds/' + req.files.headerImage[0].filename);
-    }
-    
-    // Handle widgets
-    if (widgets) {
-      try {
-        const parsedWidgets = JSON.parse(widgets);
-        if (Array.isArray(parsedWidgets)) {
-          updateFields.push('widgets_data = ?');
-          updateParams.push(widgets);
-        }
-      } catch (e) {
-        console.error('Error parsing widgets data:', e);
-      }
+      updateParams.push('/uploads/backgrounds/' + req.file.filename);
     }
 
     // Add updated_at timestamp

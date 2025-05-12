@@ -328,6 +328,7 @@ router.get('/edit', isAuthenticated, (req, res) => {
     let html = fs.readFileSync(path.join(__dirname, '../views/profile/edit.html'), 'utf8');
     html = html.replace('__DATA__', JSON.stringify(data));
 
+    console.log('Profile data:', data);
     res.send(html);
   } catch (err) {
     console.error('Error loading profile editor:', err);
@@ -337,12 +338,9 @@ router.get('/edit', isAuthenticated, (req, res) => {
 });
 
 // Update profile
-router.post('/update', isAuthenticated, upload.fields([
-  { name: 'background', maxCount: 1 },
-  { name: 'headerImage', maxCount: 1 }
-]), (req, res) => {
+router.post('/update', isAuthenticated, upload.single('background'), (req, res) => {
   try {
-    const { status, customCss, customHtml, themeTemplate, blogLayout, districtId, widgets } = req.body;
+    const { status, customCss, customHtml, themeTemplate, blogLayout, districtId } = req.body;
 
     // Sanitize inputs (basic sanitization, would use a proper library in production)
     const sanitizedStatus = status ? escapeHTML(status.slice(0, 100)) : null;
@@ -401,28 +399,9 @@ router.post('/update', isAuthenticated, upload.fields([
     }
 
     // Handle background image upload
-    if (req.files && req.files.background && req.files.background[0]) {
+    if (req.file) {
       updateFields.push('background_image = ?');
-      updateParams.push('/uploads/backgrounds/' + req.files.background[0].filename);
-    }
-    
-    // Handle header image upload
-    if (req.files && req.files.headerImage && req.files.headerImage[0]) {
-      updateFields.push('header_image = ?');
-      updateParams.push('/uploads/backgrounds/' + req.files.headerImage[0].filename);
-    }
-    
-    // Handle widgets
-    if (widgets) {
-      try {
-        const parsedWidgets = JSON.parse(widgets);
-        if (Array.isArray(parsedWidgets)) {
-          updateFields.push('widgets_data = ?');
-          updateParams.push(widgets);
-        }
-      } catch (e) {
-        console.error('Error parsing widgets data:', e);
-      }
+      updateParams.push('/uploads/backgrounds/' + req.file.filename);
     }
 
     // Add updated_at timestamp
@@ -431,6 +410,11 @@ router.post('/update', isAuthenticated, upload.fields([
     // Complete the query
     updateQuery += updateFields.join(', ') + ' WHERE user_id = ?';
     updateParams.push(req.session.user.id);
+
+    // Log the sanitized inputs and update query
+    console.log('Sanitized inputs:', { status: sanitizedStatus, customCss: sanitizedCss, customHtml: sanitizedHtml, districtId: districtId, themeTemplate: themeTemplate, blogLayout: blogLayout });
+    console.log('Update query:', updateQuery);
+    console.log('Update params:', updateParams);
 
     // Execute the update
     const result = db.prepare(updateQuery).run(...updateParams);
