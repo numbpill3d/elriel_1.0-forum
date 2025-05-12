@@ -327,11 +327,9 @@ router.get('/edit', isAuthenticated, (req, res) => {
     let html = fs.readFileSync(path.join(__dirname, '../views/profile/edit.html'), 'utf8');
     html = html.replace('__DATA__', JSON.stringify(data));
 
-    console.log('Profile data:', data);
     res.send(html);
   } catch (err) {
     console.error('Error loading profile editor:', err);
-    console.error('Error details:', err.message, err.stack);
     res.status(500).sendFile(path.join(__dirname, '../views/error.html'));
   }
 });
