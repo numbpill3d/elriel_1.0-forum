@@ -103,7 +103,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: true, // Force secure cookies in production
+    secure: process.env.NODE_ENV === 'production', // Only secure in production
     sameSite: 'lax',
     maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
   }
@@ -112,19 +112,75 @@ app.use(session({
 // Configure file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, './public/uploads/');
+    // Route to appropriate directory based on field name
+    if (file.fieldname === 'background' || file.fieldname === 'headerImage') {
+      cb(null, './public/uploads/backgrounds/');
+    } else if (file.fieldname === 'asset') {
+      cb(null, './public/uploads/assets/');
+    } else {
+      cb(null, './public/uploads/');
+    }
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const ext = path.extname(file.originalname);
+    const prefix = file.fieldname === 'background' ? 'bg-' : 
+                   file.fieldname === 'headerImage' ? 'header-' :
+                   file.fieldname === 'asset' ? 'asset-' : '';
+    cb(null, prefix + uniqueSuffix + ext);
   }
 });
-const upload = multer({ storage });
 
-// Create uploads directory if it doesn't exist
+const upload = multer({ 
+  storage,
+  limits: { 
+    fileSize: 10 * 1024 * 1024 // 10MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    // For profile images, accept only images
+    if (file.fieldname === 'background' || file.fieldname === 'headerImage') {
+      if (file.mimetype.startsWith('image/')) {
+        cb(null, true);
+      } else {
+        cb(new Error('Only image files are allowed for backgrounds'), false);
+      }
+    } 
+    // For assets, accept more file types
+    else if (file.fieldname === 'asset') {
+      const allowedTypes = [
+        'image/', 'text/', 'application/json', 'application/pdf',
+        'application/zip', 'application/x-zip-compressed',
+        'application/javascript', 'application/xml'
+      ];
+      
+      const isAllowed = allowedTypes.some(type => file.mimetype.startsWith(type));
+      if (isAllowed) {
+        cb(null, true);
+      } else {
+        cb(new Error('File type not allowed for assets'), false);
+      }
+    }
+    else {
+      cb(null, true);
+    }
+  }
+});
+
+// Create uploads directories if they don't exist
 const fs = require('fs');
-if (!fs.existsSync('./public/uploads')) {
-  fs.mkdirSync('./public/uploads', { recursive: true });
-}
+const uploadDirs = [
+  './public/uploads',
+  './public/uploads/backgrounds',
+  './public/uploads/assets',
+  './public/uploads/assets/thumbnails'
+];
+
+uploadDirs.forEach(dir => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+    console.log(`Created upload directory: ${dir}`);
+  }
+});
 
 // Render health check endpoint
 app.get('/health', (req, res) => {
@@ -159,34 +215,71 @@ staticRouter.get('/', (req, res) => {
 });
 
 // Serve static views for demo
-// Feed routes
+// Feed routes - Updated to use session-based data
 staticRouter.get('/feed/bleedstream', (req, res) => {
-  // Create mock feed data
-  const feedData = {
-    user: req.session.user || null,
-    posts: [
-      {
-        id: 1,
-        title: "Welcome to the Bleedstream",
-        content: "This is a demo post in the static version.",
-        username: "system_admin",
-        created_at: new Date().toISOString()
-      },
-      {
-        id: 2,
-        title: "Exploring the Digital Wasteland",
-        content: "The network expands. The signal grows stronger.",
-        username: "terminal_ghost",
-        created_at: new Date(Date.now() - 86400000).toISOString()
+  try {
+    const { tag } = req.query;
+    const appData = initializeSessionData(req);
+
+    // Filter posts based on tag if provided
+    let posts = [...appData.posts];
+    if (tag) {
+      posts = posts.filter(post => post.tags && post.tags.includes(tag));
+    }
+
+    // Add some default posts if none exist
+    if (posts.length === 0 && !tag) {
+      const defaultPosts = [
+        {
+          id: 'default-1',
+          title: "Welcome to the Bleedstream",
+          content: "This is your personal feed. Create posts to see them here.",
+          username: "system_admin",
+          user_id: 'system',
+          created_at: new Date().toISOString(),
+          is_encrypted: 0,
+          tags: null,
+          glyph_id: null
+        },
+        {
+          id: 'default-2',
+          title: "Exploring the Digital Wasteland",
+          content: "The network expands. The signal grows stronger. Start posting to build your presence.",
+          username: "terminal_ghost",
+          user_id: 'system',
+          created_at: new Date(Date.now() - 86400000).toISOString(),
+          is_encrypted: 0,
+          tags: 'exploration,network',
+          glyph_id: null
+        }
+      ];
+      posts = defaultPosts;
+    }
+
+    // Get all unique tags for filter dropdown
+    const allTags = new Set();
+    [...appData.posts].forEach(post => {
+      if (post.tags) {
+        post.tags.split(',').forEach(t => allTags.add(t.trim()));
       }
-    ]
-  };
+    });
 
-  // Inject data into the HTML
-  let html = fs.readFileSync(path.join(__dirname, 'views', 'feed', 'bleedstream.html'), 'utf8');
-  html = html.replace('__DATA__', JSON.stringify(feedData));
+    const feedData = {
+      user: req.session.user || null,
+      posts: posts.slice(0, 50), // Limit to 50 posts
+      tags: Array.from(allTags),
+      currentTag: tag || null
+    };
 
-  res.send(html);
+    // Inject data into the HTML
+    let html = fs.readFileSync(path.join(__dirname, 'views', 'feed', 'bleedstream.html'), 'utf8');
+    html = html.replace('__DATA__', JSON.stringify(feedData));
+
+    res.send(html);
+  } catch (err) {
+    console.error('Error loading Bleedstream:', err);
+    res.status(500).sendFile(path.join(__dirname, 'views', 'error.html'));
+  }
 });
 
 // Redirect for compatibility with old links
@@ -229,28 +322,119 @@ staticRouter.get('/glyph-crucible', (req, res) => {
 
 // Whisper routes
 staticRouter.get('/whisper/board', (req, res) => {
-  // Create mock whisper data
-  const whisperData = {
-    user: req.session.user || null,
-    whispers: [
-      {
-        id: 1,
-        content: "The void listens. The network expands.",
-        created_at: new Date().toISOString()
-      },
-      {
-        id: 2,
-        content: "Signals in the noise. Patterns in the static.",
-        created_at: new Date(Date.now() - 86400000).toISOString()
-      }
-    ]
-  };
+  try {
+    const appData = initializeSessionData(req);
+    
+    // Initialize whispers if they don't exist
+    if (!appData.whispers) {
+      appData.whispers = [];
+    }
 
-  // Inject data into the HTML
-  let html = fs.readFileSync(path.join(__dirname, 'views', 'whisper', 'board.html'), 'utf8');
-  html = html.replace('__DATA__', JSON.stringify(whisperData));
+    // Add default whispers if none exist
+    let whispers = [...appData.whispers];
+    if (whispers.length === 0) {
+      const defaultWhispers = [
+        {
+          id: 'whisper-1',
+          content: "The void listens. The network expands.",
+          user_id: 'system',
+          username: 'void_speaker',
+          created_at: new Date().toISOString()
+        },
+        {
+          id: 'whisper-2',
+          content: "Signals in the noise. Patterns in the static.",
+          user_id: 'system',
+          username: 'signal_hunter',
+          created_at: new Date(Date.now() - 86400000).toISOString()
+        }
+      ];
+      whispers = defaultWhispers;
+    }
 
-  res.send(html);
+    const whisperData = {
+      user: req.session.user || null,
+      whispers: whispers.slice(0, 50) // Limit to 50 whispers
+    };
+
+    // Inject data into the HTML
+    let html = fs.readFileSync(path.join(__dirname, 'views', 'whisper', 'board.html'), 'utf8');
+    html = html.replace('__DATA__', JSON.stringify(whisperData));
+
+    res.send(html);
+  } catch (err) {
+    console.error('Error loading whisper board:', err);
+    res.status(500).sendFile(path.join(__dirname, 'views', 'error.html'));
+  }
+});
+
+// Create whisper
+staticRouter.post('/whisper/create', (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(401).json({
+        error: 'Authentication required',
+        message: 'Please log in to create whispers.'
+      });
+    }
+
+    const { content } = req.body;
+
+    if (!content) {
+      return res.status(400).json({
+        error: 'Invalid input',
+        message: 'Content is required.'
+      });
+    }
+
+    const appData = initializeSessionData(req);
+    if (!appData.whispers) {
+      appData.whispers = [];
+    }
+
+    const newWhisper = {
+      id: `whisper-${Date.now()}`,
+      content: content.slice(0, 500),
+      user_id: req.session.user.id,
+      username: req.session.user.username,
+      created_at: new Date().toISOString()
+    };
+
+    appData.whispers.unshift(newWhisper);
+
+    res.status(201).json({
+      success: true,
+      message: 'Whisper sent into the void',
+      whisperId: newWhisper.id
+    });
+  } catch (err) {
+    console.error('Whisper creation error:', err);
+    res.status(500).json({
+      error: 'System error',
+      message: 'Terminal connection unstable. Try again later.'
+    });
+  }
+});
+
+// Get whisper creation page
+staticRouter.get('/whisper/new', (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.redirect('/auth/login');
+    }
+
+    const data = {
+      user: req.session.user
+    };
+
+    let html = fs.readFileSync(path.join(__dirname, 'views', 'whisper', 'new.html'), 'utf8');
+    html = html.replace('__DATA__', JSON.stringify(data));
+
+    res.send(html);
+  } catch (err) {
+    console.error('Error loading whisper creation page:', err);
+    res.status(500).sendFile(path.join(__dirname, 'views', 'error.html'));
+  }
 });
 
 // Redirect for compatibility with old links
@@ -272,23 +456,45 @@ staticRouter.get('/terminal/void', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'secrets', 'void.html'));
 });
 
-// About page
-staticRouter.get('/about', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'about.html'));
-});
 
 // Profile routes
 staticRouter.get('/profile', (req, res) => {
   if (req.session.user) {
-    // Create mock profile data
+    const appData = initializeSessionData(req);
+    
+    // Get or create profile for this user
+    let profile = appData.profiles.get(req.session.user.id) || {
+      user_id: req.session.user.id,
+      status: 'New terminal connected',
+      custom_css: '',
+      custom_html: '',
+      theme_template: 'default',
+      blog_layout: 'feed',
+      district_id: 1,
+      background_image: null,
+      header_image: null,
+      widgets_data: null,
+      glyph_id: null,
+      glyph_3d: 0,
+      glyph_rotation_speed: 3,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+
+    // Get user's glyph if set
+    let glyph = null;
+    if (profile.glyph_id) {
+      glyph = appData.glyphs.find(g => g.id == profile.glyph_id);
+    }
+
+    // Get user's posts
+    const posts = appData.posts.filter(p => p.user_id === req.session.user.id);
+
     const profileData = {
       user: req.session.user,
-      profile: {
-        bio: "This is a demo profile for the static version.",
-        status: "Online",
-        avatar: "/images/default-avatar.png",
-        created_at: new Date().toISOString()
-      }
+      profile: profile,
+      glyph: glyph,
+      posts: posts
     };
 
     // Inject data into the HTML
@@ -470,6 +676,1138 @@ staticRouter.get('/forum/topic/:id', (req, res) => {
   res.send(html);
 });
 
+// Session-based data storage for the static version
+// This creates persistent data that survives across requests within the same session
+const initializeSessionData = (req) => {
+  if (!req.session.appData) {
+    req.session.appData = {
+      profiles: new Map(),
+      posts: [],
+      glyphs: [],
+      districts: [
+        { id: 1, name: 'Central Terminal', is_hidden: 0 },
+        { id: 2, name: 'Digital Wasteland', is_hidden: 0 },
+        { id: 3, name: 'Void District', is_hidden: 0 },
+        { id: 4, name: 'Neon Sector', is_hidden: 0 }
+      ],
+      nextPostId: 1,
+      nextGlyphId: 1
+    };
+  }
+  return req.session.appData;
+};
+
+// Profile update route
+staticRouter.post('/profile/update', upload.fields([
+  { name: 'background', maxCount: 1 },
+  { name: 'headerImage', maxCount: 1 }
+]), (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(401).json({
+        error: 'Authentication required',
+        message: 'Please log in to update your profile.'
+      });
+    }
+
+    const appData = initializeSessionData(req);
+    const { status, customCss, customHtml, themeTemplate, blogLayout, districtId, widgets } = req.body;
+
+    // Get or create profile for this user
+    let profile = appData.profiles.get(req.session.user.id) || {
+      user_id: req.session.user.id,
+      status: 'New terminal connected',
+      custom_css: '',
+      custom_html: '',
+      theme_template: 'default',
+      blog_layout: 'feed',
+      district_id: 1,
+      background_image: null,
+      header_image: null,
+      widgets_data: null,
+      glyph_id: null,
+      glyph_3d: 0,
+      glyph_rotation_speed: 3,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+
+    // Update profile fields
+    if (status !== undefined) profile.status = status.slice(0, 100);
+    if (customCss !== undefined) profile.custom_css = customCss.slice(0, 10000);
+    if (customHtml !== undefined) profile.custom_html = customHtml.slice(0, 20000);
+    if (themeTemplate) profile.theme_template = themeTemplate;
+    if (blogLayout) profile.blog_layout = blogLayout;
+    if (districtId) profile.district_id = parseInt(districtId);
+
+    // Handle file uploads
+    if (req.files) {
+      if (req.files.background && req.files.background[0]) {
+        profile.background_image = '/uploads/backgrounds/' + req.files.background[0].filename;
+      }
+      if (req.files.headerImage && req.files.headerImage[0]) {
+        profile.header_image = '/uploads/backgrounds/' + req.files.headerImage[0].filename;
+      }
+    }
+
+    // Handle widgets
+    if (widgets) {
+      try {
+        const parsedWidgets = JSON.parse(widgets);
+        if (Array.isArray(parsedWidgets)) {
+          profile.widgets_data = widgets;
+        }
+      } catch (e) {
+        console.error('Error parsing widgets data:', e);
+      }
+    }
+
+    profile.updated_at = new Date().toISOString();
+
+    // Save profile back to session
+    appData.profiles.set(req.session.user.id, profile);
+
+    res.json({
+      success: true,
+      message: 'Terminal identity updated successfully'
+    });
+  } catch (err) {
+    console.error('Profile update error:', err);
+    res.status(500).json({
+      error: 'System error',
+      message: 'Terminal connection unstable. Try again later.'
+    });
+  }
+});
+
+// Profile edit page with proper data injection
+staticRouter.get('/profile/edit', (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.redirect('/auth/login');
+    }
+
+    const appData = initializeSessionData(req);
+    let profile = appData.profiles.get(req.session.user.id) || {
+      user_id: req.session.user.id,
+      status: 'New terminal connected',
+      custom_css: '',
+      custom_html: '',
+      theme_template: 'default',
+      blog_layout: 'feed',
+      district_id: 1,
+      background_image: null,
+      header_image: null,
+      widgets_data: null,
+      glyph_id: null,
+      glyph_3d: 0,
+      glyph_rotation_speed: 3,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+
+    // Get user's glyphs (mock data for now)
+    const userGlyphs = appData.glyphs.filter(g => g.user_id === req.session.user.id);
+
+    const data = {
+      profile,
+      glyph: profile.glyph_id ? userGlyphs.find(g => g.id === profile.glyph_id) : null,
+      userGlyphs,
+      districts: appData.districts,
+      user: req.session.user
+    };
+
+    let html = fs.readFileSync(path.join(__dirname, 'views', 'profile', 'edit.html'), 'utf8');
+    html = html.replace('__DATA__', JSON.stringify(data));
+
+    res.send(html);
+  } catch (err) {
+    console.error('Error loading profile editor:', err);
+    res.status(500).sendFile(path.join(__dirname, 'views', 'error.html'));
+  }
+});
+
+// Feed post creation
+staticRouter.get('/feed/new', (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.redirect('/auth/login');
+    }
+
+    const appData = initializeSessionData(req);
+    const userGlyphs = appData.glyphs.filter(g => g.user_id === req.session.user.id);
+
+    const data = {
+      glyphs: userGlyphs,
+      user: req.session.user
+    };
+
+    let html = fs.readFileSync(path.join(__dirname, 'views', 'feed', 'new-post.html'), 'utf8');
+    html = html.replace('__DATA__', JSON.stringify(data));
+
+    res.send(html);
+  } catch (err) {
+    console.error('Error loading new post page:', err);
+    res.status(500).sendFile(path.join(__dirname, 'views', 'error.html'));
+  }
+});
+
+// Create new post
+staticRouter.post('/feed/create', (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(401).json({
+        error: 'Authentication required',
+        message: 'Please log in to create posts.'
+      });
+    }
+
+    const { title, content, tags, glyphId, isEncrypted } = req.body;
+
+    if (!title || !content) {
+      return res.status(400).json({
+        error: 'Invalid input',
+        message: 'Title and content are required.'
+      });
+    }
+
+    const appData = initializeSessionData(req);
+
+    // Generate encryption key if post is encrypted
+    let encryptionKey = null;
+    if (isEncrypted === '1' || isEncrypted === true) {
+      encryptionKey = require('crypto').randomBytes(16).toString('hex');
+    }
+
+    // Create new post
+    const newPost = {
+      id: appData.nextPostId++,
+      user_id: req.session.user.id,
+      username: req.session.user.username,
+      title,
+      content,
+      tags: tags || null,
+      is_encrypted: isEncrypted === '1' || isEncrypted === true ? 1 : 0,
+      encryption_key: encryptionKey,
+      glyph_id: glyphId || null,
+      created_at: new Date().toISOString()
+    };
+
+    appData.posts.unshift(newPost); // Add to beginning for latest first
+
+    const response = {
+      success: true,
+      message: 'Post successfully transmitted to the Bleedstream',
+      postId: newPost.id
+    };
+
+    if (encryptionKey) {
+      response.encryptionKey = encryptionKey;
+      response.message += '. Save your encryption key to access this post later.';
+    }
+
+    res.status(201).json(response);
+  } catch (err) {
+    console.error('Post creation error:', err);
+    res.status(500).json({
+      error: 'System error',
+      message: 'Terminal connection unstable. Try again later.'
+    });
+  }
+});
+
+// View specific post
+staticRouter.get('/feed/post/:id', (req, res) => {
+  try {
+    const { id } = req.params;
+    const { key } = req.query;
+    const appData = initializeSessionData(req);
+
+    const post = appData.posts.find(p => p.id == id);
+
+    if (!post) {
+      return res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
+    }
+
+    // Check if post is encrypted and key is provided
+    if (post.is_encrypted === 1 && post.encryption_key !== key) {
+      let html = fs.readFileSync(path.join(__dirname, 'views', 'feed', 'encrypted-post.html'), 'utf8');
+      html = html.replace('__POST_ID__', id);
+      return res.send(html);
+    }
+
+    // Get user profile
+    const profile = appData.profiles.get(post.user_id) || {
+      user_id: post.user_id,
+      status: 'Terminal connected',
+      district_name: 'Unknown District'
+    };
+
+    const data = {
+      post,
+      profile,
+      user: req.session.user || null,
+      isOwner: req.session.user && req.session.user.id === post.user_id
+    };
+
+    let html = fs.readFileSync(path.join(__dirname, 'views', 'feed', 'view-post.html'), 'utf8');
+    html = html.replace('__DATA__', JSON.stringify(data));
+
+    res.send(html);
+  } catch (err) {
+    console.error('Error viewing post:', err);
+    res.status(500).sendFile(path.join(__dirname, 'views', 'error.html'));
+  }
+});
+
+// Delete post
+staticRouter.delete('/feed/post/:id', (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(401).json({
+        error: 'Authentication required',
+        message: 'Please log in to delete posts.'
+      });
+    }
+
+    const { id } = req.params;
+    const appData = initializeSessionData(req);
+
+    const postIndex = appData.posts.findIndex(p => p.id == id && p.user_id === req.session.user.id);
+
+    if (postIndex === -1) {
+      return res.status(404).json({
+        error: 'Post not found',
+        message: 'The requested post does not exist or does not belong to you.'
+      });
+    }
+
+    appData.posts.splice(postIndex, 1);
+
+    res.json({
+      success: true,
+      message: 'Post successfully erased from the Bleedstream'
+    });
+  } catch (err) {
+    console.error('Post delete error:', err);
+    res.status(500).json({
+      error: 'System error',
+      message: 'Terminal connection unstable. Try again later.'
+    });
+  }
+});
+
+// Check encryption key for encrypted post
+staticRouter.post('/feed/check-key/:id', (req, res) => {
+  try {
+    const { id } = req.params;
+    const { key } = req.body;
+
+    if (!key) {
+      return res.status(400).json({
+        error: 'Invalid input',
+        message: 'Encryption key is required.'
+      });
+    }
+
+    const appData = initializeSessionData(req);
+    const post = appData.posts.find(p => p.id == id && p.is_encrypted === 1);
+
+    if (!post) {
+      return res.status(404).json({
+        error: 'Post not found',
+        message: 'The requested post does not exist or is not encrypted.'
+      });
+    }
+
+    if (post.encryption_key !== key) {
+      return res.status(401).json({
+        error: 'Invalid key',
+        message: 'The provided encryption key is invalid.'
+      });
+    }
+
+    res.json({
+      success: true,
+      redirectUrl: `/feed/post/${id}?key=${key}`
+    });
+  } catch (err) {
+    console.error('Check encryption key error:', err);
+    res.status(500).json({
+      error: 'System error',
+      message: 'Terminal connection unstable. Try again later.'
+    });
+  }
+});
+
+// Glyph/Crucible routes
+staticRouter.get('/glyph/crucible', (req, res) => {
+  try {
+    const appData = initializeSessionData(req);
+    const userGlyphs = req.session.user ? 
+      appData.glyphs.filter(g => g.user_id === req.session.user.id) : [];
+
+    // Add some default glyphs if none exist
+    let allGlyphs = [...appData.glyphs];
+    if (allGlyphs.length === 0) {
+      const defaultGlyphs = [
+        {
+          id: 'default-glyph-1',
+          name: "Void Sigil",
+          creator: "system_admin",
+          user_id: 'system',
+          svg_data: '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="#00ff00" stroke-width="2"/><path d="M30,30 L70,70 M70,30 L30,70" stroke="#00ff00" stroke-width="2"/></svg>',
+          created_at: new Date().toISOString()
+        },
+        {
+          id: 'default-glyph-2',
+          name: "Digital Rune",
+          creator: "terminal_ghost",
+          user_id: 'system',
+          svg_data: '<svg viewBox="0 0 100 100"><rect x="20" y="20" width="60" height="60" fill="none" stroke="#00ff00" stroke-width="2"/><path d="M35,35 L65,35 L50,65 Z" fill="#00ff00" opacity="0.3"/></svg>',
+          created_at: new Date(Date.now() - 86400000).toISOString()
+        }
+      ];
+      allGlyphs = defaultGlyphs;
+    }
+
+    const glyphData = {
+      user: req.session.user || null,
+      glyphs: allGlyphs.slice(0, 20), // Limit to 20 glyphs
+      userGlyphs: userGlyphs
+    };
+
+    let html = fs.readFileSync(path.join(__dirname, 'views', 'glyph', 'crucible.html'), 'utf8');
+    html = html.replace('__DATA__', JSON.stringify(glyphData));
+
+    res.send(html);
+  } catch (err) {
+    console.error('Error loading Glyph Crucible:', err);
+    res.status(500).sendFile(path.join(__dirname, 'views', 'error.html'));
+  }
+});
+
+// Create glyph
+staticRouter.post('/glyph/create', (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(401).json({
+        error: 'Authentication required',
+        message: 'Please log in to create glyphs.'
+      });
+    }
+
+    const { name, svgData } = req.body;
+
+    if (!name || !svgData) {
+      return res.status(400).json({
+        error: 'Invalid input',
+        message: 'Name and SVG data are required.'
+      });
+    }
+
+    const appData = initializeSessionData(req);
+
+    const newGlyph = {
+      id: appData.nextGlyphId++,
+      name: name.slice(0, 50),
+      creator: req.session.user.username,
+      user_id: req.session.user.id,
+      svg_data: svgData,
+      created_at: new Date().toISOString()
+    };
+
+    appData.glyphs.unshift(newGlyph);
+
+    res.status(201).json({
+      success: true,
+      message: 'Glyph successfully forged in the crucible',
+      glyphId: newGlyph.id
+    });
+  } catch (err) {
+    console.error('Glyph creation error:', err);
+    res.status(500).json({
+      error: 'System error',
+      message: 'Terminal connection unstable. Try again later.'
+    });
+  }
+});
+
+// Set profile glyph
+staticRouter.post('/profile/set-glyph/:glyphId', (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(401).json({
+        error: 'Authentication required',
+        message: 'Please log in to set glyphs.'
+      });
+    }
+
+    const { glyphId } = req.params;
+    const { enable3d, rotationSpeed } = req.body;
+    const appData = initializeSessionData(req);
+
+    // Check if glyph exists and belongs to user
+    const glyph = appData.glyphs.find(g => g.id == glyphId && g.user_id === req.session.user.id);
+
+    if (!glyph) {
+      return res.status(404).json({
+        error: 'Glyph not found',
+        message: 'The requested glyph does not exist or does not belong to you.'
+      });
+    }
+
+    // Update profile
+    let profile = appData.profiles.get(req.session.user.id) || {
+      user_id: req.session.user.id,
+      status: 'New terminal connected',
+      custom_css: '',
+      custom_html: '',
+      theme_template: 'default',
+      blog_layout: 'feed',
+      district_id: 1,
+      background_image: null,
+      header_image: null,
+      widgets_data: null,
+      glyph_id: null,
+      glyph_3d: 0,
+      glyph_rotation_speed: 3,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+
+    profile.glyph_id = glyphId;
+    if (enable3d !== undefined) {
+      profile.glyph_3d = enable3d === true || enable3d === '1' ? 1 : 0;
+    }
+    if (rotationSpeed !== undefined) {
+      profile.glyph_rotation_speed = parseInt(rotationSpeed) || 3;
+    }
+    profile.updated_at = new Date().toISOString();
+
+    appData.profiles.set(req.session.user.id, profile);
+
+    res.json({
+      success: true,
+      message: 'Glyph set as profile sigil'
+    });
+  } catch (err) {
+    console.error('Set profile glyph error:', err);
+    res.status(500).json({
+      error: 'System error',
+      message: 'Terminal connection unstable. Try again later.'
+    });
+  }
+});
+
+// Forum routes
+staticRouter.get('/forum/scrapyard', (req, res) => {
+  try {
+    const appData = initializeSessionData(req);
+    
+    // Initialize scrapyard assets if they don't exist
+    if (!appData.scrapyardAssets) {
+      appData.scrapyardAssets = [];
+    }
+
+    // Add default scrapyard assets if none exist
+    let assets = [...appData.scrapyardAssets];
+    if (assets.length === 0) {
+      const defaultAssets = [
+        {
+          id: 'asset-1',
+          title: "Welcome to the Scrapyard",
+          description: "This is your scrapyard space. Upload digital artifacts and assets.",
+          filename: "welcome_artifact.txt",
+          size: 1024,
+          category: "Data Fragment",
+          username: "system_admin",
+          user_id: 'system',
+          created_at: new Date().toISOString(),
+          comment_count: 0,
+          download_count: 0,
+          file_path: "/uploads/assets/welcome_artifact.txt"
+        },
+        {
+          id: 'asset-2',
+          title: "Digital Wasteland Map",
+          description: "Navigation data for the digital frontier.",
+          filename: "wasteland_map.json",
+          size: 2048,
+          category: "Map Data",
+          username: "terminal_ghost",
+          user_id: 'system',
+          created_at: new Date(Date.now() - 86400000).toISOString(),
+          comment_count: 1,
+          download_count: 5,
+          file_path: "/uploads/assets/wasteland_map.json"
+        }
+      ];
+      assets = defaultAssets;
+    }
+
+    const scrapyardData = {
+      assets: assets.slice(0, 20), // Limit to 20 assets
+      assetCount: assets.length,
+      junkerCount: Math.floor(Math.random() * 10) + 5,
+      user: req.session.user || null,
+      categories: [
+        { id: 1, name: "Data Fragment" },
+        { id: 2, name: "Map Data" },
+        { id: 3, name: "Code Archive" },
+        { id: 4, name: "Media Asset" },
+        { id: 5, name: "Unknown" }
+      ]
+    };
+
+    let html = fs.readFileSync(path.join(__dirname, 'views', 'forum', 'scrapyard.html'), 'utf8');
+    html = html.replace('__DATA__', JSON.stringify(scrapyardData));
+
+    res.send(html);
+  } catch (err) {
+    console.error('Error loading forum:', err);
+    res.status(500).sendFile(path.join(__dirname, 'views', 'error.html'));
+  }
+});
+
+// Upload asset to scrapyard
+staticRouter.post('/forum/upload-asset', upload.single('asset'), (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(401).json({
+        error: 'Authentication required',
+        message: 'Please log in to upload assets.'
+      });
+    }
+
+    const { title, description, category } = req.body;
+
+    if (!title || !req.file) {
+      return res.status(400).json({
+        error: 'Invalid input',
+        message: 'Title and file are required.'
+      });
+    }
+
+    const appData = initializeSessionData(req);
+    if (!appData.scrapyardAssets) {
+      appData.scrapyardAssets = [];
+    }
+
+    const newAsset = {
+      id: `asset-${Date.now()}`,
+      title: title.slice(0, 200),
+      description: description ? description.slice(0, 1000) : '',
+      filename: req.file.filename,
+      original_filename: req.file.originalname,
+      size: req.file.size,
+      category: category || 'Unknown',
+      username: req.session.user.username,
+      user_id: req.session.user.id,
+      created_at: new Date().toISOString(),
+      comment_count: 0,
+      download_count: 0,
+      file_path: '/uploads/assets/' + req.file.filename
+    };
+
+    appData.scrapyardAssets.unshift(newAsset);
+
+    res.status(201).json({
+      success: true,
+      message: 'Asset successfully uploaded to the scrapyard',
+      assetId: newAsset.id
+    });
+  } catch (err) {
+    console.error('Asset upload error:', err);
+    res.status(500).json({
+      error: 'System error',
+      message: 'Terminal connection unstable. Try again later.'
+    });
+  }
+});
+
+// Get asset upload page
+staticRouter.get('/forum/upload-asset', (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.redirect('/auth/login');
+    }
+
+    const data = {
+      user: req.session.user,
+      categories: [
+        { id: 1, name: "Data Fragment" },
+        { id: 2, name: "Map Data" },
+        { id: 3, name: "Code Archive" },
+        { id: 4, name: "Media Asset" },
+        { id: 5, name: "Unknown" }
+      ]
+    };
+
+    let html = fs.readFileSync(path.join(__dirname, 'views', 'forum', 'upload-asset.html'), 'utf8');
+    html = html.replace('__DATA__', JSON.stringify(data));
+
+    res.send(html);
+  } catch (err) {
+    console.error('Error loading asset upload page:', err);
+    res.status(500).sendFile(path.join(__dirname, 'views', 'error.html'));
+  }
+});
+
+// View specific asset
+staticRouter.get('/forum/asset/:id', (req, res) => {
+  try {
+    const { id } = req.params;
+    const appData = initializeSessionData(req);
+
+    const asset = appData.scrapyardAssets ? appData.scrapyardAssets.find(a => a.id === id) : null;
+
+    if (!asset) {
+      return res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
+    }
+
+    const data = {
+      asset,
+      user: req.session.user || null,
+      isOwner: req.session.user && req.session.user.id === asset.user_id
+    };
+
+    let html = fs.readFileSync(path.join(__dirname, 'views', 'forum', 'view-asset.html'), 'utf8');
+    html = html.replace('__DATA__', JSON.stringify(data));
+
+    res.send(html);
+  } catch (err) {
+    console.error('Error viewing asset:', err);
+    res.status(500).sendFile(path.join(__dirname, 'views', 'error.html'));
+  }
+});
+
+// Download asset
+staticRouter.get('/forum/download/:id', (req, res) => {
+  try {
+    const { id } = req.params;
+    const appData = initializeSessionData(req);
+
+    const asset = appData.scrapyardAssets ? appData.scrapyardAssets.find(a => a.id === id) : null;
+
+    if (!asset) {
+      return res.status(404).json({
+        error: 'Asset not found',
+        message: 'The requested asset does not exist.'
+      });
+    }
+
+    // Increment download count
+    asset.download_count = (asset.download_count || 0) + 1;
+
+    // In a real implementation, serve the actual file
+    // For now, just return success
+    res.json({
+      success: true,
+      message: 'Asset download initiated',
+      filename: asset.original_filename || asset.filename
+    });
+  } catch (err) {
+    console.error('Asset download error:', err);
+    res.status(500).json({
+      error: 'System error',
+      message: 'Terminal connection unstable. Try again later.'
+    });
+  }
+});
+
+// Forum junker registration
+staticRouter.get('/forum/junker-register', (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.redirect('/auth/login');
+    }
+
+    const data = {
+      user: req.session.user
+    };
+
+    let html = fs.readFileSync(path.join(__dirname, 'views', 'forum', 'junker-register.html'), 'utf8');
+    html = html.replace('__DATA__', JSON.stringify(data));
+
+    res.send(html);
+  } catch (err) {
+    console.error('Error loading junker registration:', err);
+    res.status(500).sendFile(path.join(__dirname, 'views', 'error.html'));
+  }
+});
+
+// Process junker registration
+staticRouter.post('/forum/junker-register', (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(401).json({
+        error: 'Authentication required',
+        message: 'Please log in to register as a junker.'
+      });
+    }
+
+    const { specialization, experience, equipment } = req.body;
+
+    if (!specialization) {
+      return res.status(400).json({
+        error: 'Invalid input',
+        message: 'Specialization is required.'
+      });
+    }
+
+    const appData = initializeSessionData(req);
+    
+    // Update user profile with junker status
+    let profile = appData.profiles.get(req.session.user.id) || {
+      user_id: req.session.user.id,
+      status: 'New terminal connected',
+      custom_css: '',
+      custom_html: '',
+      theme_template: 'default',
+      blog_layout: 'feed',
+      district_id: 1,
+      background_image: null,
+      header_image: null,
+      widgets_data: null,
+      glyph_id: null,
+      glyph_3d: 0,
+      glyph_rotation_speed: 3,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+
+    profile.junker_status = 'registered';
+    profile.junker_specialization = specialization;
+    profile.junker_experience = experience || '';
+    profile.junker_equipment = equipment || '';
+    profile.updated_at = new Date().toISOString();
+
+    appData.profiles.set(req.session.user.id, profile);
+
+    res.json({
+      success: true,
+      message: 'Junker registration successful. Welcome to the scrapyard.',
+      junkerStatus: 'registered'
+    });
+  } catch (err) {
+    console.error('Junker registration error:', err);
+    res.status(500).json({
+      error: 'System error',
+      message: 'Terminal connection unstable. Try again later.'
+    });
+  }
+});
+
+// About page with data injection
+staticRouter.get('/about', (req, res) => {
+  try {
+    const data = {
+      user: req.session.user || null
+    };
+
+    let html = fs.readFileSync(path.join(__dirname, 'views', 'about.html'), 'utf8');
+    html = html.replace('__DATA__', JSON.stringify(data));
+
+    res.send(html);
+  } catch (err) {
+    console.error('Error loading about page:', err);
+    res.status(500).sendFile(path.join(__dirname, 'views', 'error.html'));
+  }
+});
+
+// Activity log page
+staticRouter.get('/activity', (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.redirect('/auth/login');
+    }
+
+    const appData = initializeSessionData(req);
+    
+    // Initialize activity logs if they don't exist
+    if (!appData.activityLogs) {
+      appData.activityLogs = new Map();
+    }
+
+    const userActivityLogs = appData.activityLogs.get(req.session.user.id) || [];
+
+    const data = {
+      user: req.session.user,
+      activityLogs: userActivityLogs.slice(0, 50) // Limit to 50 entries
+    };
+
+    let html = fs.readFileSync(path.join(__dirname, 'views', 'activity-log.html'), 'utf8');
+    html = html.replace('__DATA__', JSON.stringify(data));
+
+    res.send(html);
+  } catch (err) {
+    console.error('Error loading activity log:', err);
+    res.status(500).sendFile(path.join(__dirname, 'views', 'error.html'));
+  }
+});
+
+// Crypto index page
+staticRouter.get('/crypto', (req, res) => {
+  try {
+    const appData = initializeSessionData(req);
+    
+    // Mock crypto data
+    const data = {
+      user: req.session.user || null,
+      users: [
+        { username: 'system_admin', status: 'Online', district: 'Central Terminal' },
+        { username: 'terminal_ghost', status: 'Away', district: 'Digital Wasteland' },
+        { username: 'void_speaker', status: 'Offline', district: 'Void District' }
+      ]
+    };
+
+    let html = fs.readFileSync(path.join(__dirname, 'views', 'crypto', 'index.html'), 'utf8');
+    html = html.replace('__DATA__', JSON.stringify(data));
+
+    res.send(html);
+  } catch (err) {
+    console.error('Error loading crypto page:', err);
+    res.status(500).sendFile(path.join(__dirname, 'views', 'error.html'));
+  }
+});
+
+// Profile dashboard
+staticRouter.get('/profile/dashboard', (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.redirect('/auth/login');
+    }
+
+    const appData = initializeSessionData(req);
+    
+    // Get or create profile for this user
+    let profile = appData.profiles.get(req.session.user.id) || {
+      user_id: req.session.user.id,
+      status: 'New terminal connected',
+      custom_css: '',
+      custom_html: '',
+      theme_template: 'default',
+      blog_layout: 'feed',
+      district_id: 1,
+      background_image: null,
+      header_image: null,
+      widgets_data: null,
+      glyph_id: null,
+      glyph_3d: 0,
+      glyph_rotation_speed: 3,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+
+    // Get user's glyph if set
+    let glyph = null;
+    if (profile.glyph_id) {
+      glyph = appData.glyphs.find(g => g.id == profile.glyph_id);
+    }
+
+    // Get user's posts
+    const posts = appData.posts.filter(p => p.user_id === req.session.user.id);
+
+    const data = {
+      user: req.session.user,
+      profile: profile,
+      glyph: glyph,
+      posts: posts
+    };
+
+    let html = fs.readFileSync(path.join(__dirname, 'views', 'profile', 'dashboard.html'), 'utf8');
+    html = html.replace('__DATA__', JSON.stringify(data));
+
+    res.send(html);
+  } catch (err) {
+    console.error('Error loading profile dashboard:', err);
+    res.status(500).sendFile(path.join(__dirname, 'views', 'error.html'));
+  }
+});
+
+// Additional missing forum routes
+// Forum index
+staticRouter.get('/forum', (req, res) => {
+  try {
+    const data = {
+      user: req.session.user || null,
+      forums: [
+        {
+          id: 'scrapyard',
+          slug: 'scrapyard',
+          title: 'Digital Scrapyard',
+          description: 'A place to share and discuss digital artifacts, data fragments, and code.',
+          topic_count: 12,
+          post_count: 47,
+          last_activity: new Date().toISOString()
+        }
+      ]
+    };
+
+    let html = fs.readFileSync(path.join(__dirname, 'views', 'forum', 'index.html'), 'utf8');
+    html = html.replace('__DATA__', JSON.stringify(data));
+
+    res.send(html);
+  } catch (err) {
+    console.error('Error loading forum index:', err);
+    res.status(500).sendFile(path.join(__dirname, 'views', 'error.html'));
+  }
+});
+
+// Forum topic view
+staticRouter.get('/forum/topic/:id', (req, res) => {
+  try {
+    const { id } = req.params;
+    const appData = initializeSessionData(req);
+
+    // Check both regular forum posts and scrapyard assets
+    let topic = null;
+    let isAsset = false;
+
+    // First check scrapyard assets
+    if (appData.scrapyardAssets) {
+      topic = appData.scrapyardAssets.find(a => a.id === id);
+      if (topic) {
+        isAsset = true;
+        // Transform asset to topic format
+        topic = {
+          ...topic,
+          content: topic.description || 'No description provided.',
+          forum_title: 'Scrapyard',
+          forum_slug: 'scrapyard'
+        };
+      }
+    }
+
+    // If not found, check regular forum posts
+    if (!topic && appData.forumPosts) {
+      topic = appData.forumPosts.find(p => p.id === id);
+    }
+
+    // If still not found, create a default topic
+    if (!topic) {
+      topic = {
+        id: id,
+        title: "Topic Not Found",
+        content: "This topic may have been removed or does not exist.",
+        username: "system",
+        created_at: new Date().toISOString(),
+        forum_title: "Unknown",
+        forum_slug: "unknown"
+      };
+    }
+
+    // Mock comments
+    const comments = [
+      {
+        id: 1,
+        content: "Interesting topic. Thanks for sharing.",
+        username: "terminal_ghost",
+        created_at: new Date(Date.now() - 3600000).toISOString()
+      }
+    ];
+
+    const data = {
+      topic,
+      comments,
+      user: req.session.user || null,
+      isOwner: req.session.user && req.session.user.id === topic.user_id,
+      isAsset: isAsset
+    };
+
+    let html = fs.readFileSync(path.join(__dirname, 'views', 'forum', 'view-topic.html'), 'utf8');
+    html = html.replace('__DATA__', JSON.stringify(data));
+
+    res.send(html);
+  } catch (err) {
+    console.error('Error viewing forum topic:', err);
+    res.status(500).sendFile(path.join(__dirname, 'views', 'error.html'));
+  }
+});
+
+// Forum new topic
+staticRouter.get('/forum/:slug/new', (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.redirect('/auth/login');
+    }
+
+    const { slug } = req.params;
+
+    const data = {
+      user: req.session.user,
+      forum: {
+        slug: slug,
+        title: slug === 'scrapyard' ? 'Digital Scrapyard' : 'Forum',
+        id: slug
+      }
+    };
+
+    let html = fs.readFileSync(path.join(__dirname, 'views', 'forum', 'new-topic.html'), 'utf8');
+    html = html.replace('__DATA__', JSON.stringify(data));
+
+    res.send(html);
+  } catch (err) {
+    console.error('Error loading new topic page:', err);
+    res.status(500).sendFile(path.join(__dirname, 'views', 'error.html'));
+  }
+});
+
+// Create topic
+staticRouter.post('/forum/:slug/create-topic', (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(401).json({
+        error: 'Authentication required',
+        message: 'Please log in to create topics.'
+      });
+    }
+
+    const { title, content } = req.body;
+    const { slug } = req.params;
+
+    if (!title || !content) {
+      return res.status(400).json({
+        error: 'Invalid input',
+        message: 'Title and content are required.'
+      });
+    }
+
+    const appData = initializeSessionData(req);
+    if (!appData.forumPosts) {
+      appData.forumPosts = [];
+    }
+
+    const newTopic = {
+      id: `topic-${Date.now()}`,
+      title: title.slice(0, 200),
+      content: content.slice(0, 5000),
+      username: req.session.user.username,
+      user_id: req.session.user.id,
+      created_at: new Date().toISOString(),
+      comment_count: 0,
+      forum_title: slug === 'scrapyard' ? 'Digital Scrapyard' : 'Forum',
+      forum_slug: slug
+    };
+
+    appData.forumPosts.unshift(newTopic);
+
+    res.status(201).json({
+      success: true,
+      message: 'Topic successfully created',
+      topicId: newTopic.id,
+      redirectUrl: `/forum/topic/${newTopic.id}`
+    });
+  } catch (err) {
+    console.error('Forum topic creation error:', err);
+    res.status(500).json({
+      error: 'System error',
+      message: 'Terminal connection unstable. Try again later.'
+    });
+  }
+});
+
 // Use the static router
 app.use('/', staticRouter);
 
@@ -482,6 +1820,51 @@ app.use((err, req, res, next) => {
   console.error('Error Method:', req.method);
   console.error('Error Headers:', JSON.stringify(req.headers, null, 2));
 
+  // Handle multer file upload errors
+  if (err instanceof multer.MulterError) {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({
+        error: 'File too large',
+        message: 'File size must be less than 10MB.'
+      });
+    }
+    if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+      return res.status(400).json({
+        error: 'Invalid file field',
+        message: 'Unexpected file field in upload.'
+      });
+    }
+    return res.status(400).json({
+      error: 'File upload error',
+      message: err.message
+    });
+  }
+
+  // Handle file filter errors
+  if (err.message && (err.message.includes('Only image files') || err.message.includes('File type not allowed'))) {
+    return res.status(400).json({
+      error: 'Invalid file type',
+      message: err.message
+    });
+  }
+
+  // Handle JSON parsing errors
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    return res.status(400).json({
+      error: 'Invalid JSON',
+      message: 'Request body contains invalid JSON.'
+    });
+  }
+
+  // For AJAX requests, return JSON error
+  if (req.xhr || req.headers.accept?.indexOf('json') > -1) {
+    return res.status(500).json({
+      error: 'Internal server error',
+      message: 'Something went wrong. Please try again.'
+    });
+  }
+
+  // For regular requests, return HTML error page
   res.status(500).sendFile(path.join(__dirname, 'views', 'error.html'));
 });
 
