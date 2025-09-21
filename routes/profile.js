@@ -1,4 +1,4 @@
-// Elriel - Profile Routes
+// Elriel - Profile Routes (Supabase Version)
 // Handles user profile viewing and editing
 
 const escapeHTML = require('escape-html');
@@ -7,8 +7,7 @@ const router = express.Router();
 const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
-const Database = require('better-sqlite3');
-const db = new Database('./db/elriel.db', { verbose: console.log });
+const supabase = require('../services/db');
 
 // Configure file uploads for profile backgrounds
 const storage = multer.diskStorage({
@@ -48,46 +47,55 @@ const isAuthenticated = (req, res, next) => {
 };
 
 // Serve profile dashboard
-router.get('/', isAuthenticated, (req, res) => {
+router.get('/', isAuthenticated, async (req, res) => {
   try {
-    // Get user profile
-    let profile = db.prepare(`
-      SELECT p.*, u.username
-      FROM profiles p
-      JOIN users u ON p.user_id = u.id
-      WHERE p.user_id = ?
-    `).get(req.session.user.id);
+    // Get user profile with join
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .select('*, users(username)')
+      .eq('user_id', req.session.user.id)
+      .single();
 
-    if (!profile) {
+    if (error || !profile) {
       // Create default profile if it doesn't exist
-      const insertProfile = db.prepare(`
-        INSERT INTO profiles (user_id, status)
-        VALUES (?, 'New terminal connected')
-      `);
+      const { data: newProfile, error: insertError } = await supabase
+        .from('profiles')
+        .insert({ user_id: req.session.user.id, status: 'New terminal connected' })
+        .select('*, users(username)')
+        .eq('user_id', req.session.user.id)
+        .single();
 
-      insertProfile.run(req.session.user.id);
+      if (insertError) {
+        throw insertError;
+      }
 
-      // Get the newly created profile
-      profile = db.prepare(`
-        SELECT p.*, u.username
-        FROM profiles p
-        JOIN users u ON p.user_id = u.id
-        WHERE p.user_id = ?
-      `).get(req.session.user.id);
+      // Use the newly created profile
+      profile = newProfile;
     }
 
     // Get user's glyph if it exists
     let glyph = null;
     if (profile.glyph_id) {
-      glyph = db.prepare('SELECT * FROM glyphs WHERE id = ?').get(profile.glyph_id);
+      const { data, error: glyphError } = await supabase
+        .from('glyphs')
+        .select('*')
+        .eq('id', profile.glyph_id)
+        .single();
+      if (!glyphError) {
+        glyph = data;
+      }
     }
 
     // Get user's posts
-    const posts = db.prepare(`
-      SELECT * FROM posts
-      WHERE user_id = ?
-      ORDER BY created_at DESC
-    `).all(req.session.user.id);
+    const { data: posts, error: postsError } = await supabase
+      .from('posts')
+      .select('*')
+      .eq('user_id', req.session.user.id)
+      .order('created_at', { ascending: false });
+
+    if (postsError) {
+      throw postsError;
+    }
 
     // Pass data to the frontend
     const data = {
@@ -109,53 +117,68 @@ router.get('/', isAuthenticated, (req, res) => {
 });
 
 // View a user's profile
-router.get('/user/:username', (req, res) => {
+router.get('/user/:username', async (req, res) => {
   try {
     const { username } = req.params;
     const useEnhanced = req.query.enhanced === '1' || req.query.enhanced === 'true';
 
     // Get user and profile
-    const profile = db.prepare(`
-      SELECT p.*, u.username, u.id as user_id
-      FROM profiles p
-      JOIN users u ON p.user_id = u.id
-      WHERE u.username = ?
-    `).get(username);
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .select('*, users!inner(username, id)')
+      .eq('users.username', username)
+      .single();
 
-    if (!profile) {
+    if (error || !profile) {
       return res.status(404).sendFile(path.join(__dirname, '../views/404.html'));
     }
 
     // Get user's glyph if it exists
     let glyph = null;
     if (profile.glyph_id) {
-      glyph = db.prepare('SELECT * FROM glyphs WHERE id = ?').get(profile.glyph_id);
+      const { data, error: glyphError } = await supabase
+        .from('glyphs')
+        .select('*')
+        .eq('id', profile.glyph_id)
+        .single();
+      if (!glyphError) {
+        glyph = data;
+      }
     }
 
     // Get user's posts
-    const posts = db.prepare(`
-      SELECT * FROM posts
-      WHERE user_id = ?
-      ORDER BY created_at DESC
-    `).all(profile.user_id);
+    const { data: posts, error: postsError } = await supabase
+      .from('posts')
+      .select('*')
+      .eq('user_id', profile.users.id)
+      .order('created_at', { ascending: false });
+
+    if (postsError) {
+      throw postsError;
+    }
 
     // Get user's profile containers if enhanced view
     let containers = [];
     if (useEnhanced) {
-      containers = db.prepare(`
-        SELECT * FROM profile_containers
-        WHERE profile_id = ?
-        ORDER BY position ASC
-      `).all(profile.id);
+      const { data, error: containersError } = await supabase
+        .from('profile_containers')
+        .select('*')
+        .eq('profile_id', profile.id)
+        .order('position', { ascending: true });
+      if (!containersError) {
+        containers = data;
+      }
     }
 
     // Get user's rewards
-    const rewards = db.prepare(`
-      SELECT r.*, ur.is_equipped
-      FROM user_rewards ur
-      JOIN repute_rewards r ON ur.reward_id = r.id
-      WHERE ur.user_id = ?
-    `).all(profile.user_id);
+    const { data: rewards, error: rewardsError } = await supabase
+      .from('user_rewards')
+      .select('*, repute_rewards(*)')
+      .eq('user_id', profile.users.id);
+
+    if (rewardsError) {
+      throw rewardsError;
+    }
 
     // Pass data to the frontend
     const data = {
@@ -165,7 +188,7 @@ router.get('/user/:username', (req, res) => {
       containers,
       rewards,
       user: req.session.user || null,
-      isOwner: req.session.user && req.session.user.id === profile.user_id
+      isOwner: req.session.user && req.session.user.id === profile.users.id
     };
 
     // Determine which template to use
@@ -190,27 +213,35 @@ router.get('/enhanced', isAuthenticated, (req, res) => {
 });
 
 // Activity log page
-router.get('/activity', isAuthenticated, (req, res) => {
+router.get('/activity', isAuthenticated, async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const perPage = 10;
     const offset = (page - 1) * perPage;
 
     // Get total count for pagination
-    const totalCount = db.prepare(`
-      SELECT COUNT(*) as count FROM user_activity_logs
-      WHERE user_id = ?
-    `).get(req.session.user.id).count;
+    const { count: totalCount, error: countError } = await supabase
+      .from('user_activity_logs')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', req.session.user.id);
+
+    if (countError) {
+      throw countError;
+    }
 
     const totalPages = Math.ceil(totalCount / perPage);
 
     // Get activities for current page
-    const activities = db.prepare(`
-      SELECT * FROM user_activity_logs
-      WHERE user_id = ?
-      ORDER BY created_at DESC
-      LIMIT ? OFFSET ?
-    `).all(req.session.user.id, perPage, offset);
+    const { data: activities, error: activitiesError } = await supabase
+      .from('user_activity_logs')
+      .select('*')
+      .eq('user_id', req.session.user.id)
+      .order('created_at', { ascending: false })
+      .range(offset, offset + perPage - 1);
+
+    if (activitiesError) {
+      throw activitiesError;
+    }
 
     // Pass data to the frontend
     const data = {
@@ -233,7 +264,7 @@ router.get('/activity', isAuthenticated, (req, res) => {
 });
 
 // Container edit page - new container
-router.get('/container/edit', isAuthenticated, (req, res) => {
+router.get('/container/edit', isAuthenticated, async (req, res) => {
   try {
     // Pass data to the frontend for a new container
     const data = {
@@ -253,28 +284,35 @@ router.get('/container/edit', isAuthenticated, (req, res) => {
 });
 
 // Container edit page - edit existing container
-router.get('/container/edit/:id', isAuthenticated, (req, res) => {
+router.get('/container/edit/:id', isAuthenticated, async (req, res) => {
   try {
     const { id } = req.params;
     let container = null;
 
     // Get user profile ID
-    const profile = db.prepare('SELECT id FROM profiles WHERE user_id = ?')
-      .get(req.session.user.id);
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('user_id', req.session.user.id)
+      .single();
 
-    if (!profile) {
+    if (profileError || !profile) {
       return res.status(404).sendFile(path.join(__dirname, '../views/404.html'));
     }
 
     // Get container and verify ownership
-    container = db.prepare(`
-      SELECT * FROM profile_containers
-      WHERE id = ? AND profile_id = ?
-    `).get(id, profile.id);
+    const { data: containerData, error: containerError } = await supabase
+      .from('profile_containers')
+      .select('*')
+      .eq('id', id)
+      .eq('profile_id', profile.id)
+      .single();
 
-    if (!container) {
+    if (containerError || !containerData) {
       return res.status(404).sendFile(path.join(__dirname, '../views/404.html'));
     }
+
+    container = containerData;
 
     // Pass data to the frontend
     const data = {
@@ -294,27 +332,41 @@ router.get('/container/edit/:id', isAuthenticated, (req, res) => {
 });
 
 // Serve profile edit page
-router.get('/edit', isAuthenticated, (req, res) => {
+router.get('/edit', isAuthenticated, async (req, res) => {
   try {
     // Get user profile
-    const profile = db.prepare(`
-      SELECT p.*, u.username
-      FROM profiles p
-      JOIN users u ON p.user_id = u.id
-      WHERE p.user_id = ?
-    `).get(req.session.user.id);
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('*, users(username)')
+      .eq('user_id', req.session.user.id)
+      .single();
+
+    if (profileError) {
+      throw profileError;
+    }
 
     // Get user's glyph if it exists
     let glyph = null;
     if (profile.glyph_id) {
-      glyph = db.prepare('SELECT * FROM glyphs WHERE id = ?').get(profile.glyph_id);
+      const { data, error: glyphError } = await supabase
+        .from('glyphs')
+        .select('*')
+        .eq('id', profile.glyph_id)
+        .single();
+      if (!glyphError) {
+        glyph = data;
+      }
     }
 
     // Get all districts
-    const districts = db.prepare(`
-      SELECT * FROM districts
-      WHERE is_hidden = 0 OR id = ?
-    `).all(profile.district_id);
+    const { data: districts, error: districtsError } = await supabase
+      .from('districts')
+      .select('*')
+      .or(`is_hidden.eq.false,id.eq.${profile.district_id}`);
+
+    if (districtsError) {
+      throw districtsError;
+    }
 
     // Pass data to the frontend
     const data = {
@@ -340,7 +392,7 @@ router.get('/edit', isAuthenticated, (req, res) => {
 router.post('/update', isAuthenticated, upload.fields([
   { name: 'background', maxCount: 1 },
   { name: 'headerImage', maxCount: 1 }
-]), (req, res) => {
+]), async (req, res) => {
   try {
     const { status, customCss, customHtml, themeTemplate, blogLayout, districtId, widgets } = req.body;
 
@@ -349,67 +401,37 @@ router.post('/update', isAuthenticated, upload.fields([
     const sanitizedCss = customCss ? escapeHTML(customCss.slice(0, 10000)) : null;
     const sanitizedHtml = customHtml ? escapeHTML(customHtml.slice(0, 20000)) : null;
 
-    // Build update query
-    let updateQuery = 'UPDATE profiles SET ';
-    const updateParams = [];
-    const updateFields = [];
-
-    if (sanitizedStatus !== null) {
-      updateFields.push('status = ?');
-      updateParams.push(sanitizedStatus);
-    }
-
-    if (sanitizedCss !== null) {
-      updateFields.push('custom_css = ?');
-      updateParams.push(sanitizedCss);
-    }
-
-    if (sanitizedHtml !== null) {
-      updateFields.push('custom_html = ?');
-      updateParams.push(sanitizedHtml);
-    }
-
-    if (themeTemplate) {
-      updateFields.push('theme_template = ?');
-      updateParams.push(themeTemplate);
-    }
-
-    if (blogLayout) {
-      updateFields.push('blog_layout = ?');
-      updateParams.push(blogLayout);
-    }
-
-    if (districtId) {
-      updateFields.push('district_id = ?');
-      updateParams.push(districtId);
-    }
+    // Build update object
+    const updateData = {};
+    if (sanitizedStatus !== null) updateData.status = sanitizedStatus;
+    if (sanitizedCss !== null) updateData.custom_css = sanitizedCss;
+    if (sanitizedHtml !== null) updateData.custom_html = sanitizedHtml;
+    if (themeTemplate) updateData.theme_template = themeTemplate;
+    if (blogLayout) updateData.blog_layout = blogLayout;
+    if (districtId) updateData.district_id = districtId;
 
     // Log this activity
     const activityDescription = 'Updated profile settings';
     try {
-      db.prepare(`
-        INSERT INTO user_activity_logs
-        (user_id, activity_type, description)
-        VALUES (?, ?, ?)
-      `).run(
-        req.session.user.id,
-        'profile_updated',
-        activityDescription
-      );
+      await supabase
+        .from('user_activity_logs')
+        .insert({
+          user_id: req.session.user.id,
+          activity_type: 'profile_updated',
+          description: activityDescription
+        });
     } catch (logErr) {
       console.error('Failed to log activity:', logErr);
     }
 
     // Handle background image upload
     if (req.files && req.files.background && req.files.background[0]) {
-      updateFields.push('background_image = ?');
-      updateParams.push('/uploads/backgrounds/' + req.files.background[0].filename);
+      updateData.background_image = '/uploads/backgrounds/' + req.files.background[0].filename;
     }
     
     // Handle header image upload
     if (req.files && req.files.headerImage && req.files.headerImage[0]) {
-      updateFields.push('header_image = ?');
-      updateParams.push('/uploads/backgrounds/' + req.files.headerImage[0].filename);
+      updateData.header_image = '/uploads/backgrounds/' + req.files.headerImage[0].filename;
     }
     
     // Handle widgets
@@ -417,8 +439,7 @@ router.post('/update', isAuthenticated, upload.fields([
       try {
         const parsedWidgets = JSON.parse(widgets);
         if (Array.isArray(parsedWidgets)) {
-          updateFields.push('widgets_data = ?');
-          updateParams.push(widgets);
+          updateData.widgets_data = widgets;
         }
       } catch (e) {
         console.error('Error parsing widgets data:', e);
@@ -426,16 +447,17 @@ router.post('/update', isAuthenticated, upload.fields([
     }
 
     // Add updated_at timestamp
-    updateFields.push('updated_at = CURRENT_TIMESTAMP');
-
-    // Complete the query
-    updateQuery += updateFields.join(', ') + ' WHERE user_id = ?';
-    updateParams.push(req.session.user.id);
+    updateData.updated_at = new Date().toISOString();
 
     // Execute the update
-    const result = db.prepare(updateQuery).run(...updateParams);
+    const { data: result, error } = await supabase
+      .from('profiles')
+      .update(updateData)
+      .eq('user_id', req.session.user.id)
+      .select()
+      .single();
 
-    if (result.changes === 0) {
+    if (error || !result) {
       return res.status(404).json({
         error: 'Profile not found',
         message: 'Terminal identity not found in the system.'
@@ -456,42 +478,46 @@ router.post('/update', isAuthenticated, upload.fields([
 });
 
 // Set profile glyph
-router.post('/set-glyph/:glyphId', isAuthenticated, (req, res) => {
+router.post('/set-glyph/:glyphId', isAuthenticated, async (req, res) => {
   try {
     const { glyphId } = req.params;
     const { enable3d, rotationSpeed } = req.body;
 
     // Check if glyph exists and belongs to user
-    const glyph = db.prepare('SELECT * FROM glyphs WHERE id = ? AND user_id = ?')
-      .get(glyphId, req.session.user.id);
+    const { data: glyph, error } = await supabase
+      .from('glyphs')
+      .select('*')
+      .eq('id', glyphId)
+      .eq('user_id', req.session.user.id)
+      .single();
 
-    if (!glyph) {
+    if (error || !glyph) {
       return res.status(404).json({
         error: 'Glyph not found',
         message: 'The requested glyph does not exist or does not belong to you.'
       });
     }
 
-    // Update profile with 3D settings if provided
-    let query = 'UPDATE profiles SET glyph_id = ?';
-    const params = [glyphId];
+    // Build update data
+    const updateData = { glyph_id: glyphId };
 
     if (enable3d !== undefined) {
-      query += ', glyph_3d = ?';
-      params.push(enable3d === true || enable3d === '1' ? 1 : 0);
+      updateData.glyph_3d = enable3d === true || enable3d === '1' ? true : false;
     }
 
     if (rotationSpeed !== undefined) {
-      query += ', glyph_rotation_speed = ?';
-      params.push(parseInt(rotationSpeed) || 3);
+      updateData.glyph_rotation_speed = parseInt(rotationSpeed) || 3;
     }
 
-    query += ' WHERE user_id = ?';
-    params.push(req.session.user.id);
+    // Update profile
+    const { data: result, error: updateError } = await supabase
+      .from('profiles')
+      .update(updateData)
+      .eq('user_id', req.session.user.id)
+      .select()
+      .single();
 
-    const result = db.prepare(query).run(...params);
-
-    if (result.changes === 0) {
+    if (updateError || !result) {
       return res.status(404).json({
         error: 'Profile not found',
         message: 'Terminal identity not found in the system.'
@@ -512,40 +538,31 @@ router.post('/set-glyph/:glyphId', isAuthenticated, (req, res) => {
 });
 
 // Set background options
-router.post('/background', isAuthenticated, (req, res) => {
+router.post('/background', isAuthenticated, async (req, res) => {
   try {
     const { backgroundType, tileBackground } = req.body;
 
-    // Update profile background settings
-    let query = 'UPDATE profiles SET ';
-    const updateParams = [];
-    const updateFields = [];
+    // Build update data
+    const updateData = {};
+    if (backgroundType) updateData.profile_bg_type = backgroundType;
+    if (tileBackground !== undefined) updateData.profile_bg_tile = tileBackground === true || tileBackground === '1' ? true : false;
 
-    if (backgroundType) {
-      updateFields.push('profile_bg_type = ?');
-      updateParams.push(backgroundType);
-    }
-
-    if (tileBackground !== undefined) {
-      updateFields.push('profile_bg_tile = ?');
-      updateParams.push(tileBackground === true || tileBackground === '1' ? 1 : 0);
-    }
-
-    if (updateFields.length === 0) {
+    if (Object.keys(updateData).length === 0) {
       return res.status(400).json({
         error: 'Invalid input',
         message: 'No background options provided.'
       });
     }
 
-    // Complete the query
-    query += updateFields.join(', ') + ' WHERE user_id = ?';
-    updateParams.push(req.session.user.id);
-
     // Execute the update
-    const result = db.prepare(query).run(...updateParams);
+    const { data: result, error } = await supabase
+      .from('profiles')
+      .update(updateData)
+      .eq('user_id', req.session.user.id)
+      .select()
+      .single();
 
-    if (result.changes === 0) {
+    if (error || !result) {
       return res.status(404).json({
         error: 'Profile not found',
         message: 'Terminal identity not found in the system.'
@@ -567,7 +584,7 @@ router.post('/background', isAuthenticated, (req, res) => {
 
 // Profile container routes
 // Create new container
-router.post('/container', isAuthenticated, (req, res) => {
+router.post('/container', isAuthenticated, async (req, res) => {
   try {
     const { containerType, title, content, settings, position } = req.body;
 
@@ -579,10 +596,13 @@ router.post('/container', isAuthenticated, (req, res) => {
     }
 
     // Get user profile ID
-    const profile = db.prepare('SELECT id FROM profiles WHERE user_id = ?')
-      .get(req.session.user.id);
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('user_id', req.session.user.id)
+      .single();
 
-    if (!profile) {
+    if (profileError || !profile) {
       return res.status(404).json({
         error: 'Profile not found',
         message: 'User profile not found.'
@@ -590,27 +610,29 @@ router.post('/container', isAuthenticated, (req, res) => {
     }
 
     // Insert container
-    const result = db.prepare(`
-      INSERT INTO profile_containers (
-        profile_id, container_type, title, content, position, settings
-      ) VALUES (?, ?, ?, ?, ?, ?)
-    `).run(
-      profile.id,
-      containerType,
-      title || null,
-      content || null,
-      position || 0,
-      settings || null
-    );
+    const insertData = {
+      profile_id: profile.id,
+      container_type: containerType,
+      title: title || null,
+      content: content || null,
+      position: position || 0,
+      settings: settings || null
+    };
 
-    if (result.changes === 0) {
+    const { data: result, error: insertError } = await supabase
+      .from('profile_containers')
+      .insert(insertData)
+      .select()
+      .single();
+
+    if (insertError || !result) {
       throw new Error('Failed to create container');
     }
 
     res.status(201).json({
       success: true,
       message: 'Container created successfully',
-      containerId: result.lastInsertRowid
+      containerId: result.id
     });
   } catch (err) {
     console.error('Container creation error:', err);
@@ -622,67 +644,46 @@ router.post('/container', isAuthenticated, (req, res) => {
 });
 
 // Update container
-router.put('/container/:id', isAuthenticated, (req, res) => {
+router.put('/container/:id', isAuthenticated, async (req, res) => {
   try {
     const { id } = req.params;
     const { containerType, title, content, settings, position } = req.body;
 
     // Check if container exists and belongs to user
-    const container = db.prepare(`
-      SELECT pc.*
-      FROM profile_containers pc
-      JOIN profiles p ON pc.profile_id = p.id
-      WHERE pc.id = ? AND p.user_id = ?
-    `).get(id, req.session.user.id);
+    const { data: container, error: containerError } = await supabase
+      .from('profile_containers')
+      .select('profile_containers(*), profiles(user_id)')
+      .eq('profile_containers.id', id)
+      .eq('profiles.user_id', req.session.user.id)
+      .single();
 
-    if (!container) {
+    if (containerError || !container) {
       return res.status(404).json({
         error: 'Container not found',
         message: 'The requested container does not exist or does not belong to you.'
       });
     }
 
-    // Build update query
-    let updateQuery = 'UPDATE profile_containers SET ';
-    const updateParams = [];
-    const updateFields = [];
-
-    if (containerType) {
-      updateFields.push('container_type = ?');
-      updateParams.push(containerType);
-    }
-
-    if (title !== undefined) {
-      updateFields.push('title = ?');
-      updateParams.push(title);
-    }
-
-    if (content !== undefined) {
-      updateFields.push('content = ?');
-      updateParams.push(content);
-    }
-
-    if (settings) {
-      updateFields.push('settings = ?');
-      updateParams.push(settings);
-    }
-
-    if (position !== undefined) {
-      updateFields.push('position = ?');
-      updateParams.push(position);
-    }
+    // Build update data
+    const updateData = {};
+    if (containerType) updateData.container_type = containerType;
+    if (title !== undefined) updateData.title = title;
+    if (content !== undefined) updateData.content = content;
+    if (settings) updateData.settings = settings;
+    if (position !== undefined) updateData.position = position;
 
     // Add updated_at timestamp
-    updateFields.push('updated_at = CURRENT_TIMESTAMP');
-
-    // Complete the query
-    updateQuery += updateFields.join(', ') + ' WHERE id = ?';
-    updateParams.push(id);
+    updateData.updated_at = new Date().toISOString();
 
     // Execute the update
-    const result = db.prepare(updateQuery).run(...updateParams);
+    const { data: result, error: updateError } = await supabase
+      .from('profile_containers')
+      .update(updateData)
+      .eq('id', id)
+      .select()
+      .single();
 
-    if (result.changes === 0) {
+    if (updateError || !result) {
       return res.status(404).json({
         error: 'Update failed',
         message: 'Failed to update container.'
@@ -703,19 +704,19 @@ router.put('/container/:id', isAuthenticated, (req, res) => {
 });
 
 // Delete container
-router.delete('/container/:id', isAuthenticated, (req, res) => {
+router.delete('/container/:id', isAuthenticated, async (req, res) => {
   try {
     const { id } = req.params;
 
     // Check if container exists and belongs to user
-    const container = db.prepare(`
-      SELECT pc.*
-      FROM profile_containers pc
-      JOIN profiles p ON pc.profile_id = p.id
-      WHERE pc.id = ? AND p.user_id = ?
-    `).get(id, req.session.user.id);
+    const { data: container, error: containerError } = await supabase
+      .from('profile_containers')
+      .select('profile_containers(*), profiles(user_id)')
+      .eq('profile_containers.id', id)
+      .eq('profiles.user_id', req.session.user.id)
+      .single();
 
-    if (!container) {
+    if (containerError || !container) {
       return res.status(404).json({
         error: 'Container not found',
         message: 'The requested container does not exist or does not belong to you.'
@@ -723,9 +724,12 @@ router.delete('/container/:id', isAuthenticated, (req, res) => {
     }
 
     // Delete container
-    const result = db.prepare('DELETE FROM profile_containers WHERE id = ?').run(id);
+    const { error: deleteError } = await supabase
+      .from('profile_containers')
+      .delete()
+      .eq('id', id);
 
-    if (result.changes === 0) {
+    if (deleteError) {
       throw new Error('Failed to delete container');
     }
 
@@ -743,20 +747,20 @@ router.delete('/container/:id', isAuthenticated, (req, res) => {
 });
 
 // Equip/unequip rewards
-router.post('/reward/:id/toggle', isAuthenticated, (req, res) => {
+router.post('/reward/:id/toggle', isAuthenticated, async (req, res) => {
   try {
     const { id } = req.params;
     const { equipped } = req.body;
 
     // Check if user has this reward
-    const userReward = db.prepare(`
-      SELECT ur.*
-      FROM user_rewards ur
-      JOIN repute_rewards r ON ur.reward_id = r.id
-      WHERE ur.user_id = ? AND r.id = ?
-    `).get(req.session.user.id, id);
+    const { data: userReward, error } = await supabase
+      .from('user_rewards')
+      .select('user_rewards(*), repute_rewards(id)')
+      .eq('user_id', req.session.user.id)
+      .eq('repute_rewards.id', id)
+      .single();
 
-    if (!userReward) {
+    if (error || !userReward) {
       return res.status(404).json({
         error: 'Reward not found',
         message: 'You do not have this reward.'
@@ -764,16 +768,13 @@ router.post('/reward/:id/toggle', isAuthenticated, (req, res) => {
     }
 
     // Update equipped status
-    const result = db.prepare(`
-      UPDATE user_rewards SET is_equipped = ?
-      WHERE user_id = ? AND reward_id = ?
-    `).run(
-      equipped === true || equipped === '1' ? 1 : 0,
-      req.session.user.id,
-      id
-    );
+    const { error: updateError } = await supabase
+      .from('user_rewards')
+      .update({ is_equipped: equipped === true || equipped === '1' ? true : false })
+      .eq('user_id', req.session.user.id)
+      .eq('reward_id', id);
 
-    if (result.changes === 0) {
+    if (updateError) {
       throw new Error('Failed to update reward status');
     }
 
