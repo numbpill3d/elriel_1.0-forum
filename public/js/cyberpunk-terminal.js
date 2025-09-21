@@ -26,10 +26,13 @@ document.addEventListener('DOMContentLoaded', function() {
  * Bootstrap Sequence - Initial loading animation
  */
 function initBootstrapSequence() {
+  console.log('[BOOTSTRAP] Checking if bootstrap already completed...');
   if (sessionStorage.getItem('bootstrapComplete') === 'true') {
-    console.log('Bootstrap sequence already completed this session.');
+    console.log('[BOOTSTRAP] Bootstrap sequence already completed this session.');
     return;
   }
+
+  console.log('[BOOTSTRAP] Starting bootstrap sequence...');
 
   const bootstrapLines = [
     'ELRIEL SUBNET v1.0.3 - LOADING',
@@ -47,6 +50,8 @@ function initBootstrapSequence() {
     '[PRESS ANY KEY TO CONTINUE]'
   ];
 
+  console.log('[BOOTSTRAP] Bootstrap lines array length:', bootstrapLines.length);
+
   // Create bootstrap overlay
   const bootstrapEl = document.createElement('div');
   bootstrapEl.className = 'bootstrap-sequence';
@@ -56,43 +61,92 @@ function initBootstrapSequence() {
     </div>
   `;
   document.body.appendChild(bootstrapEl);
+  console.log('[BOOTSTRAP] Bootstrap overlay created and appended to body');
 
   // Type out each line with delay
   const linesContainer = document.getElementById('bootstrap-lines');
+  console.log('[BOOTSTRAP] Lines container found:', !!linesContainer);
   let lineIndex = 0;
 
   const typeBootstrapLine = () => {
+    console.log(`[BOOTSTRAP] typeBootstrapLine called, lineIndex: ${lineIndex}, bootstrapLines.length: ${bootstrapLines.length}`);
+
     if (lineIndex >= bootstrapLines.length) {
+      console.log('[BOOTSTRAP] All lines typed, setting up continue handlers...');
       // Bootstrap complete, add continue handler
       bootstrapEl.addEventListener('click', () => {
+        console.log('[BOOTSTRAP] Click detected, hiding bootstrap...');
         bootstrapEl.style.opacity = '0';
         setTimeout(() => {
           bootstrapEl.remove();
           sessionStorage.setItem('bootstrapComplete', 'true');
+          console.log('[BOOTSTRAP] Bootstrap sequence completed and removed');
         }, 1000);
       });
 
       document.addEventListener('keydown', () => {
+        console.log('[BOOTSTRAP] Keydown detected, hiding bootstrap...');
         bootstrapEl.style.opacity = '0';
         setTimeout(() => {
           bootstrapEl.remove();
           sessionStorage.setItem('bootstrapComplete', 'true');
+          console.log('[BOOTSTRAP] Bootstrap sequence completed and removed');
         }, 1000);
       }, { once: true });
 
       return;
     }
 
-    const line = document.createElement('div');
-    line.className = 'bootstrap-line';
-    line.textContent = bootstrapLines[lineIndex];
-    linesContainer.appendChild(line);
+    try {
+      const line = document.createElement('div');
+      line.className = 'bootstrap-line';
+      // Make the continue prompt more visible
+      if (bootstrapLines[lineIndex] === '[PRESS ANY KEY TO CONTINUE]') {
+        line.classList.add('continue-prompt');
+        line.style.color = '#ffffff';
+        line.style.fontWeight = 'bold';
+        line.style.textShadow = '0 0 10px #ffffff, 0 0 20px #ffffff';
+        line.style.fontSize = '1.2em';
+        line.style.marginTop = '20px';
+        line.style.padding = '10px';
+        line.style.border = '2px solid #ffffff';
+        line.style.borderRadius = '5px';
+        line.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+        line.style.textAlign = 'center';
+        console.log('[BOOTSTRAP] Styled continue prompt for visibility');
+  // Add timeout fallback for stuck loading screens
+  setTimeout(() => {
+    if (document.querySelector('.bootstrap-sequence')) {
+      console.log('[BOOTSTRAP] Timeout reached, forcing bootstrap completion...');
+      const bootstrapEl = document.querySelector('.bootstrap-sequence');
+      if (bootstrapEl) {
+        bootstrapEl.style.opacity = '0';
+        setTimeout(() => {
+          bootstrapEl.remove();
+          sessionStorage.setItem('bootstrapComplete', 'true');
+          console.log('[BOOTSTRAP] Bootstrap sequence force-completed due to timeout');
+        }, 1000);
+      }
+    }
+  }, 30000); // 30 second timeout</parameter>
+</insert_content>
+      }</parameter>
+</insert_content>
+      line.textContent = bootstrapLines[lineIndex];
+      linesContainer.appendChild(line);
+      console.log(`[BOOTSTRAP] Added line ${lineIndex + 1}/${bootstrapLines.length}: "${bootstrapLines[lineIndex]}"`);
 
-    lineIndex++;
-    setTimeout(typeBootstrapLine, lineIndex < 3 ? 800 : Math.random() * 500 + 300);
+      lineIndex++;
+      const delay = lineIndex < 3 ? 800 : Math.random() * 500 + 300;
+      console.log(`[BOOTSTRAP] Scheduling next line in ${delay}ms`);
+      setTimeout(typeBootstrapLine, delay);
+    } catch (error) {
+      console.error('[BOOTSTRAP] Error in typeBootstrapLine:', error);
+    }
   };
 
   // Start bootstrap sequence after a short delay
+  console.log('[BOOTSTRAP] Starting sequence in 500ms...');
   setTimeout(typeBootstrapLine, 500);
 }
 
