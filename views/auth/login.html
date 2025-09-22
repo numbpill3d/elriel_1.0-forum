@@ -188,23 +188,41 @@
         testLink.onload = () => console.log('DEBUG: win98.css loaded successfully');
         testLink.onerror = () => console.error('DEBUG: Failed to load win98.css - 404 or serving issue');
         document.head.appendChild(testLink);
-        
-        // Check computed style after a delay
-        setTimeout(() => {
-          const bodyStyle = window.getComputedStyle(document.body);
-          const bgColor = bodyStyle.backgroundColor;
-          const hasTerminalClass = document.body.classList.contains('terminal');
-          console.log('DEBUG: Body background color:', bgColor);
-          console.log('DEBUG: Body has terminal class:', hasTerminalClass);
-          if (bgColor === 'rgba(0, 0, 0, 0)' || bgColor === 'transparent' || bgColor === 'white') {
-            console.error('DEBUG: Styles not applied - likely CSS variables missing');
-          } else {
-            console.log('DEBUG: Styles appear applied');
-          }
-        }, 100);
       } else {
         console.error('DEBUG: No win98.css link found in head');
       }
+
+      // Debug: Test loading cyberpunk-terminal.css and check terminal styles
+      const terminalTestLink = document.createElement('link');
+      terminalTestLink.rel = 'stylesheet';
+      terminalTestLink.href = '/css/cyberpunk-terminal.css';
+      terminalTestLink.onload = () => {
+        console.log('DEBUG: cyberpunk-terminal.css loaded successfully');
+        setTimeout(() => {
+          const bodyStyle = window.getComputedStyle(document.body);
+          const bgColor = bodyStyle.backgroundColor;
+          console.log('DEBUG: Body background after terminal CSS:', bgColor);
+          if (bgColor !== 'rgba(0, 0, 0, 0)' && bgColor !== 'transparent' && bgColor !== 'white') {
+            console.log('DEBUG: Terminal styles applied - dark background confirmed');
+          } else {
+            console.error('DEBUG: Terminal styles not applied even after load');
+          }
+        }, 100);
+      };
+      terminalTestLink.onerror = () => console.error('DEBUG: Failed to load cyberpunk-terminal.css - check serving');
+      document.head.appendChild(terminalTestLink);
+
+      // Initial style check
+      setTimeout(() => {
+        const bodyStyle = window.getComputedStyle(document.body);
+        const bgColor = bodyStyle.backgroundColor;
+        const hasTerminalClass = document.body.classList.contains('terminal');
+        console.log('DEBUG: Initial body background color:', bgColor);
+        console.log('DEBUG: Body has terminal class:', hasTerminalClass);
+        if (bgColor === 'rgba(0, 0, 0, 0)' || bgColor === 'transparent' || bgColor === 'white') {
+          console.error('DEBUG: Initial styles missing - likely no terminal CSS');
+        }
+      }, 50);
 
       // Inject data from server
       try {
