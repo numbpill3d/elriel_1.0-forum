@@ -509,139 +509,120 @@
       <nav class="sidebar" id="main-sidebar">
         <div class="nav-section">
           <h3 class="nav-title">MAIN SYSTEMS</h3>
-          <ul class="nav-links">
-            <li><a href="/">TERMINAL</a></li>
-            <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
-            <li><a href="/glyph/crucible">GLYPH CRUCIBLE</a></li>
-            <li><a href="/whisper/board">WHISPERBOARD</a></li>
-            <li><a href="/forum/scrapyard">SCRAPYARD</a></li>
-          </ul>
-        </div>
-        <div class="nav-section">
-          <h3 class="nav-title">PROFILE</h3>
-          <ul class="nav-links">
-            <li><a href="/profile">DASHBOARD</a></li>
-            <!-- Edit profile link only for owner -->
-            <li id="edit-profile-link" class="hidden"><a href="/profile/edit">EDIT PROFILE</a></li>
-            <li><a href="/feed/new">CREATE POST</a></li>
-          </ul>
-        </div>
-        <div class="nav-section">
-          <h3 class="nav-title">SYSTEM</h3>
-          <ul class="nav-links">
-            <li><a href="/about">ABOUT</a></li>
-            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
-          </ul>
-        </div>
-      </nav>
-
-      <main class="main-content">
-        <div class="web1-marquee">
-          <div class="web1-marquee-content">
-            WELCOME TO THE DEEPWEB FORUM OF MYSTICAL HACKER SECRETS... PROCEED WITH CAUTION... KNOWLEDGE IS POWER... TRUTH IS HIDDEN... <span class="blink-text">INCOMING TRANSMISSION...</span> EXPLORE THE SCRAPYARD FOR FORGOTTEN ARTIFACTS... <span class="blink-text">CONNECTION UNSTABLE...</span> DATA CORRUPTION IMMINENT...
-          </div>
-        </div>
-
-        <section class="profile-view-panel">
-          <div class="panel-header">
-            <h2>USER PROFILE: <span id="profile-view-username"></span></h2>
-            <div class="status-indicator" id="profile-view-status"></div>
-          </div>
-          <div class="profile-view-content">
-            <!-- Win98-style profile navigation bar -->
-            <div class="profile-nav-bar">
-              <a href="#profile" class="profile-nav-item active">PROFILE</a>
-              <a href="#posts" class="profile-nav-item">POSTS</a>
-              <a href="#activity" class="profile-nav-item">ACTIVITY</a>
-              <a href="#glyphs" class="profile-nav-item">GLYPHS</a>
-            </div>
-
-            <div class="profile-view-header">
-              <div class="scanner-line"></div>
-              <div class="profile-view-background" id="profile-view-background">
-                <!-- Background image will be injected here -->
+          <div class="noise-overlay"></div>
+          <div class="scan-lines"></div>
+          <div class="container">
+            <header class="main-header">
+              <div class="logo">
+                <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+                <div class="logo-subtitle">TERMINAL ACCESS v1.0</div>
               </div>
-              <div class="profile-view-avatar">
-                <!-- Placeholder for avatar -->
-                <div class="default-avatar"></div>
-              </div>
-              <div class="profile-view-info">
-                <h3 id="profile-view-username-large"></h3>
-                <div class="profile-view-district" id="profile-view-district"></div>
-              </div>
-            </div>
-
-            <!-- Owner-only edit controls with margin positioning -->
-            <div id="profile-owner-controls" class="hidden profile-controls-margin">
-              <div class="profile-control-left">
-                <a href="/profile/edit" class="edit-profile-btn">EDIT PROFILE</a>
-              </div>
-
-              <div class="action-buttons profile-control-right">
-                <a href="/profile/edit#background" class="action-button">CHANGE BACKGROUND</a>
-                <a href="/profile/edit#glyph" class="action-button">CHANGE SIGIL</a>
-                <a href="/glyph/crucible" class="action-button">GLYPH CRUCIBLE</a>
-              </div>
-            </div>
-
-            <div class="web1-divider"></div>
-
-            <div class="profile-view-details">
-              <div class="profile-view-section">
-                <div class="section-title">STATUS:</div>
-                <div class="section-content" id="profile-view-status-text"></div>
-              </div>
-
-              <div class="profile-view-section">
-                <div class="section-title">PROFILE SIGIL:</div>
-                <div class="section-content" id="profile-view-glyph">
-                  <!-- Profile glyph will be injected here -->
+              <div class="user-panel">
+                <div id="user-status">
+                  <!-- User status will be injected here -->
                 </div>
               </div>
+            </header>
 
-              <div class="profile-view-section">
-                <div class="section-title">RECENT ACTIVITY:</div>
-                <div class="section-content">
-                  <div class="profile-activity-log" id="profile-activity-log">
-                    <!-- Recent activity items will be loaded here -->
-                    <div class="loading-activity">LOADING ACTIVITY LOG...</div>
-                  </div>
-                  <div class="view-all-activity">
-                    <a href="/activity-log" class="activity-link">VIEW FULL ACTIVITY LOG</a>
+            <div class="content-wrapper">
+              <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle">TOGGLE NAVIGATION</button>
+              <nav class="sidebar" id="main-sidebar">
+                ...existing code...
+              </nav>
+
+              <main class="main-content">
+                <div class="web1-marquee">
+                  <div class="web1-marquee-content">
+                    WELCOME TO THE DEEPWEB FORUM OF MYSTICAL HACKER SECRETS... PROCEED WITH CAUTION... KNOWLEDGE IS POWER... TRUTH IS HIDDEN... <span class="blink-text">INCOMING TRANSMISSION...</span> EXPLORE THE SCRAPYARD FOR FORGOTTEN ARTIFACTS... <span class="blink-text">CONNECTION UNSTABLE...</span> DATA CORRUPTION IMMINENT...
                   </div>
                 </div>
-              </div>
 
-              <div class="profile-view-section">
-                <div class="section-title">CUSTOM CODE:</div>
-                <div class="section-content">
-                  <style id="profile-view-custom-css"></style>
-                  <style id="profile-view-theme-template"></style>
-                  <div id="profile-view-custom-html"></div>
-                </div>
-              </div>
+                <!-- Improved Profile Header Card -->
+                <section class="profile-header-card">
+                  <div class="profile-header-bg" id="profile-view-background"></div>
+                  <div class="profile-header-content">
+                    <div class="profile-header-avatar">
+                      <div class="profile-view-avatar">
+                        <div class="default-avatar"></div>
+                      </div>
+                    </div>
+                    <div class="profile-header-info">
+                      <h2 id="profile-view-username-large"></h2>
+                      <div class="profile-view-district" id="profile-view-district"></div>
+                      <div class="profile-header-status" id="profile-view-status"></div>
+                    </div>
+                    <div class="profile-header-controls" id="profile-owner-controls">
+                      <a href="/profile/edit" class="edit-profile-btn">EDIT PROFILE</a>
+                      <a href="/profile/edit#background" class="action-button">CHANGE BACKGROUND</a>
+                      <a href="/profile/edit#glyph" class="action-button">CHANGE SIGIL</a>
+                      <a href="/glyph/crucible" class="action-button">GLYPH CRUCIBLE</a>
+                    </div>
+                  </div>
+                </section>
 
-              <!-- Windows 98 experience section removed -->
+                <!-- Sticky Profile Navigation Bar -->
+                <nav class="profile-nav-bar sticky-nav">
+                  <a href="#profile" class="profile-nav-item active"><span class="nav-icon">👤</span> PROFILE</a>
+                  <a href="#posts" class="profile-nav-item"><span class="nav-icon">📝</span> POSTS</a>
+                  <a href="#activity" class="profile-nav-item"><span class="nav-icon">📜</span> ACTIVITY</a>
+                  <a href="#glyphs" class="profile-nav-item"><span class="nav-icon">🔮</span> GLYPHS</a>
+                </nav>
+
+                <div class="web1-divider"></div>
+
+                <!-- Profile Details Card -->
+                <section class="profile-view-details card-section" id="profile">
+                  <div class="profile-view-section">
+                    <div class="section-title"><span class="section-icon">👤</span> STATUS</div>
+                    <div class="section-content" id="profile-view-status-text"></div>
+                  </div>
+                  <div class="profile-view-section">
+                    <div class="section-title"><span class="section-icon">🔮</span> PROFILE SIGIL</div>
+                    <div class="section-content" id="profile-view-glyph"></div>
+                  </div>
+                  <div class="profile-view-section">
+                    <div class="section-title"><span class="section-icon">📜</span> RECENT ACTIVITY</div>
+                    <div class="section-content">
+                      <div class="profile-activity-log" id="profile-activity-log">
+                        <div class="loading-activity">LOADING ACTIVITY LOG...</div>
+                      </div>
+                      <div class="view-all-activity">
+                        <a href="/activity-log" class="activity-link">VIEW FULL ACTIVITY LOG</a>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="profile-view-section">
+                    <div class="section-title"><span class="section-icon">⚙️</span> CUSTOM CODE</div>
+                    <div class="section-content">
+                      <style id="profile-view-custom-css"></style>
+                      <style id="profile-view-theme-template"></style>
+                      <div id="profile-view-custom-html"></div>
+                    </div>
+                  </div>
+                </section>
+
+                <!-- Posts Grid Section -->
+                <section class="user-view-posts-panel card-section" id="posts">
+                  <div class="panel-header">
+                    <h2><span class="section-icon">📝</span> RECENT POSTS</h2>
+                    <div class="status-indicator">ARCHIVE</div>
+                  </div>
+                  <div class="user-view-posts-content posts-grid" id="user-view-posts-content">
+                    <!-- User posts will be injected here -->
+                  </div>
+                </section>
+              </main>
             </div>
-          </div>
-        </section>
 
-        <section class="user-view-posts-panel">
-          <div class="panel-header">
-            <h2>RECENT POSTS</h2>
-            <div class="status-indicator">ARCHIVE</div>
+            <footer class="main-footer">
+              <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+              <div class="footer-glyphs">
+                <span class="glyph">⌘</span>
+                <span class="glyph">⍟</span>
+                <span class="glyph">⎔</span>
+              </div>
+            </footer>
           </div>
-          <div class="user-view-posts-content" id="user-view-posts-content">
-            <!-- User posts will be injected here -->
-          </div>
-        </section>
-      </main>
-    </div>
-
-    <footer class="main-footer">
-      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
-      <div class="footer-glyphs">
-        <span class="glyph">⌘</span>
         <span class="glyph">⍟</span>
         <span class="glyph">⎔</span>
       </div>

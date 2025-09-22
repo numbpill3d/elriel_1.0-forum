@@ -12,7 +12,8 @@
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/glitch.css">
   <link rel="stylesheet" href="/css/win98.css">
-  <link rel="stylesheet" href="/css/cursor-fix.css">
+  <link rel="stylesheet" href="/css/responsive-fixes.css">
+  <link rel="stylesheet" href="/css/bleedstream-sidebar.css">
 
   <!-- Core scripts -->
   <script src="/js/error-logger.js" defer></script>
@@ -56,13 +57,14 @@
     .sitemap-card {
       background-color: var(--panel-bg);
       border: var(--panel-border);
+      border-radius: 0;
       padding: 1rem;
+      box-shadow: 0 0 25px var(--glow-color), inset 0 0 15px rgba(255, 0, 0, 0.3);
       transition: all 0.3s ease;
     }
-
     .sitemap-card:hover {
       transform: translateY(-3px);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 5px 15px var(--glow-color);
     }
 
     .sitemap-card h3 {

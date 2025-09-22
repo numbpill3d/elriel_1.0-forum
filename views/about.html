@@ -6,43 +6,46 @@
   <title>ABOUT | ELRIEL</title>
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/glitch.css">
+  <link rel="stylesheet" href="/css/win98.css">
+  <link rel="stylesheet" href="/css/responsive-fixes.css">
+  <link rel="stylesheet" href="/css/bleedstream-sidebar.css">
   <script src="/js/glitch.js" defer></script>
+  <script src="/js/navigation-debug.js" defer></script>
+  <script src="/js/sidebar-manager.js" defer></script>
   <style>
     .about-container {
       padding: 2rem;
     }
-    
     .about-panel {
       background-color: var(--panel-bg);
       border: var(--panel-border);
-      border-radius: 4px;
+      border-radius: 0;
       padding: 1.5rem;
       margin-bottom: 2rem;
+      box-shadow: 0 0 25px var(--glow-color), inset 0 0 15px rgba(255, 0, 0, 0.3);
     }
-    
     .about-panel .panel-header {
-      background-color: rgba(0, 0, 0, 0.3);
-      border-bottom: var(--panel-border);
+      background-color: rgba(10, 0, 0, 0.8);
+      border-bottom: 2px solid var(--terminal-green);
       padding: 0.8rem 1rem;
       margin: -1.5rem -1.5rem 1.5rem -1.5rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    
     .about-panel .panel-header h2 {
       font-family: var(--header-font);
       color: var(--terminal-green);
       font-size: 1.5rem;
       margin: 0;
+      text-shadow: 0 0 10px var(--red-glow-strong);
+      letter-spacing: 2px;
     }
-    
     .about-content {
       font-family: var(--terminal-font);
       color: var(--terminal-text);
       line-height: 1.8;
     }
-    
     .about-content h3 {
       font-family: var(--header-font);
       color: var(--terminal-dim-green);
@@ -52,16 +55,13 @@
       border-bottom: 1px dashed rgba(0, 255, 0, 0.1);
       padding-bottom: 0.3rem;
     }
-    
     .about-content p {
       margin-bottom: 1rem;
     }
-    
     .about-content a {
       color: var(--terminal-blue);
       text-decoration: none;
     }
-    
     .about-content a:hover {
       text-decoration: underline;
     }
