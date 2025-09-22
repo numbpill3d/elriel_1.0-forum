@@ -248,50 +248,5 @@
     });
   </script>
 </body>
-          const data = await response.json();
-          console.log('[LOGIN] Response data:', data);
-          
-          if (data.success) {
-            console.log('[LOGIN] Login successful, redirecting to /profile');
-            window.location.href = '/profile'; // Redirect to profile on success
-          } else {
-            console.log('[LOGIN] Login failed:', data.message);
-            errorMessageEl.textContent = data.message || 'Login failed. Unknown error.';
-          }
-        } catch (error) {
-          console.error('[LOGIN] Fetch error:', error);
-          errorMessageEl.textContent = 'System error. Could not connect to authentication server.';
-        }
-      }
-      
-      // Add direct button click listener
-      const loginButton = document.getElementById('login-button');
-      if (loginButton) {
-        console.log('[LOGIN] Login button found, adding direct click listener');
-        loginButton.addEventListener('click', function(e) {
-          console.log('[LOGIN] Button click detected directly');
-          e.preventDefault();
-          e.stopPropagation();
-          handleLogin();
-        });
-      } else {
-        console.error('[LOGIN] Login button not found');
-      }
-      
-      // Add form submit listener
-      const loginForm = document.getElementById('login-form');
-      if (loginForm) {
-        console.log('[LOGIN] Login form found, adding submit listener');
-        loginForm.addEventListener('submit', function(e) {
-          console.log('[LOGIN] Form submit event triggered');
-          e.preventDefault();
-          handleLogin();
-        });
-        console.log('[LOGIN] Form submit listener added successfully');
-      } else {
-        console.error('[LOGIN] Login form not found in DOM');
-      }
-    });
-  </script>
 </body>
 </html>
