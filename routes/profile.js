@@ -341,14 +341,27 @@ router.get('/edit', isAuthenticated, async (req, res) => {
       .select('*, users(username)')
       .eq('user_id', req.session.user.id)
       .single();
+
     console.log('Profile query result - data exists:', !!profile, 'error:', profileError ? profileError.message : 'None');
 
-    if (profileError) {
-      console.error('Profile query error details:', profileError);
-      throw profileError;
-    }
-    if (!profile) {
-      console.warn('No profile found for user ID:', req.session.user.id);
+    if (profileError || !profile) {
+      // Create default profile if it doesn't exist
+      console.log('Creating default profile for user ID:', req.session.user.id);
+      const { data: newProfile, error: insertError } = await supabase
+        .from('profiles')
+        .insert({ user_id: req.session.user.id, status: 'New terminal connected' })
+        .select('*, users(username)')
+        .eq('user_id', req.session.user.id)
+        .single();
+
+      if (insertError) {
+        console.error('Default profile creation error:', insertError);
+        throw insertError;
+      }
+
+      // Use the newly created profile
+      profile = newProfile;
+      console.log('Default profile created successfully');
     }
 
     // Get user's glyph if it exists
@@ -363,7 +376,6 @@ router.get('/edit', isAuthenticated, async (req, res) => {
         glyph = data;
       }
     }
-
     // Get all districts
     const { data: districts, error: districtsError } = await supabase
       .from('districts')
