@@ -86,8 +86,12 @@ app.use(express.static(publicPath));
 // Also serve files directly from the root for compatibility with some paths
 app.use('/public', express.static(publicPath));
 
-// Add cache control for static assets
+// Add logging and cache control for static assets
 app.use((req, res, next) => {
+  // Log static asset requests
+  if (req.url.startsWith('/css/') || req.url.startsWith('/js/') || req.url.match(/\.(css|js|png|jpg|ico)$/)) {
+    console.log(`[STATIC ASSET] ${req.method} ${req.url} from ${publicPath}`);
+  }
   // If the request is for a static asset
   if (req.url.match(/\.(css|js|jpg|jpeg|png|gif|ico|svg|woff|woff2|ttf|eot)$/)) {
     // Set cache headers
@@ -509,7 +513,19 @@ staticRouter.get('/profile', (req, res) => {
 
 // Auth routes
 staticRouter.get('/auth/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'auth', 'login.html'));
+  const filePath = path.join(__dirname, 'views', 'auth', 'login.html');
+  console.log(`[LOGIN ROUTE] Requested login page. Path: ${filePath}`);
+  console.log(`[LOGIN ROUTE] File exists: ${fs.existsSync(filePath)}`);
+  res.set('Content-Type', 'text/html; charset=utf-8');
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      console.error(`[LOGIN ROUTE] Error serving file: ${err}`);
+      res.status(err.status || 500).send('Failed to load login page');
+    } else {
+      console.log(`[LOGIN ROUTE] Login page sent successfully. Status: ${res.statusCode}`);
+      console.log(`[LOGIN ROUTE] Content-Type: ${res.get('Content-Type')}`);
+    }
+  });
 });
 
 staticRouter.get('/auth/register', (req, res) => {
