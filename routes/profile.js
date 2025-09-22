@@ -400,18 +400,51 @@ router.get('/edit', isAuthenticated, async (req, res) => {
       districts = [{ id: 1, name: 'Central District', is_hidden: false }];
     }
 
+    // Get user's glyphs for selection
+    let userGlyphs = [];
+    try {
+      const { data: glyphsData, error: glyphsError } = await supabase
+        .from('glyphs')
+        .select('*')
+        .eq('user_id', req.session.user.id);
+      if (!glyphsError && Array.isArray(glyphsData)) {
+        userGlyphs = glyphsData;
+      }
+    } catch (err) {
+      console.error('Error loading user glyphs:', err);
+      userGlyphs = [];
+    }
+
+    // Ensure all expected keys exist in profile
+    const safeProfile = {
+      status: profile.status || '',
+      custom_css: profile.custom_css || '',
+      custom_html: profile.custom_html || '',
+      blog_layout: profile.blog_layout || 'feed',
+      district_id: profile.district_id || 1,
+      background_image: profile.background_image || '',
+      header_image: profile.header_image || '',
+      theme_template: profile.theme_template || 'default',
+      glyph_id: profile.glyph_id || null,
+      glyph_3d: profile.glyph_3d || false,
+      glyph_rotation_speed: profile.glyph_rotation_speed || 3,
+      widgets_data: profile.widgets_data || '[]',
+      ...profile
+    };
+
     // Pass data to the frontend
     const data = {
-      profile,
+      profile: safeProfile,
       glyph,
       districts,
-      user: req.session.user
+      user: req.session.user,
+      userGlyphs
     };
 
     // Inject data into the HTML
     console.log('Reading edit.html template and injecting data');
-    let html = fs.readFileSync(path.join(__dirname, '../views/profile/edit.html'), 'utf8');
     const jsonData = JSON.stringify(data);
+    let html = fs.readFileSync(path.join(__dirname, '../views/profile/edit.html'), 'utf8');
     console.log('Data JSON length:', jsonData.length);
     html = html.replace('__DATA__', jsonData);
 
