@@ -136,11 +136,13 @@ router.post('/create', isAuthenticated, async (req, res) => {
     
     // Validate input
     if (!title || !content) {
-      return res.status(400).json({ 
-        error: 'Invalid input', 
-        message: 'Title and content are required.' 
+      return res.status(400).json({
+        error: 'Invalid input',
+        message: 'Title and content are required.'
       });
     }
+
+    console.log('Validated input for post creation. User ID:', req.session.user.id, 'Title length:', title.length, 'Content length:', content.length);
     
     // Generate encryption key if post is encrypted
     let encryptionKey = null;
@@ -166,11 +168,13 @@ router.post('/create', isAuthenticated, async (req, res) => {
     if (error) {
       throw error;
     }
-    
+
+    console.log('Post inserted successfully. Post ID:', newPost.id, 'Is encrypted:', !!encryptionKey);
+
     // Return success with post ID and encryption key if applicable
-    const response = { 
-      success: true, 
-      message: 'Post successfully transmitted to the Bleedstream', 
+    const response = {
+      success: true,
+      message: 'Post successfully transmitted to the Bleedstream',
       postId: newPost.id
     };
     
@@ -181,10 +185,10 @@ router.post('/create', isAuthenticated, async (req, res) => {
     
     res.status(201).json(response);
   } catch (err) {
-    console.error('Post creation error:', err);
-    res.status(500).json({ 
-      error: 'System error', 
-      message: 'Terminal connection unstable. Try again later.' 
+    console.error('Post creation error details:', err.message, err.code, err.details);
+    res.status(500).json({
+      error: 'System error',
+      message: 'Terminal connection unstable. Try again later.'
     });
   }
 });

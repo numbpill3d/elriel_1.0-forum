@@ -93,6 +93,12 @@
                 </div>
 
                 <div class="form-group">
+                  <label for="status">STATUS:</label>
+                  <input type="text" id="status" name="status" maxlength="100" placeholder="Enter your status message..." value="<%= profile.status || '' %>">
+                  <p class="help-text">Your status message will appear on your profile.</p>
+                </div>
+
+                <div class="form-group">
                   <label for="bio">BIO:</label>
                   <textarea id="bio" name="bio" rows="5" maxlength="2000" placeholder="Enter your bio in markdown..." class="markdown-textarea"><%= profile.bio || '' %></textarea>
                   <div id="bio-preview" class="preview" style="border:1px solid var(--terminal-green); padding:0.5rem; margin-top:0.5rem; min-height: 100px;">
@@ -285,7 +291,8 @@
               <div id="two-column-editor" class="edit-section" style="display: none;">
                 <h3 class="section-header">MAIN ZONES (Two-Column)</h3>
                 <p>Use the widgets section above to add to left/right zones. Backend groups via profile_containers.zone.</p>
-                <input type="hidden" id="zones_config" name="main_content" value='<%= JSON.stringify({type: "zones", left: [], right: []}) %>'>
+                <input type="hidden" id="sidebarConfig" name="sidebarConfig" value="">
+                <input type="hidden" id="mainContent" name="mainContent" value="">
               </div>
 
               <div class="form-actions">
@@ -483,17 +490,131 @@
       }
     }
 
+    // Widget management
+    let sidebarWidgets = [];
+    let mainLeftWidgets = [];
+    let mainRightWidgets = [];
+
+    // Add widget button handler
+    document.getElementById('add-widget-btn').addEventListener('click', () => {
+      const zone = document.getElementById('widget-zone').value;
+      const type = document.getElementById('widget-type').value;
+      if (!type) return;
+
+      const widgetsContainer = document.getElementById('widgets-container');
+      const emptyMessage = widgetsContainer.querySelector('.empty-widget-message');
+      if (emptyMessage) emptyMessage.remove();
+
+      const widgetId = Date.now();
+      const widgetDiv = document.createElement('div');
+      widgetDiv.className = 'widget-item';
+      widgetDiv.dataset.zone = zone;
+      widgetDiv.dataset.id = widgetId;
+      widgetDiv.innerHTML = `
+        <div class="widget-header">
+          <span class="widget-type">${type.toUpperCase()}</span>
+          <span class="widget-zone">${zone.replace('-', ' ').toUpperCase()}</span>
+          <button type="button" class="remove-widget-btn">Remove</button>
+        </div>
+        <div class="widget-content">
+          <input type="text" class="widget-title" placeholder="Title (optional)" maxlength="100">
+          <textarea class="widget-content" rows="3" placeholder="Content (text/markdown for text, URL for image/video/iframe)"></textarea>
+          <input type="text" class="widget-settings" placeholder="Settings JSON (optional, e.g., {'width': '100%'})">
+        </div>
+      `;
+
+      // Add remove handler
+      widgetDiv.querySelector('.remove-widget-btn').addEventListener('click', () => {
+        widgetDiv.remove();
+        // Rebuild arrays
+        rebuildWidgetArrays();
+      });
+
+      widgetsContainer.appendChild(widgetDiv);
+
+      // Add to appropriate array
+      const title = widgetDiv.querySelector('.widget-title').value;
+      const content = widgetDiv.querySelector('.widget-content').value;
+      const settings = widgetDiv.querySelector('.widget-settings').value ? JSON.parse(widgetDiv.querySelector('.widget-settings').value) : {};
+      const widget = { id: widgetId, type, title, content, settings };
+
+      if (zone === 'sidebar') {
+        sidebarWidgets.push(widget);
+      } else if (zone === 'main-left') {
+        mainLeftWidgets.push(widget);
+      } else if (zone === 'main-right') {
+        mainRightWidgets.push(widget);
+      }
+
+      // Clear selects for next addition
+      document.getElementById('widget-type').value = '';
+    });
+
+    // Function to rebuild arrays from DOM (in case of direct edits)
+    function rebuildWidgetArrays() {
+      sidebarWidgets = [];
+      mainLeftWidgets = [];
+      mainRightWidgets = [];
+
+      document.querySelectorAll('.widget-item').forEach(item => {
+        const zone = item.dataset.zone;
+        const title = item.querySelector('.widget-title').value;
+        const content = item.querySelector('.widget-content').value;
+        const settingsInput = item.querySelector('.widget-settings');
+        let settings = {};
+        if (settingsInput.value) {
+          try {
+            settings = JSON.parse(settingsInput.value);
+          } catch (e) {
+            console.error('Invalid settings JSON');
+          }
+        }
+        const widget = {
+          type: item.querySelector('.widget-type').textContent.toLowerCase(),
+          title,
+          content,
+          settings
+        };
+        if (zone === 'sidebar') sidebarWidgets.push(widget);
+        else if (zone === 'main-left') mainLeftWidgets.push(widget);
+        else if (zone === 'main-right') mainRightWidgets.push(widget);
+      });
+    }
+
+    // Listen for changes in widget inputs to rebuild arrays
+    document.addEventListener('input', (e) => {
+      if (e.target.closest('.widget-item')) {
+        rebuildWidgetArrays();
+      }
+    });
+
     // Handle form submission
     document.getElementById('profile-edit-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       console.log('Profile form submission started');
+
+      // Rebuild widget arrays before submit
+      rebuildWidgetArrays();
+
+      // Serialize complex fields
+      const sidebarConfig = sidebarWidgets.length > 0 ? sidebarWidgets : null;
+      const mainContent = {
+        left: mainLeftWidgets,
+        right: mainRightWidgets
+      };
+
+      // Set hidden inputs
+      document.getElementById('sidebarConfig').value = JSON.stringify(sidebarConfig || []);
+      document.getElementById('mainContent').value = JSON.stringify(mainContent);
 
       const formData = new FormData(e.target);
       const messageEl = document.getElementById('message');
       const errorMessageEl = document.getElementById('error-message');
       messageEl.textContent = '';
       errorMessageEl.textContent = '';
-      console.log('FormData prepared, submitting to /profile/update');
+      console.log('Serialized sidebarConfig:', sidebarConfig);
+      console.log('Serialized mainContent:', mainContent);
+      console.log('FormData prepared, submitting to /profile/edit');
 
       try {
         const response = await fetch('/profile/edit', {

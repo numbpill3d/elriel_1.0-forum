@@ -627,23 +627,18 @@ router.post('/edit', isAuthenticated, upload.fields([
       updateData.header_image = '/uploads/backgrounds/' + req.files.headerImage[0].filename;
     }
     
-    // Handle widgets
-    if (widgets) {
-      try {
-        const parsedWidgets = JSON.parse(widgets);
-        if (Array.isArray(parsedWidgets)) {
-          updateData.widgets_data = widgets;
-        }
-      } catch (e) {
-        console.error('Error parsing widgets data:', e);
-      }
-    }
+    // Widgets_data column does not exist in schema; skip to avoid update errors
+    // if (widgets) { ... } - removed
 
     // Add updated_at timestamp
     updateData.updated_at = new Date().toISOString();
 
+    // Log parsed data for debugging
+    console.log('Parsed sidebarConfig:', sidebarConfigData);
+    console.log('Parsed mainContent:', mainContentData);
+    console.log('Final updateData before Supabase call:', updateData);
+
     // Execute the update
-    console.log('Attempting Supabase edit with new fields:', updateData);
     const { data: result, error } = await supabase
       .from('profiles')
       .update(updateData)

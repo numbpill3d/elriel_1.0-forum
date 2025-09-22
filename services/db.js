@@ -90,20 +90,13 @@ let supabase;
 
 // Validate environment variables and create appropriate client
 if (!supabaseUrl || !supabaseKey) {
-  console.warn('Warning: Missing Supabase credentials in environment variables.');
-  console.warn('Using mock Supabase client for development. Data will not persist.');
-
-  // Create mock client instead of exiting
-  supabase = createMockClient();
+  throw new Error('Missing Supabase credentials. Please set SUPABASE_URL and SUPABASE_KEY in .env file.');
 } else {
   try {
-    // Create real Supabase client
     supabase = createClient(supabaseUrl, supabaseKey);
     console.log('✅ Connected to Supabase at:', supabaseUrl);
   } catch (error) {
-    console.error('Error connecting to Supabase:', error);
-    console.warn('Falling back to mock Supabase client.');
-    supabase = createMockClient();
+    throw new Error(`Failed to connect to Supabase: ${error.message}. Check your SUPABASE_URL and SUPABASE_KEY.`);
   }
 }
 
