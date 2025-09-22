@@ -11,6 +11,8 @@
   <link rel="stylesheet" href="/css/responsive-fixes.css">
   <link rel="stylesheet" href="/css/bleedstream-sidebar.css">
   <script src="/js/glitch.js" defer></script>
+  <script src="/js/profile-themes.js" defer></script>
+  <script src="/js/profile-widgets.js" defer></script>
   <script src="/js/win98.js" defer></script>
   <script src="/js/sidebar-manager.js" defer></script>
   <style>
@@ -509,28 +511,31 @@
       <nav class="sidebar" id="main-sidebar">
         <div class="nav-section">
           <h3 class="nav-title">MAIN SYSTEMS</h3>
-          <div class="noise-overlay"></div>
-          <div class="scan-lines"></div>
-          <div class="container">
-            <header class="main-header">
-              <div class="logo">
-                <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
-                <div class="logo-subtitle">TERMINAL ACCESS v1.0</div>
-              </div>
-              <div class="user-panel">
-                <div id="user-status">
-                  <!-- User status will be injected here -->
-                </div>
-              </div>
-            </header>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">PROFILE</h3>
+          <ul class="nav-links">
+            <li><a href="/profile" class="active">DASHBOARD</a></li>
+            <li><a href="/profile/edit">EDIT PROFILE</a></li>
+            <li><a href="/profile/activity">ACTIVITY</a></li>
+          </ul>
+        </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
 
-            <div class="content-wrapper">
-              <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle">TOGGLE NAVIGATION</button>
-              <nav class="sidebar" id="main-sidebar">
-                ...existing code...
-              </nav>
-
-              <main class="main-content">
+      <main class="main-content">
                 <div class="web1-marquee">
                   <div class="web1-marquee-content">
                     WELCOME TO THE DEEPWEB FORUM OF MYSTICAL HACKER SECRETS... PROCEED WITH CAUTION... KNOWLEDGE IS POWER... TRUTH IS HIDDEN... <span class="blink-text">INCOMING TRANSMISSION...</span> EXPLORE THE SCRAPYARD FOR FORGOTTEN ARTIFACTS... <span class="blink-text">CONNECTION UNSTABLE...</span> DATA CORRUPTION IMMINENT...
@@ -547,7 +552,7 @@
                       </div>
                     </div>
                     <div class="profile-header-info">
-                      <h2 id="profile-view-username-large"></h2>
+                      <h2 id="profile-view-username"></h2>
                       <div class="profile-view-district" id="profile-view-district"></div>
                       <div class="profile-header-status" id="profile-view-status"></div>
                     </div>
@@ -599,6 +604,11 @@
                       <div id="profile-view-custom-html"></div>
                     </div>
                   </div>
+                </section>
+
+                <!-- Windows 98 Profile Section -->
+                <section class="profile-windows-section">
+                  <div id="profile-windows" class="profile-windows-container"></div>
                 </section>
 
                 <!-- Posts Grid Section -->
@@ -667,7 +677,6 @@
 
     // Update profile details
     document.getElementById('profile-view-username').textContent = profile.username;
-    document.getElementById('profile-view-username-large').textContent = profile.username;
     document.getElementById('profile-view-status').textContent = profile.status;
     document.getElementById('profile-view-status-text').textContent = profile.status;
     document.getElementById('profile-view-district').textContent = `DISTRICT: ${profile.district_name || 'UNKNOWN'}`;
@@ -688,9 +697,23 @@
       profileGlyphEl.innerHTML = '<span class="blink-text">NO SIGIL SET</span>';
     }
 
-    // Load recent activity placeholder until API is ready
+    // Load recent activity from posts as proxy until dedicated API
     const activityLogEl = document.getElementById('profile-activity-log');
-    activityLogEl.innerHTML = '<div class="no-activity">ACTIVITY LOG COMING SOON</div>';
+    if (posts && posts.length > 0) {
+      let activityHtml = '';
+      posts.slice(0, 5).forEach(post => {
+        activityHtml += `
+          <div class="activity-item">
+            <span class="activity-date">${new Date(post.created_at).toLocaleDateString()}</span>
+            <span class="activity-action">Posted: "${post.title.substring(0, 50)}..."</span>
+            ${post.is_encrypted ? '<span class="activity-encrypted"> [ENCRYPTED]</span>' : ''}
+          </div>
+        `;
+      });
+      activityLogEl.innerHTML = activityHtml || '<div class="no-activity">No recent activity.</div>';
+    } else {
+      activityLogEl.innerHTML = '<div class="no-activity">No recent activity.</div>';
+    }
 
     // Inject custom CSS, theme template, and HTML
     document.getElementById('profile-view-custom-css').textContent = profile.custom_css || '';

@@ -557,7 +557,6 @@ h3 {
   align-items: center;
   margin-top: var(--space-3);
   position: relative;
-  padding-left: var(--space-3);
 }
 
 .command-line::before {
@@ -576,7 +575,8 @@ h3 {
   font-size: 1rem;
   flex: 1;
   outline: none;
-  padding: 0;
+  padding-left: var(--space-3);
+  padding-right: 0;
 }
 
 /* ===== FOOTER ===== */
