@@ -177,6 +177,7 @@ router.get('/crucible', (req, res) => {
     res.send(html);
   } catch (err) {
     console.error('Error loading Glyph Crucible:', err);
+    res.set('Content-Type', 'text/html; charset=utf-8');
     res.status(500).sendFile(path.join(__dirname, '../views/error.html'));
   }
 });
@@ -207,6 +208,7 @@ router.get('/crucible-3d', (req, res) => {
     res.send(html);
   } catch (err) {
     console.error('Error loading Enhanced Glyph Crucible:', err);
+    res.set('Content-Type', 'text/html; charset=utf-8');
     res.status(500).sendFile(path.join(__dirname, '../views/error.html'));
   }
 });

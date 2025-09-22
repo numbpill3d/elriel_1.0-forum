@@ -95,6 +95,7 @@ router.get('/crypto', async (req, res) => {
     res.send(html);
   } catch (err) {
     console.error('Error loading crypto page:', err);
+    res.set('Content-Type', 'text/html; charset=utf-8');
     res.status(500).sendFile(path.join(__dirname, '../views/error.html'));
   }
 });
@@ -151,6 +152,7 @@ router.get('/activity-log', async (req, res) => {
     res.send(html);
   } catch (err) {
     console.error('Error loading activity log:', err);
+    res.set('Content-Type', 'text/html; charset=utf-8');
     res.status(500).sendFile(path.join(__dirname, '../views/error.html'));
   }
 });

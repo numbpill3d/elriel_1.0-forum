@@ -368,6 +368,7 @@ staticRouter.get('/whisper/board', (req, res) => {
     res.send(html);
   } catch (err) {
     console.error('Error loading whisper board:', err);
+    res.set('Content-Type', 'text/html; charset=utf-8');
     res.status(500).sendFile(path.join(__dirname, 'views', 'error.html'));
   }
 });
@@ -437,6 +438,7 @@ staticRouter.get('/whisper/new', (req, res) => {
     res.send(html);
   } catch (err) {
     console.error('Error loading whisper creation page:', err);
+    res.set('Content-Type', 'text/html; charset=utf-8');
     res.status(500).sendFile(path.join(__dirname, 'views', 'error.html'));
   }
 });
@@ -448,6 +450,7 @@ staticRouter.get('/whisperboard', (req, res) => {
 
 // Terminal/secrets routes
 staticRouter.get('/terminal/numbpill', (req, res) => {
+  res.set('Content-Type', 'text/html; charset=utf-8');
   res.sendFile(path.join(__dirname, 'views', 'secrets', 'numbpill.html'));
 });
 
@@ -457,6 +460,7 @@ staticRouter.get('/numbpill', (req, res) => {
 });
 
 staticRouter.get('/terminal/void', (req, res) => {
+  res.set('Content-Type', 'text/html; charset=utf-8');
   res.sendFile(path.join(__dirname, 'views', 'secrets', 'void.html'));
 });
 
@@ -529,6 +533,7 @@ staticRouter.get('/auth/login', (req, res) => {
 });
 
 staticRouter.get('/auth/register', (req, res) => {
+  res.set('Content-Type', 'text/html; charset=utf-8');
   res.sendFile(path.join(__dirname, 'views', 'auth', 'register.html'));
 });
 
@@ -864,6 +869,7 @@ staticRouter.get('/feed/new', (req, res) => {
     res.send(html);
   } catch (err) {
     console.error('Error loading new post page:', err);
+    res.set('Content-Type', 'text/html; charset=utf-8');
     res.status(500).sendFile(path.join(__dirname, 'views', 'error.html'));
   }
 });
@@ -972,6 +978,7 @@ staticRouter.get('/feed/post/:id', (req, res) => {
     res.send(html);
   } catch (err) {
     console.error('Error viewing post:', err);
+    res.set('Content-Type', 'text/html; charset=utf-8');
     res.status(500).sendFile(path.join(__dirname, 'views', 'error.html'));
   }
 });
@@ -1366,6 +1373,7 @@ staticRouter.get('/forum/upload-asset', (req, res) => {
     res.send(html);
   } catch (err) {
     console.error('Error loading asset upload page:', err);
+    res.set('Content-Type', 'text/html; charset=utf-8');
     res.status(500).sendFile(path.join(__dirname, 'views', 'error.html'));
   }
 });
@@ -1394,6 +1402,7 @@ staticRouter.get('/forum/asset/:id', (req, res) => {
     res.send(html);
   } catch (err) {
     console.error('Error viewing asset:', err);
+    res.set('Content-Type', 'text/html; charset=utf-8');
     res.status(500).sendFile(path.join(__dirname, 'views', 'error.html'));
   }
 });

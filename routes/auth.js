@@ -13,6 +13,7 @@ router.get('/login', (req, res) => {
   if (req.session.user) {
     return res.redirect('/profile');
   }
+  res.set('Content-Type', 'text/html; charset=utf-8');
   res.sendFile(path.join(__dirname, '../views/auth/login.html'));
 });
 
@@ -21,6 +22,7 @@ router.get('/register', (req, res) => {
   if (req.session.user) {
     return res.redirect('/profile');
   }
+  res.set('Content-Type', 'text/html; charset=utf-8');
   res.sendFile(path.join(__dirname, '../views/auth/register.html'));
 });
 

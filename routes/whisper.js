@@ -35,6 +35,7 @@ router.get('/board', (req, res) => {
     res.send(html);
   } catch (err) {
     console.error('Error loading Whisperboard:', err);
+    res.set('Content-Type', 'text/html; charset=utf-8');
     res.status(500).sendFile(path.join(__dirname, '../views/error.html'));
   }
 });
@@ -65,6 +66,7 @@ router.get('/new', (req, res) => {
     res.send(html);
   } catch (err) {
     console.error('Error loading new whisper page:', err);
+    res.set('Content-Type', 'text/html; charset=utf-8');
     res.status(500).sendFile(path.join(__dirname, '../views/error.html'));
   }
 });
@@ -184,6 +186,7 @@ router.get('/:id', (req, res) => {
     res.send(html);
   } catch (err) {
     console.error('Error viewing whisper:', err);
+    res.set('Content-Type', 'text/html; charset=utf-8');
     res.status(500).sendFile(path.join(__dirname, '../views/error.html'));
   }
 });

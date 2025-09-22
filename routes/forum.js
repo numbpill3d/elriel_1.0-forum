@@ -65,6 +65,7 @@ router.get('/', (req, res) => {
     res.send(html);
   } catch (err) {
     console.error('Error loading forums:', err);
+    res.set('Content-Type', 'text/html; charset=utf-8');
     res.status(500).sendFile(path.join(__dirname, '../views/error.html'));
   }
 });
@@ -108,6 +109,7 @@ router.get('/:slug', (req, res) => {
     res.send(html);
   } catch (err) {
     console.error('Error loading forum topics:', err);
+    res.set('Content-Type', 'text/html; charset=utf-8');
     res.status(500).sendFile(path.join(__dirname, '../views/error.html'));
   }
 });
@@ -139,6 +141,7 @@ router.get('/:slug/new', isAuthenticated, (req, res) => {
     res.send(html);
   } catch (err) {
     console.error('Error loading new topic page:', err);
+    res.set('Content-Type', 'text/html; charset=utf-8');
     res.status(500).sendFile(path.join(__dirname, '../views/error.html'));
   }
 });
@@ -277,6 +280,7 @@ router.get('/topic/:id', (req, res) => {
     res.send(html);
   } catch (err) {
     console.error('Error viewing topic:', err);
+    res.set('Content-Type', 'text/html; charset=utf-8');
     res.status(500).sendFile(path.join(__dirname, '../views/error.html'));
   }
 });
@@ -335,10 +339,8 @@ router.post('/topic/:id/comment', isAuthenticated, (req, res) => {
     });
   } catch (err) {
     console.error('Error adding comment:', err);
-    res.status(500).json({ 
-      error: 'System error', 
-      message: 'Terminal connection unstable. Try again later.' 
-    });
+    res.set('Content-Type', 'text/html; charset=utf-8');
+    res.status(500).sendFile(path.join(__dirname, '../views/error.html'));
   }
 });
 

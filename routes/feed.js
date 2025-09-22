@@ -78,6 +78,7 @@ router.get('/bleedstream', (req, res) => {
     res.send(html);
   } catch (err) {
     console.error('Error loading Bleedstream:', err);
+    res.set('Content-Type', 'text/html; charset=utf-8');
     res.status(500).sendFile(path.join(__dirname, '../views/error.html'));
   }
 });
@@ -105,6 +106,7 @@ router.get('/new', isAuthenticated, (req, res) => {
     res.send(html);
   } catch (err) {
     console.error('Error loading new post page:', err);
+    res.set('Content-Type', 'text/html; charset=utf-8');
     res.status(500).sendFile(path.join(__dirname, '../views/error.html'));
   }
 });
@@ -221,6 +223,7 @@ router.get('/post/:id', (req, res) => {
     res.send(html);
   } catch (err) {
     console.error('Error viewing post:', err);
+    res.set('Content-Type', 'text/html; charset=utf-8');
     res.status(500).sendFile(path.join(__dirname, '../views/error.html'));
   }
 });
