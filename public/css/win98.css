@@ -696,7 +696,7 @@
 
 /* Extra CSS to ensure cursor is visible */
 body, html, button, a, input, textarea, select, [contenteditable] {
-  cursor: url('/css/win98-cursors/normal.cur'), default !important;
+  cursor: default !important;
 }
 
 input, textarea, [contenteditable] {
@@ -704,7 +704,7 @@ input, textarea, [contenteditable] {
 }
 
 a, button, .clickable, [role="button"] {
-  cursor: url('/css/win98-cursors/link.cur'), pointer !important;
+  cursor: pointer !important;
 }
 
 /* Fix for links */
