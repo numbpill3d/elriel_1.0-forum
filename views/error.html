@@ -26,129 +26,186 @@
     }
     
     .bsod-title {
-      font-size: 24px;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-    
-    .bsod-message {
-      margin-bottom: 30px;
-      line-height: 1.5;
-    }
-    
-    .bsod-details {
-      background-color: #000088;
-      border: 2px solid #FFFFFF;
-      padding: 16px;
-      width: 100%;
-      max-width: 800px;
-      text-align: left;
-      margin-bottom: 30px;
-      overflow: auto;
-      height: 300px;
-      box-shadow: inset 0 0 0 2px #000088;
-      white-space: pre-wrap;
-      font-family: 'Courier New', monospace;
-      font-size: 14px;
-    }
-    
-    .error-line {
-      margin-bottom: 6px;
-      color: #FFFFFF;
-    }
-    
-    .error-line.highlight {
-      color: #FFFF00;
-    }
-    
-    .home-link {
-      display: inline-block;
-      padding: 8px 16px;
-      background-color: #C0C0C0;
-      border-width: 2px;
-      border-style: solid;
-      border-color: #FFFFFF #808080 #808080 #FFFFFF;
-      color: #000000;
-      text-decoration: none;
-      font-family: 'MS Sans Serif', sans-serif;
-      font-size: 14px;
-      text-align: center;
-      margin: 0 auto;
-      display: block;
-      width: 200px;
-    }
-    
-    .home-link:active {
-      border-color: #808080 #FFFFFF #FFFFFF #808080;
-    }
-    
-    .hidden-message {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      font-size: 10px;
-      color: #FFFFFF;
-      cursor: default;
-      font-family: 'Courier New', monospace;
-    }
-    
-    .hidden-message:hover {
-      color: #FFFF00;
-    }
-    
-    .bsod-footer {
-      margin-top: 40px;
-      text-align: center;
-      font-size: 14px;
-    }
-  </style>
-</head>
-<body>
-  <div class="bsod-container">
-    <div class="bsod-header">ELRIEL.EXE</div>
-    
-    <div class="bsod-title">A fatal exception has occurred at 0028:C00420AC</div>
-    <div class="bsod-message">
-      The current application will be terminated.<br>
-      * Press any key to return to the ELRIEL Terminal.<br>
-      * Press CTRL+ALT+DEL to restart your computer. You will<br>
-      &nbsp;&nbsp;lose any unsaved information in all applications.
-    </div>
-    
-    <div class="bsod-details">
-      <div class="error-line">INITIALIZING ERROR DIAGNOSTIC...</div>
-      <div class="error-line">SCANNING MEMORY SECTORS...</div>
-      <div class="error-line">CORRUPTION DETECTED IN SECTOR 7G...</div>
-      <div class="error-line highlight">CRITICAL SYSTEM FAILURE</div>
-      <div class="error-line">ATTEMPTING TO RECOVER DATA...</div>
       <div class="error-line">...</div>
-      <div class="error-line">...</div>
-      <div class="error-line">RECOVERY FAILED</div>
-      <div class="error-line">...</div>
-      <div class="error-line highlight">UNAUTHORIZED ACCESS ATTEMPT LOGGED</div>
-      <div class="error-line">IP ADDRESS: [REDACTED]</div>
-      <div class="error-line">TIMESTAMP: <span id="timestamp"></span></div>
-      <div class="error-line">...</div>
-      <div class="error-line">SECURITY PROTOCOLS ENGAGED</div>
-      <div class="error-line">...</div>
-      <div class="error-line">REDIRECTING TO SAFE TERMINAL...</div>
-      <div class="error-line">...</div>
-      <div class="error-line highlight">THE VOID WATCHES</div>
-      <div class="error-line">...</div>
-      <div class="error-line">...</div>
-      <div class="error-line">NUMBPILL CELL INTEGRITY: 78%</div>
-      <div class="error-line">...</div>
-      <div class="error-line">GLYPH CRUCIBLE STABILITY: COMPROMISED</div>
-      <div class="error-line">...</div>
-      <div class="error-line highlight">WHISPERS DETECTED IN BACKGROUND RADIATION</div>
-    </div>
-    
-    <a href="/" class="home-link">PRESS ANY KEY TO CONTINUE</a>
-    
-    <div class="hidden-message" onclick="revealSecret()">45 4C 52 49 45 4C</div>
-    
-    <div class="bsod-footer">
-      ELRIEL 1.0 - TERMINAL ACCESS SYSTEM
+      <body class="terminal">
+        <div class="noise-overlay"></div>
+        <div class="scan-lines"></div>
+        <div class="container">
+          <header class="main-header">
+            <div class="logo">
+              <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+              <div class="logo-subtitle">TERMINAL ACCESS v1.0</div>
+            </div>
+            <div class="user-panel">
+              <div id="user-status">
+                <!-- User status will be injected here -->
+              </div>
+            </div>
+          </header>
+
+          <div class="content-wrapper">
+            <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle">TOGGLE NAVIGATION</button>
+            <nav class="sidebar" id="main-sidebar">
+              <div class="nav-section">
+                <h3 class="nav-title">MAIN SYSTEMS</h3>
+                <ul class="nav-links">
+                  <li><a href="/">TERMINAL</a></li>
+                  <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
+                  <li><a href="/glyph/crucible">GLYPH CRUCIBLE</a></li>
+                  <li><a href="/whisper/board">WHISPERBOARD</a></li>
+                  <li><a href="/forum/scrapyard">SCRAPYARD</a></li>
+                </ul>
+              </div>
+              <div class="nav-section">
+                <h3 class="nav-title">PROFILE</h3>
+                <ul class="nav-links">
+                  <li><a href="/profile">DASHBOARD</a></li>
+                  <li><a href="/profile/edit">EDIT PROFILE</a></li>
+                  <li><a href="/feed/new">CREATE POST</a></li>
+                </ul>
+              </div>
+              <div class="nav-section">
+                <h3 class="nav-title">SYSTEM</h3>
+                <ul class="nav-links">
+                  <li><a href="/about">ABOUT</a></li>
+                  <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+                </ul>
+              </div>
+            </nav>
+
+            <main class="main-content">
+              <section class="error-panel">
+                <div class="panel-header">
+                  <h2>SYSTEM ERROR</h2>
+                  <div class="status-indicator alert">CRITICAL</div>
+                </div>
+                <div class="panel-content">
+                  <div class="bsod-title">A fatal exception has occurred at 0028:C00420AC</div>
+                  <div class="bsod-message">
+                    The current application will be terminated.<br>
+                    * Press any key to return to the ELRIEL Terminal.<br>
+                    * Press CTRL+ALT+DEL to restart your computer. You will<br>
+                    &nbsp;&nbsp;lose any unsaved information in all applications.
+                  </div>
+                  <div class="bsod-details">
+                    <div class="error-line">INITIALIZING ERROR DIAGNOSTIC...</div>
+                    <div class="error-line">SCANNING MEMORY SECTORS...</div>
+                    <div class="error-line">CORRUPTION DETECTED IN SECTOR 7G...</div>
+                    <div class="error-line highlight">CRITICAL SYSTEM FAILURE</div>
+                    <div class="error-line">ATTEMPTING TO RECOVER DATA...</div>
+                    <div class="error-line">...</div>
+                    <div class="error-line">...</div>
+                    <div class="error-line">RECOVERY FAILED</div>
+                    <div class="error-line">...</div>
+                    <div class="error-line highlight">UNAUTHORIZED ACCESS ATTEMPT LOGGED</div>
+                    <div class="error-line">IP ADDRESS: [REDACTED]</div>
+                    <div class="error-line">TIMESTAMP: <span id="timestamp"></span></div>
+                    <div class="error-line">...</div>
+                    <div class="error-line">SECURITY PROTOCOLS ENGAGED</div>
+                    <div class="error-line">...</div>
+                    <div class="error-line">REDIRECTING TO SAFE TERMINAL...</div>
+                    <div class="error-line">...</div>
+                    <div class="error-line highlight">THE VOID WATCHES</div>
+                    <div class="error-line">...</div>
+                    <div class="error-line">...</div>
+                    <div class="error-line">NUMBPILL CELL INTEGRITY: 78%</div>
+                    <div class="error-line">...</div>
+                    <div class="error-line">GLYPH CRUCIBLE STABILITY: COMPROMISED</div>
+                    <div class="error-line">...</div>
+                    <div class="error-line highlight">WHISPERS DETECTED IN BACKGROUND RADIATION</div>
+                  </div>
+                  <a href="/" class="home-link">PRESS ANY KEY TO CONTINUE</a>
+                  <div class="hidden-message" onclick="revealSecret()">45 4C 52 49 45 4C</div>
+                </div>
+              </section>
+            </main>
+          </div>
+
+          <footer class="main-footer">
+            <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+            <div class="footer-glyphs">
+              <span class="glyph">&#x2318;</span>
+              <span class="glyph">&#x235f;</span>
+              <span class="glyph">&#x2394;</span>
+            </div>
+          </footer>
+        </div>
+
+        <script>
+          // Set current timestamp
+          document.getElementById('timestamp').textContent = new Date().toISOString();
+          // Reveal secret function (ARG element)
+          function revealSecret() {
+            const secretCode = '766F6964';
+            const decoded = hexToText(secretCode);
+            // Create a glitched message
+            const message = document.createElement('div');
+            message.className = 'corrupt-text';
+            message.textContent = `ACCESS CODE: ${decoded}`;
+            message.setAttribute('data-text', `ACCESS CODE: ${decoded}`);
+            message.style.position = 'fixed';
+            message.style.bottom = '40px';
+            message.style.right = '10px';
+            message.style.color = 'var(--terminal-red)';
+            document.body.appendChild(message);
+            setTimeout(() => { message.remove(); }, 5000);
+          }
+          function hexToText(hex) {
+            let text = '';
+            for (let i = 0; i < hex.length; i += 2) {
+              text += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+            }
+            return text;
+          }
+          function addRandomGlitch() {
+            const errorLines = document.querySelectorAll('.error-line');
+            const randomIndex = Math.floor(Math.random() * errorLines.length);
+            const line = errorLines[randomIndex];
+            if (line.classList.contains('highlight')) return;
+            const originalText = line.textContent;
+            const glitchChars = '!@#$%^&*()_+-=[]{}|;:,.<>?/\\`~\u2591\u2592\u2593\u2588\u2584\u2580\u25a0\u25a1\u25aa\u25ab\u25ac\u25b2\u25ba\u25bc\u25c4\u25ca\u25cb\u25cf\u25d8\u25d9\u263a\u263b\u2665\u2666\u2663\u2660\u2642\u2640\u266a\u266b\u263c\u25ba\u25c4\u25b2\u25bc\u00a7\u00b6';
+            let glitchedText = '';
+            for (let i = 0; i < originalText.length; i++) {
+              if (Math.random() < 0.1) {
+                glitchedText += glitchChars.charAt(Math.floor(Math.random() * glitchChars.length));
+              } else {
+                glitchedText += originalText.charAt(i);
+              }
+            }
+            line.textContent = glitchedText;
+            setTimeout(() => { line.textContent = originalText; }, 500);
+          }
+          setInterval(addRandomGlitch, 1000);
+          // Inject data from server
+          try {
+            const data = __DATA__;
+            const userStatusEl = document.getElementById('user-status');
+            if (data && data.user) {
+              userStatusEl.innerHTML = `
+                <div class="logged-in">
+                  <span class="username">${data.user.username}</span>
+                  <div class="user-links">
+                    <a href="/profile">PROFILE</a>
+                    <a href="/auth/logout">LOGOUT</a>
+                  </div>
+                </div>
+              `;
+            } else {
+              userStatusEl.innerHTML = `
+                <div class="logged-out">
+                  <a href="/auth/login" class="login-btn">LOGIN</a>
+                  <a href="/auth/register" class="register-btn">REGISTER</a>
+                </div>
+              `;
+            }
+          } catch (err) {}
+          // Toggle glitch effects
+          document.getElementById('toggle-glitch').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.body.classList.toggle('glitch-active');
+          });
+        </script>
+      </body>
     </div>
   </div>
   

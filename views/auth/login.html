@@ -88,115 +88,166 @@
     .form-group input:focus {
       outline: 1px dotted black;
     }
-    
-    .auth-button {
-      display: inline-block;
-      padding: 4px 8px;
-      background-color: var(--win98-button-face);
-      color: var(--win98-text);
-      border-width: 2px;
-      border-style: solid;
-      border-color: var(--win98-border-light) var(--win98-border-darker) var(--win98-border-darker) var(--win98-border-light);
-      box-shadow: 1px 1px 0px var(--win98-border-dark);
-      font-family: 'MS Sans Serif', sans-serif;
-      font-size: 11px;
-      text-decoration: none;
-      margin: 4px;
-      min-width: 75px;
-      text-align: center;
-      cursor: pointer;
-    }
-    
-    .auth-button:active {
-      border-color: var(--win98-border-darker) var(--win98-border-light) var(--win98-border-light) var(--win98-border-darker);
-      box-shadow: 1px 1px 0px rgba(0,0,0,0.1) inset;
-    }
-    
-    .switch-auth {
-      margin-top: 16px;
-      font-size: 11px;
-    }
-    
-    .switch-auth a {
-      color: var(--win98-link);
-      text-decoration: none;
-    }
-    
-    .switch-auth a:hover {
-      text-decoration: underline;
-    }
-    
-    .error-message {
-      color: red;
-      margin-top: 8px;
-      font-size: 11px;
-      font-family: 'MS Sans Serif', sans-serif;
-    }
-  </style>
-</head>
-<body>
+</style>
+<body class="terminal">
   <div class="noise-overlay"></div>
   <div class="scan-lines"></div>
-  
-  <div class="auth-container">
-    <div class="auth-panel">
-      <div class="auth-titlebar">
-        <div class="win98-titlebar-text">LOGIN TO ELRIEL</div>
-        <div class="auth-window-controls">
-          <div class="auth-window-control">_</div>
-          <div class="auth-window-control">□</div>
-          <div class="auth-window-control">×</div>
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">TERMINAL ACCESS v1.0</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
         </div>
       </div>
-      <div class="auth-content">
-      
-      <form id="login-form">
-        <div class="form-group">
-          <label for="username">USERNAME:</label>
-          <input type="text" id="username" name="username" required>
+    </header>
+
+    <div class="content-wrapper">
+      <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle">TOGGLE NAVIGATION</button>
+      <nav class="sidebar" id="main-sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+            <li><a href="/forum/scrapyard">SCRAPYARD</a></li>
+          </ul>
         </div>
-        
-        <div class="form-group">
-          <label for="password">PASSWORD:</label>
-          <input type="password" id="password" name="password" required>
+        <div class="nav-section">
+          <h3 class="nav-title">PROFILE</h3>
+          <ul class="nav-links">
+            <li><a href="/profile">DASHBOARD</a></li>
+            <li><a href="/profile/edit">EDIT PROFILE</a></li>
+            <li><a href="/feed/new">CREATE POST</a></li>
+          </ul>
         </div>
-        
-        <button type="submit" class="auth-button" id="login-button">ACCESS TERMINAL</button>
-      </form>
-      
-      <div class="switch-auth">
-        NEW USER? <a href="/auth/register">REGISTER NEW TERMINAL IDENTITY</a>
-      </div>
-      
-      <div id="error-message" class="error-message"></div>
-      </div>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="main-content">
+        <section class="auth-panel">
+          <div class="auth-titlebar">
+            <div class="win98-titlebar-text">LOGIN TO ELRIEL</div>
+            <div class="auth-window-controls">
+              <div class="auth-window-control">_</div>
+              <div class="auth-window-control">&#x25a1;</div>
+              <div class="auth-window-control">&#xd7;</div>
+            </div>
+          </div>
+          <div class="auth-content">
+            <form id="login-form">
+              <div class="form-group">
+                <label for="username">USERNAME:</label>
+                <input type="text" id="username" name="username" required>
+              </div>
+              <div class="form-group">
+                <label for="password">PASSWORD:</label>
+                <input type="password" id="password" name="password" required>
+              </div>
+              <button type="submit" class="auth-button" id="login-button">ACCESS TERMINAL</button>
+            </form>
+            <div class="switch-auth">
+              NEW USER? <a href="/auth/register">REGISTER NEW TERMINAL IDENTITY</a>
+            </div>
+            <div id="error-message" class="error-message"></div>
+          </div>
+        </section>
+      </main>
     </div>
+
+    <footer class="main-footer">
+      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+      <div class="footer-glyphs">
+        <span class="glyph">&#x2318;</span>
+        <span class="glyph">&#x235f;</span>
+        <span class="glyph">&#x2394;</span>
+      </div>
+    </footer>
   </div>
-  
+
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      console.log('[LOGIN] DOM loaded, setting up login form event listener');
-      
+      // Inject data from server
+      try {
+        const data = __DATA__;
+        const userStatusEl = document.getElementById('user-status');
+        if (data && data.user) {
+          userStatusEl.innerHTML = `
+            <div class="logged-in">
+              <span class="username">${data.user.username}</span>
+              <div class="user-links">
+                <a href="/profile">PROFILE</a>
+                <a href="/auth/logout">LOGOUT</a>
+              </div>
+            </div>
+          `;
+        } else {
+          userStatusEl.innerHTML = `
+            <div class="logged-out">
+              <a href="/auth/login" class="login-btn">LOGIN</a>
+              <a href="/auth/register" class="register-btn">REGISTER</a>
+            </div>
+          `;
+        }
+      } catch (err) {}
+
       // Extract login logic to function
       async function handleLogin() {
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
         const errorMessageEl = document.getElementById('error-message');
-        
-        console.log('[LOGIN] Login function called with data:', { username, password: '***' });
-        
         try {
-          console.log('[LOGIN] Starting fetch to /auth/login');
           const response = await fetch('/auth/login', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
           });
-          
-          console.log('[LOGIN] Fetch response status:', response.status);
-          
+          const data = await response.json();
+          if (data.success) {
+            window.location.href = '/profile';
+          } else {
+            errorMessageEl.textContent = data.message || 'Login failed. Unknown error.';
+          }
+        } catch (error) {
+          errorMessageEl.textContent = 'System error. Could not connect to authentication server.';
+        }
+      }
+      // Add direct button click listener
+      const loginButton = document.getElementById('login-button');
+      if (loginButton) {
+        loginButton.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          handleLogin();
+        });
+      }
+      // Add form submit listener
+      const loginForm = document.getElementById('login-form');
+      if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          handleLogin();
+        });
+      }
+      // Toggle glitch effects
+      document.getElementById('toggle-glitch').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.body.classList.toggle('glitch-active');
+      });
+    });
+  </script>
+</body>
           const data = await response.json();
           console.log('[LOGIN] Response data:', data);
           

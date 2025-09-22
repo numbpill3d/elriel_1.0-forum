@@ -134,90 +134,161 @@
     }
   </style>
 </head>
-<body>
+<body class="terminal">
   <div class="noise-overlay"></div>
   <div class="scan-lines"></div>
-  
-  <div class="auth-container">
-    <div class="auth-panel">
-      <div class="auth-titlebar">
-        <div class="win98-titlebar-text">REGISTER NEW USER</div>
-        <div class="auth-window-controls">
-          <div class="auth-window-control">_</div>
-          <div class="auth-window-control">□</div>
-          <div class="auth-window-control">×</div>
+  <div class="container">
+    <header class="main-header">
+      <div class="logo">
+        <h1 class="glitch" data-text="ELRIEL">ELRIEL</h1>
+        <div class="logo-subtitle">TERMINAL ACCESS v1.0</div>
+      </div>
+      <div class="user-panel">
+        <div id="user-status">
+          <!-- User status will be injected here -->
         </div>
       </div>
-      <div class="auth-content">
-      
-      <form id="register-form">
-        <div class="form-group">
-          <label for="username">USERNAME:</label>
-          <input type="text" id="username" name="username" required>
+    </header>
+
+    <div class="content-wrapper">
+      <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle">TOGGLE NAVIGATION</button>
+      <nav class="sidebar" id="main-sidebar">
+        <div class="nav-section">
+          <h3 class="nav-title">MAIN SYSTEMS</h3>
+          <ul class="nav-links">
+            <li><a href="/">TERMINAL</a></li>
+            <li><a href="/feed/bleedstream">BLEEDSTREAM</a></li>
+            <li><a href="/glyph/crucible">GLYPH CRUCIBLE</a></li>
+            <li><a href="/whisper/board">WHISPERBOARD</a></li>
+            <li><a href="/forum/scrapyard">SCRAPYARD</a></li>
+          </ul>
         </div>
-        
-        <div class="form-group">
-          <label for="email">EMAIL:</label>
-          <input type="email" id="email" name="email" required>
+        <div class="nav-section">
+          <h3 class="nav-title">PROFILE</h3>
+          <ul class="nav-links">
+            <li><a href="/profile">DASHBOARD</a></li>
+            <li><a href="/profile/edit">EDIT PROFILE</a></li>
+            <li><a href="/feed/new">CREATE POST</a></li>
+          </ul>
         </div>
-        
-        <div class="form-group">
-          <label for="password">PASSWORD:</label>
-          <input type="password" id="password" name="password" required>
+        <div class="nav-section">
+          <h3 class="nav-title">SYSTEM</h3>
+          <ul class="nav-links">
+            <li><a href="/about">ABOUT</a></li>
+            <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
+          </ul>
         </div>
-        
-        <div class="form-group">
-          <label for="confirm-password">CONFIRM PASSWORD:</label>
-          <input type="password" id="confirm-password" name="confirmPassword" required>
-        </div>
-        
-        <button type="submit" class="auth-button">REGISTER IDENTITY</button>
-      </form>
-      
-      <div class="switch-auth">
-        ALREADY REGISTERED? <a href="/auth/login">ACCESS TERMINAL</a>
-      </div>
-      
-      <div id="error-message" class="error-message"></div>
-      </div>
+      </nav>
+
+      <main class="main-content">
+        <section class="auth-panel">
+          <div class="auth-titlebar">
+            <div class="win98-titlebar-text">REGISTER NEW USER</div>
+            <div class="auth-window-controls">
+              <div class="auth-window-control">_</div>
+              <div class="auth-window-control">&#x25a1;</div>
+              <div class="auth-window-control">&#xd7;</div>
+            </div>
+          </div>
+          <div class="auth-content">
+            <form id="register-form">
+              <div class="form-group">
+                <label for="username">USERNAME:</label>
+                <input type="text" id="username" name="username" required>
+              </div>
+              <div class="form-group">
+                <label for="email">EMAIL:</label>
+                <input type="email" id="email" name="email" required>
+              </div>
+              <div class="form-group">
+                <label for="password">PASSWORD:</label>
+                <input type="password" id="password" name="password" required>
+              </div>
+              <div class="form-group">
+                <label for="confirm-password">CONFIRM PASSWORD:</label>
+                <input type="password" id="confirm-password" name="confirmPassword" required>
+              </div>
+              <button type="submit" class="auth-button">REGISTER IDENTITY</button>
+            </form>
+            <div class="switch-auth">
+              ALREADY REGISTERED? <a href="/auth/login">ACCESS TERMINAL</a>
+            </div>
+            <div id="error-message" class="error-message"></div>
+          </div>
+        </section>
+      </main>
     </div>
+
+    <footer class="main-footer">
+      <div class="footer-text">ELRIEL NETWORK // ESTABLISHED 2025 // ALL RIGHTS SURRENDERED</div>
+      <div class="footer-glyphs">
+        <span class="glyph">&#x2318;</span>
+        <span class="glyph">&#x235f;</span>
+        <span class="glyph">&#x2394;</span>
+      </div>
+    </footer>
   </div>
-  
+
   <script>
-    document.getElementById('register-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      const username = document.getElementById('username').value;
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const confirmPassword = document.getElementById('confirm-password').value;
-      const errorMessageEl = document.getElementById('error-message');
-      
-      if (password !== confirmPassword) {
-        errorMessageEl.textContent = 'Passwords do not match.';
-        return;
-      }
-      
+    document.addEventListener('DOMContentLoaded', function() {
+      // Inject data from server
       try {
-        const response = await fetch('/auth/register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ username, email, password, confirmPassword })
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-          window.location.href = '/profile'; // Redirect to profile on success
+        const data = __DATA__;
+        const userStatusEl = document.getElementById('user-status');
+        if (data && data.user) {
+          userStatusEl.innerHTML = `
+            <div class="logged-in">
+              <span class="username">${data.user.username}</span>
+              <div class="user-links">
+                <a href="/profile">PROFILE</a>
+                <a href="/auth/logout">LOGOUT</a>
+              </div>
+            </div>
+          `;
         } else {
-          errorMessageEl.textContent = data.message || 'Registration failed. Unknown error.';
+          userStatusEl.innerHTML = `
+            <div class="logged-out">
+              <a href="/auth/login" class="login-btn">LOGIN</a>
+              <a href="/auth/register" class="register-btn">REGISTER</a>
+            </div>
+          `;
         }
-      } catch (error) {
-        console.error('Registration error:', error);
-        errorMessageEl.textContent = 'System error. Could not connect to registration server.';
-      }
+      } catch (err) {}
+
+      document.getElementById('register-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = document.getElementById('username').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+        const errorMessageEl = document.getElementById('error-message');
+        if (password !== confirmPassword) {
+          errorMessageEl.textContent = 'Passwords do not match.';
+          return;
+        }
+        try {
+          const response = await fetch('/auth/register', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, email, password, confirmPassword })
+          });
+          const data = await response.json();
+          if (data.success) {
+            window.location.href = '/profile';
+          } else {
+            errorMessageEl.textContent = data.message || 'Registration failed. Unknown error.';
+          }
+        } catch (error) {
+          errorMessageEl.textContent = 'System error. Could not connect to registration server.';
+        }
+      });
+      // Toggle glitch effects
+      document.getElementById('toggle-glitch').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.body.classList.toggle('glitch-active');
+      });
     });
   </script>
 </body>

@@ -5,19 +5,21 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 const fs = require('fs');
-const Database = require('better-sqlite3');
-const db = new Database('./db/elriel.db', { verbose: console.log });
+const supabase = require('../services/db');
 
 // Home page
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   // Get current announcements
   let announcement = null;
   try {
-    announcement = db.prepare(`
-      SELECT * FROM announcements 
-      WHERE is_active = 1
-      ORDER BY created_at DESC LIMIT 1
-    `).get();
+    const { data, error } = await supabase
+      .from('announcements')
+      .select('*')
+      .eq('is_active', true)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+    if (!error) announcement = data;
   } catch (err) {
     console.error('Error loading announcement:', err);
   }
@@ -25,12 +27,12 @@ router.get('/', (req, res) => {
   // Get recent activity
   let recentActivity = [];
   try {
-    recentActivity = db.prepare(`
-      SELECT p.id, p.title, u.username, p.created_at
-      FROM posts p
-      JOIN users u ON p.user_id = u.id
-      ORDER BY p.created_at DESC LIMIT 5
-    `).all();
+    const { data, error } = await supabase
+      .from('posts')
+      .select('id, title, users!inner(username), created_at')
+      .order('created_at', { ascending: false })
+      .limit(5);
+    if (!error) recentActivity = data || [];
   } catch (err) {
     console.error('Error loading recent activity:', err);
   }
@@ -64,7 +66,7 @@ router.get('/about', (req, res) => {
 });
 
 // Crypto page
-router.get('/crypto', (req, res) => {
+router.get('/crypto', async (req, res) => {
   // Authentication check
   if (!req.session.user) {
     return res.redirect('/auth/login');
@@ -72,16 +74,18 @@ router.get('/crypto', (req, res) => {
   
   try {
     // Get all users for recipient dropdown
-    const users = db.prepare(`
-      SELECT id, username FROM users
-      WHERE id != ?
-      ORDER BY username ASC
-    `).all(req.session.user.id);
+    const { data: users, error } = await supabase
+      .from('users')
+      .select('id, username')
+      .neq('id', req.session.user.id)
+      .order('username');
+    
+    if (error) throw error;
     
     // Pass data to the frontend
     const data = {
       user: req.session.user,
-      users: users
+      users: users || []
     };
     
     // Inject data into the HTML
@@ -96,7 +100,7 @@ router.get('/crypto', (req, res) => {
 });
 
 // Add activity log to user's session
-router.get('/activity-log', (req, res) => {
+router.get('/activity-log', async (req, res) => {
   // Authentication check
   if (!req.session.user) {
     return res.redirect('/auth/login');
@@ -104,36 +108,40 @@ router.get('/activity-log', (req, res) => {
   
   try {
     // Get user's activity logs
-    const activityLogs = db.prepare(`
-      SELECT activity_type, description, created_at, metadata
-      FROM user_activity_logs
-      WHERE user_id = ?
-      ORDER BY created_at DESC
-      LIMIT 50
-    `).all(req.session.user.id);
+    const { data: activityLogs, error: activityError } = await supabase
+      .from('user_activity_logs')
+      .select('activity_type, description, created_at, metadata')
+      .eq('user_id', req.session.user.id)
+      .order('created_at', { ascending: false })
+      .limit(50);
+    
+    if (activityError) throw activityError;
     
     // Get user's reputation
-    const reputation = db.prepare(`
-      SELECT reputation_points, reputation_level
-      FROM user_reputation
-      WHERE user_id = ?
-    `).get(req.session.user.id) || { reputation_points: 0, reputation_level: 1 };
+    const { data: reputation, error: repError } = await supabase
+      .from('user_reputation')
+      .select('reputation_points, reputation_level')
+      .eq('user_id', req.session.user.id)
+      .single();
+    
+    if (repError && repError.code !== 'PGRST116') throw repError; // PGRST116 is no rows
+    const repData = reputation || { reputation_points: 0, reputation_level: 1 };
     
     // Get user's badges/rewards
-    const rewards = db.prepare(`
-      SELECT r.name, r.description, r.badge_image, ur.earned_at, ur.is_equipped
-      FROM user_rewards ur
-      JOIN rewards r ON ur.reward_id = r.id
-      WHERE ur.user_id = ?
-      ORDER BY ur.earned_at DESC
-    `).all(req.session.user.id);
+    const { data: rewards, error: rewardsError } = await supabase
+      .from('user_rewards')
+      .select('*, rewards(name, description, badge_image)')
+      .eq('user_id', req.session.user.id)
+      .order('earned_at', { ascending: false });
+    
+    if (rewardsError) throw rewardsError;
     
     // Pass data to the frontend
     const data = {
       user: req.session.user,
-      activityLogs: activityLogs,
-      reputation: reputation,
-      rewards: rewards
+      activityLogs: activityLogs || [],
+      reputation: repData,
+      rewards: rewards || []
     };
     
     // Inject data into the HTML

@@ -47,11 +47,10 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Create uploads directory if it doesn't exist
-const fs = require('fs');
-if (!fs.existsSync('./public/uploads')) {
-  fs.mkdirSync('./public/uploads', { recursive: true });
-}
+  // Create uploads directory if it doesn't exist
+  if (!fs.existsSync('./public/uploads')) {
+    fs.mkdirSync('./public/uploads', { recursive: true });
+  }
 
 // Import routes - using Supabase versions
 const indexRoutes = require('./routes/index');
