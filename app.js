@@ -36,6 +36,13 @@ app.use(session({
   cookie: { secure: process.env.NODE_ENV === 'production' }
 }));
 
+const isAuthenticated = (req, res, next) => {
+  if (!req.session.user) {
+    return res.status(401).redirect('/auth/login');
+  }
+  next();
+};
+
 // Configure file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -47,10 +54,10 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-  // Create uploads directory if it doesn't exist
-  if (!fs.existsSync('./public/uploads')) {
-    fs.mkdirSync('./public/uploads', { recursive: true });
-  }
+// Create uploads directory if it doesn't exist
+if (!fs.existsSync('./public/uploads')) {
+  fs.mkdirSync('./public/uploads', { recursive: true });
+}
 
 // Import routes - using Supabase versions
 const indexRoutes = require('./routes/index');
@@ -75,6 +82,11 @@ app.use('/forum', forumRoutes);
 app.use('/crypto', cryptoRoutes);
 app.use('/api', apiRoutes);
 app.use('/scrapyard', scrapyardRoutes); // Add scrapyard routes
+
+// Alias route for /bleedstream/new (redirects to /feed/new for backward compatibility)
+app.get('/bleedstream/new', isAuthenticated, (req, res) => {
+  res.redirect('/feed/new');
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
