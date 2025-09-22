@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>REGISTER | ELRIEL</title>
   <link rel="stylesheet" href="/css/win98.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/bleedstream-sidebar.css">
   <script src="/js/glitch.js" defer></script>
   <style>
     .auth-container {
@@ -30,16 +32,44 @@
     .switch-auth a { color: var(--win98-link); text-decoration: none; }
     .switch-auth a:hover { text-decoration: underline; }
     .error-message { color: red; margin-top: 8px; font-size: 11px; font-family: 'MS Sans Serif', sans-serif; }
-    /* --- Responsive styles --- */
-    @media (max-width: 900px) {
-      .container { flex-direction: column; padding: 0 4vw; }
-      .main-header, .main-footer { padding-left: 0; padding-right: 0; }
-      .sidebar { position: fixed; left: -100vw; top: 0; width: 80vw; height: 100vh; z-index: 1000; background: var(--sidebar-bg); transition: left 0.3s; }
-      .sidebar.active { left: 0; }
-      .mobile-nav-toggle { display: block; position: fixed; top: 1rem; left: 1rem; z-index: 1100; background: #222; color: #fff; border: 2px solid #0ff; border-radius: 4px; padding: 0.5em 1em; font-family: var(--header-font); cursor: pointer; }
-      .main-content { margin-left: 0 !important; width: 100vw; padding: 2vw 0; }
+
+    .sidebar-toggle-icon {
+      font-size: 20px;
+      color: var(--terminal-green, #8a2be2);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      border-radius: 50%;
+      transition: all 0.3s ease;
     }
-    @media (max-width: 600px) {
+
+    .sidebar-toggle-icon:hover {
+      background-color: rgba(138, 43, 226, 0.2);
+      box-shadow: 0 0 10px var(--glow-color, rgba(138, 43, 226, 0.5));
+    }
+
+    @media (max-width: 768px) {
+      .sidebar-toggle-icon {
+        position: fixed;
+        bottom: 1rem;
+        right: 1rem;
+        z-index: 1100;
+        background-color: rgba(0,0,0,0.8);
+        border: 1px solid var(--terminal-green);
+      }
+      .sidebar-toggle-icon:hover {
+        background-color: var(--terminal-green);
+        color: var(--terminal-bg);
+      }
       .container { padding: 0 2vw; }
       .main-header h1 { font-size: 2rem; }
       .main-content { padding: 1vw 0; }
@@ -63,7 +93,6 @@
     </header>
 
     <div class="content-wrapper">
-  <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Toggle navigation">☰</button>
       <nav class="sidebar" id="main-sidebar">
         <div class="nav-section">
           <h3 class="nav-title">MAIN SYSTEMS</h3>
@@ -90,6 +119,7 @@
             <li><a href="#" id="toggle-glitch">TOGGLE GLITCH</a></li>
           </ul>
         </div>
+        <button type="button" class="mobile-nav-toggle sidebar-toggle-icon" id="mobile-nav-toggle" aria-label="Toggle navigation">></button>
       </nav>
 
       <main class="main-content">
@@ -201,10 +231,6 @@
         e.preventDefault();
         document.body.classList.toggle('glitch-active');
       });
-      // Mobile nav toggle
-      document.getElementById('mobile-nav-toggle').addEventListener('click', function() {
-        document.getElementById('main-sidebar').classList.toggle('active');
-      });
       // Hide sidebar on nav link click (mobile)
       document.querySelectorAll('.sidebar .nav-links a').forEach(function(link) {
         link.addEventListener('click', function() {
@@ -213,5 +239,6 @@
       });
     });
   </script>
+  <script defer src="/js/sidebar-manager.js"></script>
 </body>
 </html>

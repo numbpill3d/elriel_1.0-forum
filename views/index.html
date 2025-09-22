@@ -209,6 +209,43 @@
 
   <!-- ASCII art generator script -->
   <script>
+    // Add mobile debugging logs
+    window.addEventListener('resize', function() {
+      console.log('Viewport resized:', {
+        width: window.innerWidth,
+        height: window.innerHeight,
+        isMobile: window.innerWidth <= 768
+      });
+      // Log sidebar state
+      const sidebar = document.getElementById('main-sidebar');
+      if (sidebar) {
+        console.log('Sidebar active:', sidebar.classList.contains('active'));
+      }
+    });
+
+    // Log mobile nav toggle
+    const mobileToggle = document.getElementById('mobile-nav-toggle');
+    if (mobileToggle) {
+      mobileToggle.addEventListener('click', function() {
+        console.log('Mobile nav toggle clicked');
+        const sidebar = document.getElementById('main-sidebar');
+        if (sidebar) {
+          sidebar.classList.toggle('active');
+          console.log('Sidebar toggled to active:', sidebar.classList.contains('active'));
+        }
+      });
+      // Also log touch events
+      mobileToggle.addEventListener('touchstart', function() {
+        console.log('Mobile nav touch started');
+      });
+    }
+
+    // Initial log
+    console.log('Initial viewport:', {
+      width: window.innerWidth,
+      height: window.innerHeight,
+      isMobile: window.innerWidth <= 768
+    });
     // Initialize glyphs after DOM load
     document.addEventListener('DOMContentLoaded', function() {
       console.log("Initializing Elriel Terminal Interface...");

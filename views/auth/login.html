@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LOGIN | ELRIEL</title>
   <link rel="stylesheet" href="/css/win98.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/bleedstream-sidebar.css">
   <script src="/js/glitch.js" defer></script>
   <style>
     .auth-container {
@@ -88,7 +90,46 @@
     .form-group input:focus {
       outline: 1px dotted black;
     }
-</style>
+
+    .sidebar-toggle-icon {
+      font-size: 20px;
+      color: var(--terminal-green, #8a2be2);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar-toggle-icon:hover {
+      background-color: rgba(138, 43, 226, 0.2);
+      box-shadow: 0 0 10px var(--glow-color, rgba(138, 43, 226, 0.5));
+    }
+
+    @media (max-width: 768px) {
+      .sidebar-toggle-icon {
+        position: fixed;
+        bottom: 1rem;
+        right: 1rem;
+        z-index: 1100;
+        background-color: rgba(0,0,0,0.8);
+        border: 1px solid var(--terminal-green);
+      }
+      .sidebar-toggle-icon:hover {
+        background-color: var(--terminal-green);
+        color: var(--terminal-bg);
+      }
+    }
+  </style>
 <body class="terminal">
   <div class="noise-overlay"></div>
   <div class="scan-lines"></div>
@@ -106,7 +147,6 @@
     </header>
 
     <div class="content-wrapper">
-      <button type="button" class="mobile-nav-toggle" id="mobile-nav-toggle">TOGGLE NAVIGATION</button>
       <nav class="sidebar" id="main-sidebar">
         <div class="nav-section">
           <h3 class="nav-title">MAIN SYSTEMS</h3>
@@ -118,6 +158,7 @@
             <li><a href="/forum/scrapyard">SCRAPYARD</a></li>
           </ul>
         </div>
+        <button type="button" class="mobile-nav-toggle sidebar-toggle-icon" id="mobile-nav-toggle">></button>
         <div class="nav-section">
           <h3 class="nav-title">PROFILE</h3>
           <ul class="nav-links">
@@ -293,5 +334,6 @@
       });
     });
   </script>
+  <script defer src="/js/sidebar-manager.js"></script>
 </body>
 </html>
