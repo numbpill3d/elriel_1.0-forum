@@ -182,6 +182,220 @@ CREATE POLICY "Temporary allow all operations on announcements"
   ON public.announcements FOR ALL
   USING (true);
 
+-- Forums table
+CREATE TABLE IF NOT EXISTS public.forums (
+  id SERIAL PRIMARY KEY,
+  title TEXT NOT NULL,
+  slug TEXT UNIQUE NOT NULL,
+  description TEXT,
+  position INTEGER DEFAULT 0,
+  is_active INTEGER DEFAULT 1,
+  created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Enable RLS on forums table
+ALTER TABLE public.forums ENABLE ROW LEVEL SECURITY;
+
+-- Policies for forums
+CREATE POLICY "Allow public access to forums"
+  ON public.forums FOR SELECT
+  USING (true);
+
+-- For development only - replace with proper auth later
+CREATE POLICY "Temporary allow all operations on forums"
+  ON public.forums FOR ALL
+  USING (true);
+
+-- Forum topics table
+CREATE TABLE IF NOT EXISTS public.forum_topics (
+  id SERIAL PRIMARY KEY,
+  forum_id INTEGER NOT NULL REFERENCES public.forums(id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  content TEXT NOT NULL,
+  is_pinned INTEGER DEFAULT 0,
+  view_count INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Enable RLS on forum_topics table
+ALTER TABLE public.forum_topics ENABLE ROW LEVEL SECURITY;
+
+-- Policies for forum_topics
+CREATE POLICY "Allow public access to forum topics"
+  ON public.forum_topics FOR SELECT
+  USING (true);
+
+CREATE POLICY "Allow authenticated users to create topics"
+  ON public.forum_topics FOR INSERT
+  TO authenticated
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Allow users to update their own topics"
+  ON public.forum_topics FOR UPDATE
+  TO authenticated
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Allow users to delete their own topics"
+  ON public.forum_topics FOR DELETE
+  TO authenticated
+  USING (auth.uid() = user_id);
+
+-- For development only - replace with proper auth later
+CREATE POLICY "Temporary allow all operations on forum topics"
+  ON public.forum_topics FOR ALL
+  USING (true);
+
+-- Forum comments table
+CREATE TABLE IF NOT EXISTS public.forum_comments (
+  id SERIAL PRIMARY KEY,
+  topic_id INTEGER NOT NULL REFERENCES public.forum_topics(id) ON DELETE CASCADE,
+  user_id INTEGER NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+  content TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Enable RLS on forum_comments table
+ALTER TABLE public.forum_comments ENABLE ROW LEVEL SECURITY;
+
+-- Policies for forum_comments
+CREATE POLICY "Allow public access to forum comments"
+  ON public.forum_comments FOR SELECT
+  USING (true);
+
+CREATE POLICY "Allow authenticated users to create comments"
+  ON public.forum_comments FOR INSERT
+  TO authenticated
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Allow users to update their own comments"
+  ON public.forum_comments FOR UPDATE
+  TO authenticated
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Allow users to delete their own comments"
+  ON public.forum_comments FOR DELETE
+  TO authenticated
+  USING (auth.uid() = user_id);
+
+-- For development only - replace with proper auth later
+CREATE POLICY "Temporary allow all operations on forum comments"
+  ON public.forum_comments FOR ALL
+  USING (true);
+
+-- User signatures table
+CREATE TABLE IF NOT EXISTS public.user_signatures (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL UNIQUE REFERENCES public.users(id) ON DELETE CASCADE,
+  content TEXT,
+  is_enabled INTEGER DEFAULT 1,
+  created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Enable RLS on user_signatures table
+ALTER TABLE public.user_signatures ENABLE ROW LEVEL SECURITY;
+
+-- Policies for user_signatures
+CREATE POLICY "Allow public access to user signatures"
+  ON public.user_signatures FOR SELECT
+  USING (true);
+
+CREATE POLICY "Allow users to manage their own signatures"
+  ON public.user_signatures FOR ALL
+  TO authenticated
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+
+-- For development only - replace with proper auth later
+CREATE POLICY "Temporary allow all operations on user signatures"
+  ON public.user_signatures FOR ALL
+  USING (true);
+
+-- User rewards table
+CREATE TABLE IF NOT EXISTS public.user_rewards (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+  reward_id INTEGER NOT NULL,
+  is_equipped INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Enable RLS on user_rewards table
+ALTER TABLE public.user_rewards ENABLE ROW LEVEL SECURITY;
+
+-- Policies for user_rewards
+CREATE POLICY "Allow public access to user rewards"
+  ON public.user_rewards FOR SELECT
+  USING (true);
+
+CREATE POLICY "Allow users to manage their own rewards"
+  ON public.user_rewards FOR ALL
+  TO authenticated
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+
+-- For development only - replace with proper auth later
+CREATE POLICY "Temporary allow all operations on user rewards"
+  ON public.user_rewards FOR ALL
+  USING (true);
+
+-- Repute rewards table (rewards users can earn)
+CREATE TABLE IF NOT EXISTS public.repute_rewards (
+  id SERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  description TEXT,
+  reputation_cost INTEGER DEFAULT 0,
+  is_active INTEGER DEFAULT 1,
+  created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Enable RLS on repute_rewards table
+ALTER TABLE public.repute_rewards ENABLE ROW LEVEL SECURITY;
+
+-- Policies for repute_rewards
+CREATE POLICY "Allow public access to repute rewards"
+  ON public.repute_rewards FOR SELECT
+  USING (true);
+
+-- For development only - replace with proper auth later
+CREATE POLICY "Temporary allow all operations on repute rewards"
+  ON public.repute_rewards FOR ALL
+  USING (true);
+
+-- Insert sample forum (Scrapyard)
+INSERT INTO public.forums (title, slug, description, position)
+VALUES ('Scrapyard', 'scrapyard', 'A digital wasteland marketplace for sharing code artifacts, images, and web assets.', 1)
+ON CONFLICT (slug) DO NOTHING;
+
+-- Insert sample rewards
+INSERT INTO public.repute_rewards (id, name, description, reputation_cost)
+VALUES
+  (1, 'Forum Badge', 'Badge for active forum participation', 10),
+  (2, 'Topic Creator', 'Award for creating engaging topics', 25)
+ON CONFLICT (id) DO NOTHING;
+
+-- Create increment function for reputation
+CREATE OR REPLACE FUNCTION increment_reputation(user_id INTEGER, amount INTEGER)
+RETURNS INTEGER AS $$
+BEGIN
+  UPDATE public.profiles
+  SET reputation = reputation + amount
+  WHERE user_id = $1;
+  
+  RETURN amount;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Insert default scrapyard forum if not exists
+INSERT INTO public.forums (title, slug, description, position)
+SELECT 'Scrapyard', 'scrapyard', 'Digital asset marketplace and code sharing hub.', 99
+WHERE NOT EXISTS (SELECT 1 FROM public.forums WHERE slug = 'scrapyard');
+
 -- Insert default district (Numbpill Cell)
 INSERT INTO public.districts (id, name, description, theme)
 VALUES (1, 'Numbpill Cell', 'The primary node of the Elriel network. A digital wasteland of glitched terminals and corrupted data.', 'terminal')

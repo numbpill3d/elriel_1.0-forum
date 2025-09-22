@@ -73,7 +73,7 @@ const whisperRoutes = require('./routes/whisper');
 const forumRoutes = require('./routes/forum_supabase'); // Using Supabase forum
 const cryptoRoutes = require('./routes/crypto');
 const apiRoutes = require('./routes/api');
-const scrapyardRoutes = require('./routes/scrapyard'); // Scrapyard marketplace
+const scrapyardRoutes = require('./routes/scrapyard_supabase'); // Scrapyard marketplace
 
 // Use routes
 app.use('/', indexRoutes);
