@@ -178,6 +178,34 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      // Debug: Check if win98.css loaded
+      const cssLink = document.querySelector('link[href="/css/win98.css"]');
+      if (cssLink) {
+        // Create a test link to verify load
+        const testLink = document.createElement('link');
+        testLink.rel = 'stylesheet';
+        testLink.href = '/css/win98.css';
+        testLink.onload = () => console.log('DEBUG: win98.css loaded successfully');
+        testLink.onerror = () => console.error('DEBUG: Failed to load win98.css - 404 or serving issue');
+        document.head.appendChild(testLink);
+        
+        // Check computed style after a delay
+        setTimeout(() => {
+          const bodyStyle = window.getComputedStyle(document.body);
+          const bgColor = bodyStyle.backgroundColor;
+          const hasTerminalClass = document.body.classList.contains('terminal');
+          console.log('DEBUG: Body background color:', bgColor);
+          console.log('DEBUG: Body has terminal class:', hasTerminalClass);
+          if (bgColor === 'rgba(0, 0, 0, 0)' || bgColor === 'transparent' || bgColor === 'white') {
+            console.error('DEBUG: Styles not applied - likely CSS variables missing');
+          } else {
+            console.log('DEBUG: Styles appear applied');
+          }
+        }, 100);
+      } else {
+        console.error('DEBUG: No win98.css link found in head');
+      }
+
       // Inject data from server
       try {
         const data = __DATA__;
