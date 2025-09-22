@@ -392,6 +392,27 @@ router.get('/edit', isAuthenticated, async (req, res) => {
 
     console.log('Profile query result - data exists:', !!profile, 'error:', profileError ? profileError.message : 'None');
 
+    // Get user's profile containers
+    let containers = [];
+    const { data: containersData, error: containersError } = await supabase
+      .from('profile_containers')
+      .select('*')
+      .eq('profile_id', profile.id)
+      .order('position', { ascending: true });
+
+    if (!containersError) {
+      containers = containersData || [];
+    }
+
+    // Group containers by zone
+    const groupedContainers = {
+      sidebar: containers.filter(c => c.zone === 'sidebar').sort((a, b) => a.position - b.position),
+      mainLeft: containers.filter(c => c.zone === 'main-left').sort((a, b) => a.position - b.position),
+      mainRight: containers.filter(c => c.zone === 'main-right').sort((a, b) => a.position - b.position)
+    };
+
+    console.log('Edit page fetched grouped containers:', groupedContainers);
+
     if (profileError || !profile) {
       // Create default profile if it doesn't exist
       console.log('Creating default profile for user ID:', req.session.user.id);
@@ -493,7 +514,8 @@ router.get('/edit', isAuthenticated, async (req, res) => {
       glyph,
       districts,
       user: req.session.user,
-      userGlyphs
+      userGlyphs,
+      groupedContainers
     };
 
     // Inject data into the HTML
@@ -523,6 +545,8 @@ router.post('/edit', isAuthenticated, upload.fields([
   try {
     console.log('Profile edit started for user ID:', req.session.user.id);
     console.log('Request body keys:', Object.keys(req.body));
+    console.log('Background file received:', req.files?.background?.[0]?.filename || 'None');
+    console.log('Header file received:', req.files?.headerImage?.[0]?.filename || 'None');
     const {
       status, customCss, customHtml, themeTemplate, blogLayout, districtId, widgets,
       bio, layoutType, sidebarConfig, mainContent
@@ -627,6 +651,83 @@ router.post('/edit', isAuthenticated, upload.fields([
       .select()
       .single();
     console.log('Supabase profile edit result:', result ? 'Success' : 'No result', 'Error:', error ? error.message : 'None');
+
+    // If sidebar_config or main_content provided, sync to profile_containers (upsert based on zone/position)
+    if (sidebarConfigData || mainContentData) {
+      try {
+        const profileId = result.id;
+        let allContainers = [];
+
+        // Sidebar
+        if (sidebarConfigData && Array.isArray(sidebarConfigData)) {
+          for (let i = 0; i < sidebarConfigData.length; i++) {
+            const cont = sidebarConfigData[i];
+            allContainers.push({
+              profile_id: profileId,
+              zone: 'sidebar',
+              position: i,
+              container_type: cont.type,
+              title: cont.title,
+              content: cont.content,
+              settings: cont.settings || {}
+            });
+          }
+        }
+
+        // Main content (assume mainContentData is {left: [], right: []})
+        if (mainContentData && typeof mainContentData === 'object') {
+          if (mainContentData.left && Array.isArray(mainContentData.left)) {
+            for (let i = 0; i < mainContentData.left.length; i++) {
+              const cont = mainContentData.left[i];
+              allContainers.push({
+                profile_id: profileId,
+                zone: 'main-left',
+                position: i,
+                container_type: cont.type,
+                title: cont.title,
+                content: cont.content,
+                settings: cont.settings || {}
+              });
+            }
+          }
+          if (mainContentData.right && Array.isArray(mainContentData.right)) {
+            for (let i = 0; i < mainContentData.right.length; i++) {
+              const cont = mainContentData.right[i];
+              allContainers.push({
+                profile_id: profileId,
+                zone: 'main-right',
+                position: i,
+                container_type: cont.type,
+                title: cont.title,
+                content: cont.content,
+                settings: cont.settings || {}
+              });
+            }
+          }
+        }
+
+        // Delete existing containers for these zones
+        await supabase
+          .from('profile_containers')
+          .delete()
+          .eq('profile_id', profileId)
+          .in('zone', ['sidebar', 'main-left', 'main-right']);
+
+        // Insert new ones
+        if (allContainers.length > 0) {
+          const { error: insertError } = await supabase
+            .from('profile_containers')
+            .insert(allContainers);
+          if (insertError) {
+            console.error('Error syncing containers:', insertError);
+          } else {
+            console.log('Containers synced successfully:', allContainers.length);
+          }
+        }
+      } catch (syncErr) {
+        console.error('Container sync error:', syncErr);
+      }
+    }
 
     if (error || !result) {
       return res.status(404).json({

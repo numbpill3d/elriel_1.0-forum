@@ -12,6 +12,8 @@
   <script src="/js/win98.js" defer></script>
   <script src="/js/profile-themes.js" defer></script>
   <script src="/js/profile-widgets.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@latest/lib/marked.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.7/dist/purify.min.js"></script>
 </head>
 <body class="terminal">
   <div class="noise-overlay"></div>
@@ -92,9 +94,9 @@
 
                 <div class="form-group">
                   <label for="bio">BIO:</label>
-                  <textarea id="bio" name="bio" rows="5" maxlength="2000" placeholder="Enter your bio in markdown..."><%= profile.bio || '' %></textarea>
-                  <div id="bio-preview" style="border:1px solid var(--terminal-green); padding:0.5rem; margin-top:0.5rem;">
-                    <!-- Live preview placeholder: Use marked.js to render bio here -->
+                  <textarea id="bio" name="bio" rows="5" maxlength="2000" placeholder="Enter your bio in markdown..." class="markdown-textarea"><%= profile.bio || '' %></textarea>
+                  <div id="bio-preview" class="preview" style="border:1px solid var(--terminal-green); padding:0.5rem; margin-top:0.5rem; min-height: 100px;">
+                    <!-- Live preview: marked.js renders bio here -->
                   </div>
                   <p class="help-text">Your bio will be rendered as markdown on your profile sidebar.</p>
                 </div>
@@ -266,21 +268,21 @@
               </div>
 
               <!-- One-Column Editor -->
-              <div id="one-column-editor" class="edit-section" style="display: <%= profile.layout_type === 'one-column' ? 'block' : 'none' %>;">
+              <div id="one-column-editor" class="edit-section" style="display: none;">
                 <h3 class="section-header">MAIN CONTENT (One-Column Markdown)</h3>
                 <div class="form-group">
                   <label for="main_content_markdown">MAIN CONTENT:</label>
-                  <textarea id="main_content_markdown" name="main_content_markdown" rows="10" maxlength="5000" placeholder="Enter main content in markdown..."></textarea>
+                  <textarea id="main_content_markdown" name="main_content_markdown" rows="10" maxlength="5000" placeholder="Enter main content in markdown..." class="markdown-textarea"></textarea>
                   <input type="hidden" id="main_content" name="main_content">
-                  <div id="main-preview" style="border:1px solid var(--terminal-green); padding:0.5rem; margin-top:0.5rem;">
-                    <!-- Live preview placeholder: Use marked.js to render main content here -->
+                  <div id="main-preview" class="preview" style="border:1px solid var(--terminal-green); padding:0.5rem; margin-top:0.5rem; min-height: 200px;">
+                    <!-- Live preview: marked.js renders main content here -->
                   </div>
                   <p class="help-text">Full-width markdown content for one-column layout (stored in main_content JSONB).</p>
                 </div>
               </div>
 
               <!-- Two-Column Editor (widgets above) -->
-              <div id="two-column-editor" class="edit-section" style="display: <%= profile.layout_type === 'two-column' ? 'block' : 'none' %>;">
+              <div id="two-column-editor" class="edit-section" style="display: none;">
                 <h3 class="section-header">MAIN ZONES (Two-Column)</h3>
                 <p>Use the widgets section above to add to left/right zones. Backend groups via profile_containers.zone.</p>
                 <input type="hidden" id="zones_config" name="main_content" value='<%= JSON.stringify({type: "zones", left: [], right: []}) %>'>
@@ -494,7 +496,7 @@
       console.log('FormData prepared, submitting to /profile/update');
 
       try {
-        const response = await fetch('/profile/update', {
+        const response = await fetch('/profile/edit', {
           method: 'POST',
           body: formData
         });
@@ -552,6 +554,30 @@
       e.preventDefault();
       document.body.classList.toggle('glitch-active');
     });
+    // Enhanced markdown preview with marked.js and DOMPurify
+    function updateMarkdownPreview(textareaId, previewId) {
+      const textarea = document.getElementById(textareaId);
+      const preview = document.getElementById(previewId);
+      if (!textarea || !preview) return;
+      
+      textarea.addEventListener('input', () => {
+        const html = marked.parse(textarea.value);
+        preview.innerHTML = DOMPurify.sanitize(html);
+      });
+      
+      // Initial render
+      const html = marked.parse(textarea.value);
+      preview.innerHTML = DOMPurify.sanitize(html);
+    }
+    
+    // Init previews
+    updateMarkdownPreview('bio', 'bio-preview');
+    updateMarkdownPreview('main_content_markdown', 'main-preview');
+    
+    // Override basic MarkdownPreview in profile-widgets.js if present
+    if (typeof MarkdownPreview === 'function') {
+      window.MarkdownPreview = updateMarkdownPreview;
+    }
   </script>
 </body>
 </html>
