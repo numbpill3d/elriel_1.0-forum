@@ -408,6 +408,10 @@
     let glyph3DRenderer = null;
     let isRendering3D = true;
     let userPresets = JSON.parse(localStorage.getItem('glyph_presets') || '{}');
+
+    // Fire crucibleReady for glyph3d.js init
+    document.dispatchEvent(new CustomEvent('crucibleReady'));
+    console.log('[EXTREME] crucibleReady event fired');
     
     // Update user status in header
     const userStatusEl = document.getElementById('user-status');
@@ -933,18 +937,51 @@
               animationStyle: document.getElementById('animation-style').value,
               particleEnabled: document.getElementById('particle-enabled').value,
               auraEnabled: document.getElementById('aura-enabled').value,
-              textureMap: document.getElementById('texture-map').value
+              textureMap: document.getElementById('texture-map').value,
+              secondaryColor: document.getElementById('secondary-color').value,
+              bloomEffect: document.getElementById('bloom-effect').value,
+              secondaryGlow: document.getElementById('secondary-glow').checked,
+              haloEffect: document.getElementById('halo-effect').checked,
+              animationSpeed: parseFloat(document.getElementById('animation-speed').value),
+              animationPath: document.getElementById('animation-path').value,
+              elementAnimation: document.getElementById('element-animation').value,
+              morphIntensity: parseFloat(document.getElementById('morph-intensity').value),
+              reverseAnimation: document.getElementById('reverse-animation').checked,
+              alternateAnimation: document.getElementById('alternate-animation').checked,
+              particleCount: parseInt(document.getElementById('particle-count').value),
+              particleSize: parseFloat(document.getElementById('particle-size').value),
+              particleColor: document.getElementById('particle-color').value,
+              particleShape: document.getElementById('particle-shape').value,
+              particleSpeed: parseFloat(document.getElementById('particle-speed').value),
+              particleOpacity: parseFloat(document.getElementById('particle-opacity').value),
+              particleBehavior: document.getElementById('particle-behavior').value,
+              auraColor: document.getElementById('aura-color').value,
+              auraIntensity: parseFloat(document.getElementById('aura-intensity').value),
+              auraSize: parseFloat(document.getElementById('aura-size').value),
+              auraPulseRate: parseFloat(document.getElementById('aura-pulseRate').value),
+              auraSecondaryColor: document.getElementById('aura-secondary-color').value,
+              auraStyle: document.getElementById('aura-style').value,
+              auraRotate: document.getElementById('aura-rotate').checked,
+              textureScale: parseFloat(document.getElementById('texture-scale').value),
+              textureOpacity: parseFloat(document.getElementById('texture-opacity').value),
+              normalMap: document.getElementById('normal-map').value,
+              normalScale: parseFloat(document.getElementById('normal-scale').value),
+              displacementMap: document.getElementById('displacement-map').value,
+              displacementScale: parseFloat(document.getElementById('displacement-scale').value),
+              animateTexture: document.getElementById('animate-texture').checked
             };
             
             // Load the Glyph3DRenderer dynamically
             if (typeof Glyph3DRenderer !== 'undefined') {
               glyph3DRenderer = new Glyph3DRenderer('generated-glyph-3d', options);
+              console.log('[EXTREME] 3D renderer created successfully');
             } else {
               // Load script if not available
               const script = document.createElement('script');
               script.src = '/js/glyph3d.js';
               script.onload = () => {
                 glyph3DRenderer = new Glyph3DRenderer('generated-glyph-3d', options);
+                console.log('[EXTREME] 3D renderer loaded dynamically');
               };
               document.head.appendChild(script);
             }

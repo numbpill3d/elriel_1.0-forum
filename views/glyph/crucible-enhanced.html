@@ -254,6 +254,10 @@
     let currentGeneratedGlyph = null;
     let glyph3DRenderer = null;
     let isRendering3D = false;
+
+    // Fire crucibleReady for glyph3d.js init
+    document.dispatchEvent(new CustomEvent('crucibleReady'));
+    console.log('[ENHANCED] crucibleReady event fired');
     
     // Update user status in header
     const userStatusEl = document.getElementById('user-status');
@@ -431,8 +435,21 @@
               shape: glyphShapeSelect.value,
               color: glyphColorInput.value,
               rotationSpeed: parseFloat(rotationSpeedInput.value) * 0.01,
-              autoRotate: autoRotateCheckbox.checked
+              autoRotate: autoRotateCheckbox.checked,
+              opacity: 1,
+              size: 1,
+              glowColor: glyphColorInput.value,
+              glowIntensity: 1.5,
+              glowAnimation: 'none',
+              glowSpeed: 1,
+              wireframeStyle: 'none',
+              metalness: 0.3,
+              roughness: 0.4,
+              particleEnabled: 'basic',
+              particleCount: 50,
+              auraEnabled: 'none'
             });
+            console.log('[ENHANCED] 3D renderer created successfully');
           }
           
           playAudioBtn.style.display = 'inline-block';
