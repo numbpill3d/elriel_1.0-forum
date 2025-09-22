@@ -6,13 +6,26 @@ const router = express.Router();
 const path = require('path');
 const bcrypt = require('bcrypt');
 const supabase = require('../services/db');
+const fs = require('fs');
+const path = require('path');
 
 // Serve login page
 router.get('/login', (req, res) => {
   if (req.session.user) {
     return res.redirect('/profile');
   }
-  res.sendFile(path.join(__dirname, '../views/auth/login.html'));
+  const filePath = path.join(__dirname, '../views/auth/login.html');
+  console.log(`[LOGIN ROUTE] Requested login page. Path: ${filePath}`);
+  console.log(`[LOGIN ROUTE] File exists: ${fs.existsSync(filePath)}`);
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      console.error(`[LOGIN ROUTE] Error serving file: ${err}`);
+      res.status(err.status).send('Failed to load login page');
+    } else {
+      console.log(`[LOGIN ROUTE] Login page sent successfully. Status: ${res.statusCode}`);
+      console.log(`[LOGIN ROUTE] Content-Type: ${res.get('Content-Type')}`);
+    }
+  });
 });
 
 // Serve registration page
