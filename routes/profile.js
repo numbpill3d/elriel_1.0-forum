@@ -377,13 +377,27 @@ router.get('/edit', isAuthenticated, async (req, res) => {
       }
     }
     // Get all districts
-    const { data: districts, error: districtsError } = await supabase
-      .from('districts')
-      .select('*')
-      .or(`is_hidden.eq.false,id.eq.${profile.district_id}`);
+    let districts = [];
+    try {
+      const { data: districtsData, error: districtsError } = await supabase
+        .from('districts')
+        .select('*')
+        .or(`is_hidden.eq.false,id.eq.${profile.district_id || 1}`);
 
-    if (districtsError) {
-      throw districtsError;
+      if (districtsError) {
+        console.error('Districts query error:', districtsError);
+        districts = [{ id: 1, name: 'Central District', is_hidden: false }];
+      } else {
+        districts = districtsData || [];
+      }
+    } catch (err) {
+      console.error('Error loading districts:', err);
+      districts = [{ id: 1, name: 'Central District', is_hidden: false }];
+    }
+
+    // Ensure at least one district exists
+    if (districts.length === 0) {
+      districts = [{ id: 1, name: 'Central District', is_hidden: false }];
     }
 
     // Pass data to the frontend
