@@ -334,15 +334,21 @@ router.get('/container/edit/:id', isAuthenticated, async (req, res) => {
 // Serve profile edit page
 router.get('/edit', isAuthenticated, async (req, res) => {
   try {
+    console.log('Loading profile edit for user ID:', req.session.user.id);
     // Get user profile
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('*, users(username)')
       .eq('user_id', req.session.user.id)
       .single();
+    console.log('Profile query result - data exists:', !!profile, 'error:', profileError ? profileError.message : 'None');
 
     if (profileError) {
+      console.error('Profile query error details:', profileError);
       throw profileError;
+    }
+    if (!profile) {
+      console.warn('No profile found for user ID:', req.session.user.id);
     }
 
     // Get user's glyph if it exists
@@ -377,13 +383,19 @@ router.get('/edit', isAuthenticated, async (req, res) => {
     };
 
     // Inject data into the HTML
+    console.log('Reading edit.html template and injecting data');
     let html = fs.readFileSync(path.join(__dirname, '../views/profile/edit.html'), 'utf8');
-    html = html.replace('__DATA__', JSON.stringify(data));
+    const jsonData = JSON.stringify(data);
+    console.log('Data JSON length:', jsonData.length);
+    html = html.replace('__DATA__', jsonData);
 
     res.send(html);
   } catch (err) {
-    console.error('Error loading profile editor:', err);
-    console.error('Error details:', err.message, err.stack);
+    console.error('Error loading profile editor details:', {
+      message: err.message,
+      stack: err.stack,
+      userId: req.session.user.id
+    });
     res.status(500).sendFile(path.join(__dirname, '../views/error.html'));
   }
 });
@@ -394,6 +406,8 @@ router.post('/update', isAuthenticated, upload.fields([
   { name: 'headerImage', maxCount: 1 }
 ]), async (req, res) => {
   try {
+    console.log('Profile update started for user ID:', req.session.user.id);
+    console.log('Request body keys:', Object.keys(req.body));
     const { status, customCss, customHtml, themeTemplate, blogLayout, districtId, widgets } = req.body;
 
     // Sanitize inputs (basic sanitization, would use a proper library in production)
@@ -450,12 +464,14 @@ router.post('/update', isAuthenticated, upload.fields([
     updateData.updated_at = new Date().toISOString();
 
     // Execute the update
+    console.log('Attempting Supabase update with data:', updateData);
     const { data: result, error } = await supabase
       .from('profiles')
       .update(updateData)
       .eq('user_id', req.session.user.id)
       .select()
       .single();
+    console.log('Supabase update result:', result ? 'Success' : 'No result', 'Error:', error ? error.message : 'None');
 
     if (error || !result) {
       return res.status(404).json({
@@ -469,7 +485,12 @@ router.post('/update', isAuthenticated, upload.fields([
       message: 'Terminal identity updated successfully'
     });
   } catch (err) {
-    console.error('Profile update error:', err);
+    console.error('Profile update error details:', {
+      message: err.message,
+      stack: err.stack,
+      userId: req.session.user.id,
+      updateData: updateData
+    });
     res.status(500).json({
       error: 'System error',
       message: 'Terminal connection unstable. Try again later.'

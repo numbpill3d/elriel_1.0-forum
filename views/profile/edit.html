@@ -419,20 +419,24 @@
     // Handle form submission
     document.getElementById('profile-edit-form').addEventListener('submit', async (e) => {
       e.preventDefault();
+      console.log('Profile form submission started');
 
       const formData = new FormData(e.target);
       const messageEl = document.getElementById('message');
       const errorMessageEl = document.getElementById('error-message');
       messageEl.textContent = '';
       errorMessageEl.textContent = '';
+      console.log('FormData prepared, submitting to /profile/update');
 
       try {
         const response = await fetch('/profile/update', {
           method: 'POST',
           body: formData
         });
+        console.log('Fetch response status:', response.status, response.statusText);
 
         const data = await response.json();
+        console.log('Server response data:', data);
 
         if (data.success) {
           messageEl.textContent = data.message;
@@ -442,7 +446,7 @@
           errorMessageEl.textContent = data.message || 'Profile update failed. Unknown error.';
         }
       } catch (error) {
-        console.error('Profile update error:', error);
+        console.error('Profile update fetch error:', error);
         errorMessageEl.textContent = 'System error. Could not connect to update server.';
       }
     });
