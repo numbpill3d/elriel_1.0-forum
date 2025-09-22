@@ -53,6 +53,10 @@
       </nav>
 
       <main class="main-content">
+        <% if (typeof flash !== 'undefined') { %>
+          <% if (flash.message) { %><div class="flash-message" style="color: green; margin-bottom: 1rem;"><%= flash.message %></div><% } %>
+          <% if (flash.error) { %><div class="flash-error" style="color: red; margin-bottom: 1rem;"><%= flash.error %></div><% } %>
+        <% } %>
         <section class="win98-window profile-panel">
           <div class="win98-titlebar">
             <div class="win98-titlebar-text">USER PROFILE: <span id="profile-username"></span></div>
@@ -118,8 +122,33 @@
                     <a href="/glyph/crucible" class="action-button">GLYPH CRUCIBLE</a>
                   </div>
                 </div>
+    
+                <!-- Layout Preview -->
+                <div class="profile-section">
+                  <div class="section-title">LAYOUT PREVIEW:</div>
+                  <div class="section-content">
+                    <div class="preview-container" style="display:flex; gap:1rem; border:1px dashed var(--terminal-green); padding:1rem;">
+                      <div class="preview-sidebar" style="flex:0 0 150px; border-right:1px solid var(--terminal-green); padding-right:1rem;">
+                        <div class="preview-item">Avatar: <%= profile.avatar_url ? 'Uploaded' : 'Default' %></div>
+                        <div class="preview-item">Bio: <%= (profile.bio || 'No bio').substring(0, 30) + '...' %></div>
+                        <% if (profile.sidebar_config && Object.keys(profile.sidebar_config).length > 0) { %><div class="preview-item">Sidebar Widget: Configured</div><% } else { %><div class="preview-item">Sidebar Widget: None</div><% } %>
+                      </div>
+                      <div class="preview-main" style="flex:1;">
+                        <% if (profile.layout_type === 'one-column') { %>
+                          <div class="preview-one-column">Main (Markdown): <%= profile.main_content && profile.main_content.length > 0 ? 'Set' : 'Empty' %></div>
+                        <% } else { %>
+                          <div style="display:flex; gap:1rem;">
+                            <div class="preview-left" style="flex:1; border-right:1px solid var(--terminal-green);">Left Zone: <%= (groupedContainers && groupedContainers.mainLeft ? groupedContainers.mainLeft.length : 0) %> widgets</div>
+                            <div class="preview-right" style="flex:1;">Right Zone: <%= (groupedContainers && groupedContainers.mainRight ? groupedContainers.mainRight.length : 0) %> widgets</div>
+                          </div>
+                        <% } %>
+                      </div>
+                    </div>
+                    <p style="margin-top:0.5rem;"><a href="/profile/edit">Edit Layout</a> | <a href="/profile/view-enhanced">View Profile</a></p>
+                  </div>
+                </div>
               </div>
-            </div>
+              </div>
           </div>
           </div>
         </section>
@@ -156,6 +185,7 @@
     // Inject data from server
   const data = __DATA__;
     const profile = data.profile;
+    const groupedContainers = data.groupedContainers || {sidebar: [], mainLeft: [], mainRight: []};
     const user = data.user;
     const glyph = data.glyph;
     const posts = data.posts;

@@ -38,6 +38,19 @@ const upload = multer({
   }
 });
 
+// Configure avatar upload to memory for Supabase storage
+const avatarUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 2 * 1024 * 1024 }, // 2MB limit for avatars
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed'), false);
+    }
+  }
+});
+
 // Authentication middleware
 const isAuthenticated = (req, res, next) => {
   if (!req.session.user) {
@@ -97,11 +110,33 @@ router.get('/', isAuthenticated, async (req, res) => {
       throw postsError;
     }
 
+    // Get user's profile containers (always for dashboard)
+    let containers = [];
+    const { data: containersData, error: containersError } = await supabase
+      .from('profile_containers')
+      .select('*')
+      .eq('profile_id', profile.id)
+      .order('position', { ascending: true });
+
+    if (!containersError) {
+      containers = containersData || [];
+    }
+
+    // Group containers by zone
+    const groupedContainers = {
+      sidebar: containers.filter(c => c.zone === 'sidebar').sort((a, b) => a.position - b.position),
+      mainLeft: containers.filter(c => c.zone === 'main-left').sort((a, b) => a.position - b.position),
+      mainRight: containers.filter(c => c.zone === 'main-right').sort((a, b) => a.position - b.position)
+    };
+
+    console.log('Dashboard fetched grouped containers:', groupedContainers);
+
     // Pass data to the frontend
     const data = {
       profile,
       glyph,
       posts,
+      groupedContainers,
       user: req.session.user
     };
 
@@ -160,6 +195,7 @@ router.get('/user/:username', async (req, res) => {
 
     // Get user's profile containers if enhanced view
     let containers = [];
+    let groupedContainers = {};
     if (useEnhanced) {
       const { data, error: containersError } = await supabase
         .from('profile_containers')
@@ -167,7 +203,14 @@ router.get('/user/:username', async (req, res) => {
         .eq('profile_id', profile.id)
         .order('position', { ascending: true });
       if (!containersError) {
-        containers = data;
+        containers = data || [];
+        // Group containers by zone
+        groupedContainers = {
+          sidebar: containers.filter(c => c.zone === 'sidebar').sort((a, b) => a.position - b.position),
+          mainLeft: containers.filter(c => c.zone === 'main-left').sort((a, b) => a.position - b.position),
+          mainRight: containers.filter(c => c.zone === 'main-right').sort((a, b) => a.position - b.position)
+        };
+        console.log('Profile view fetched grouped containers:', groupedContainers);
       }
     }
 
@@ -187,6 +230,7 @@ router.get('/user/:username', async (req, res) => {
       glyph,
       posts,
       containers,
+      groupedContainers,
       rewards,
       user: req.session.user || null,
       isOwner: req.session.user && req.session.user.id === profile.users.id
@@ -433,8 +477,15 @@ router.get('/edit', isAuthenticated, async (req, res) => {
       glyph_3d: profile.glyph_3d || false,
       glyph_rotation_speed: profile.glyph_rotation_speed || 3,
       widgets_data: profile.widgets_data || '[]',
+      avatar_url: profile.avatar_url || '',
+      bio: profile.bio || '',
+      layout_type: profile.layout_type || 'two-column',
+      sidebar_config: profile.sidebar_config || '{}',
+      main_content: profile.main_content || '[]',
       ...profile
     };
+
+    console.log('Edit page fetched profile with new fields:', safeProfile);
 
     // Pass data to the frontend
     const data = {
@@ -464,26 +515,66 @@ router.get('/edit', isAuthenticated, async (req, res) => {
   }
 });
 
-// Update profile
-router.post('/update', isAuthenticated, upload.fields([
+// Update profile (renamed to /edit)
+router.post('/edit', isAuthenticated, upload.fields([
   { name: 'background', maxCount: 1 },
   { name: 'headerImage', maxCount: 1 }
 ]), async (req, res) => {
   try {
-    console.log('Profile update started for user ID:', req.session.user.id);
+    console.log('Profile edit started for user ID:', req.session.user.id);
     console.log('Request body keys:', Object.keys(req.body));
-    const { status, customCss, customHtml, themeTemplate, blogLayout, districtId, widgets } = req.body;
+    const {
+      status, customCss, customHtml, themeTemplate, blogLayout, districtId, widgets,
+      bio, layoutType, sidebarConfig, mainContent
+    } = req.body;
 
-    // Sanitize inputs (basic sanitization, would use a proper library in production)
+    // Sanitize inputs
     const sanitizedStatus = status ? escapeHTML(status.slice(0, 100)) : null;
     const sanitizedCss = customCss ? escapeHTML(customCss.slice(0, 10000)) : null;
     const sanitizedHtml = customHtml ? escapeHTML(customHtml.slice(0, 20000)) : null;
+    const sanitizedBio = bio ? escapeHTML(bio.slice(0, 500)) : null; // Basic sanitization; add markdown parser if needed
+
+    // Validate layout_type
+    const validLayouts = ['one-column', 'two-column'];
+    let validatedLayout = null;
+    if (layoutType && validLayouts.includes(layoutType)) {
+      validatedLayout = layoutType;
+    }
+
+    // Parse and store JSONB fields
+    let sidebarConfigData = null;
+    if (sidebarConfig) {
+      try {
+        sidebarConfigData = typeof sidebarConfig === 'string' ? JSON.parse(sidebarConfig) : sidebarConfig;
+        if (typeof sidebarConfigData === 'object' && sidebarConfigData !== null) {
+          updateData.sidebar_config = sidebarConfigData;
+        }
+      } catch (e) {
+        console.error('Error parsing sidebar_config:', e);
+      }
+    }
+
+    let mainContentData = null;
+    if (mainContent) {
+      try {
+        mainContentData = typeof mainContent === 'string' ? JSON.parse(mainContent) : mainContent;
+        if (Array.isArray(mainContentData)) {
+          updateData.main_content = mainContentData;
+        }
+      } catch (e) {
+        console.error('Error parsing main_content:', e);
+      }
+    }
 
     // Build update object
     const updateData = {};
     if (sanitizedStatus !== null) updateData.status = sanitizedStatus;
     if (sanitizedCss !== null) updateData.custom_css = sanitizedCss;
     if (sanitizedHtml !== null) updateData.custom_html = sanitizedHtml;
+    if (sanitizedBio !== null) updateData.bio = sanitizedBio;
+    if (validatedLayout !== null) updateData.layout_type = validatedLayout;
+    if (sidebarConfigData !== null) updateData.sidebar_config = sidebarConfigData;
+    if (mainContentData !== null) updateData.main_content = mainContentData;
     if (themeTemplate) updateData.theme_template = themeTemplate;
     if (blogLayout) updateData.blog_layout = blogLayout;
     if (districtId) updateData.district_id = districtId;
@@ -528,14 +619,14 @@ router.post('/update', isAuthenticated, upload.fields([
     updateData.updated_at = new Date().toISOString();
 
     // Execute the update
-    console.log('Attempting Supabase update with data:', updateData);
+    console.log('Attempting Supabase edit with new fields:', updateData);
     const { data: result, error } = await supabase
       .from('profiles')
       .update(updateData)
       .eq('user_id', req.session.user.id)
       .select()
       .single();
-    console.log('Supabase update result:', result ? 'Success' : 'No result', 'Error:', error ? error.message : 'None');
+    console.log('Supabase profile edit result:', result ? 'Success' : 'No result', 'Error:', error ? error.message : 'None');
 
     if (error || !result) {
       return res.status(404).json({
@@ -549,15 +640,82 @@ router.post('/update', isAuthenticated, upload.fields([
       message: 'Terminal identity updated successfully'
     });
   } catch (err) {
-    console.error('Profile update error details:', {
+    console.error('Profile edit error details:', {
       message: err.message,
       stack: err.stack,
       userId: req.session.user.id,
-      updateData: updateData
+      updateData
     });
     res.status(500).json({
       error: 'System error',
       message: 'Terminal connection unstable. Try again later.'
+    });
+  }
+});
+
+// Avatar upload endpoint
+router.post('/avatar', isAuthenticated, avatarUpload.single('avatar'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        error: 'No file uploaded',
+        message: 'Please select an image file.'
+      });
+    }
+
+    const fileExt = path.extname(req.file.originalname).toLowerCase();
+    const allowedExts = ['.jpg', '.jpeg', '.png', '.gif'];
+    if (!allowedExts.includes(fileExt)) {
+      return res.status(400).json({
+        error: 'Invalid file type',
+        message: 'Only JPG, PNG, and GIF images are allowed.'
+      });
+    }
+
+    const fileName = `${req.session.user.id}-${Date.now()}${fileExt}`;
+
+    // Upload to Supabase storage 'avatars' bucket
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from('avatars')
+      .upload(fileName, req.file.buffer, {
+        cacheControl: '3600',
+        upsert: false,
+        contentType: req.file.mimetype
+      });
+
+    if (uploadError) {
+      console.error('Avatar upload error:', uploadError);
+      throw uploadError;
+    }
+
+    // Get public URL
+    const { data: { publicUrl } } = supabase.storage
+      .from('avatars')
+      .getPublicUrl(fileName);
+
+    // Update profile avatar_url
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({ avatar_url: publicUrl })
+      .eq('user_id', req.session.user.id);
+
+    if (updateError) {
+      console.error('Avatar profile update error:', updateError);
+      throw updateError;
+    }
+
+    console.log('Avatar uploaded successfully for user:', req.session.user.id, 'URL:', publicUrl);
+
+    res.json({
+      success: true,
+      message: 'Avatar uploaded successfully',
+      avatar_url: publicUrl
+    });
+  } catch (err) {
+    console.error('Avatar endpoint error:', err);
+    res.status(500).json({
+      error: 'System error',
+      message: 'Failed to upload avatar. Try again later.'
     });
   }
 });

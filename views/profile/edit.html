@@ -58,6 +58,10 @@
       </nav>
 
       <main class="main-content">
+        <% if (typeof flash !== 'undefined') { %>
+          <% if (flash.message) { %><div class="flash-message" style="color: var(--terminal-green); margin-bottom: 1rem;"><%= flash.message %></div><% } %>
+          <% if (flash.error) { %><div class="flash-error" style="color: var(--terminal-red); margin-bottom: 1rem;"><%= flash.error %></div><% } %>
+        <% } %>
         <section class="profile-edit-panel">
           <div class="panel-header">
             <h2>EDIT PROFILE</h2>
@@ -78,9 +82,21 @@
               <div id="basics" class="edit-section">
                 <h3 class="section-header">BASIC INFORMATION</h3>
                 <div class="form-group">
-                  <label for="status">STATUS:</label>
-                  <input type="text" id="status" name="status" maxlength="100" placeholder="Enter your current status...">
-                  <p class="help-text">Your status will be visible on your profile page.</p>
+                  <label for="avatar">AVATAR:</label>
+                  <input type="file" id="avatar" name="avatar" accept="image/*">
+                  <div id="current-avatar-preview">
+                    <% if (profile.avatar_url) { %><img src="<%= profile.avatar_url %>" alt="Current Avatar" style="width:100px;height:100px;border-radius:50%;"><% } else { %><span>NO AVATAR SET</span><% } %>
+                  </div>
+                  <p class="help-text">Upload your profile avatar (triggers /profile/avatar).</p>
+                </div>
+
+                <div class="form-group">
+                  <label for="bio">BIO:</label>
+                  <textarea id="bio" name="bio" rows="5" maxlength="2000" placeholder="Enter your bio in markdown..."><%= profile.bio || '' %></textarea>
+                  <div id="bio-preview" style="border:1px solid var(--terminal-green); padding:0.5rem; margin-top:0.5rem;">
+                    <!-- Live preview placeholder: Use marked.js to render bio here -->
+                  </div>
+                  <p class="help-text">Your bio will be rendered as markdown on your profile sidebar.</p>
                 </div>
 
                 <div class="form-group">
@@ -92,12 +108,35 @@
                 </div>
 
                 <div class="form-group">
+                  <label for="layout_type">LAYOUT TYPE:</label>
+                  <select id="layout_type" name="layout_type">
+                    <option value="one-column" <%= profile.layout_type === 'one-column' ? 'selected' : '' %>>One Column (Markdown)</option>
+                    <option value="two-column" <%= profile.layout_type === 'two-column' ? 'selected' : '' %>>Two Column (Zones)</option>
+                  </select>
+                  <p class="help-text">Choose your profile main content layout.</p>
+                </div>
+
+                <div class="form-group">
                   <label for="blog-layout">BLOG LAYOUT:</label>
                   <select id="blog-layout" name="blogLayout">
                     <option value="feed">Traditional Feed</option>
                     <option value="grid">Icon Grid</option>
                   </select>
                   <p class="help-text">Choose how your posts will be displayed on your profile.</p>
+                </div>
+
+                <!-- Sidebar Widget Slot -->
+                <div class="form-group">
+                  <label for="sidebar_type">SIDEBAR WIDGET (Optional):</label>
+                  <select id="sidebar_type" name="sidebar_type">
+                    <option value="">None</option>
+                    <option value="text">Text</option>
+                    <option value="iframe">Iframe</option>
+                    <option value="image">Image</option>
+                  </select>
+                  <textarea id="sidebar_content" name="sidebar_content" rows="3" style="display:none;" placeholder="Enter sidebar content..."></textarea>
+                  <input type="url" id="sidebar_url" name="sidebar_url" style="display:none;" placeholder="Enter image/iframe URL...">
+                  <p class="help-text">Add an optional widget to your sidebar (stored in sidebar_config JSONB).</p>
                 </div>
               </div>
 
@@ -198,12 +237,17 @@
                 </div>
               </div>
               
-              <!-- Widgets/Cards Section -->
+              <!-- Widgets/Cards Section (for two-column zones) -->
               <div id="widgets" class="edit-section">
-                <h3 class="section-header">PROFILE WIDGETS</h3>
+                <h3 class="section-header">PROFILE WIDGETS (Two-Column Zones)</h3>
                 <div class="widget-manager">
                   <div class="form-group">
-                    <label for="widget-type">ADD NEW WIDGET:</label>
+                    <label for="widget-zone">ZONE:</label>
+                    <select id="widget-zone">
+                      <option value="main-left">Main Left</option>
+                      <option value="main-right">Main Right</option>
+                    </select>
+                    <label for="widget-type">TYPE:</label>
                     <select id="widget-type" class="widget-type-select" aria-label="Select widget type">
                       <option value="">-- Select Widget Type --</option>
                       <option value="text">Text Block</option>
@@ -215,10 +259,31 @@
                   </div>
 
                   <div class="widgets-container" id="widgets-container">
-                    <!-- Widget items will be added dynamically here -->
-                    <div class="empty-widget-message">No widgets added yet. Use the controls above to add widgets to your profile.</div>
+                    <!-- Widget items will be added dynamically here with zone -->
+                    <div class="empty-widget-message">No widgets added yet. Use the controls above to add widgets to zones (stored in profile_containers with zone).</div>
                   </div>
                 </div>
+              </div>
+
+              <!-- One-Column Editor -->
+              <div id="one-column-editor" class="edit-section" style="display: <%= profile.layout_type === 'one-column' ? 'block' : 'none' %>;">
+                <h3 class="section-header">MAIN CONTENT (One-Column Markdown)</h3>
+                <div class="form-group">
+                  <label for="main_content_markdown">MAIN CONTENT:</label>
+                  <textarea id="main_content_markdown" name="main_content_markdown" rows="10" maxlength="5000" placeholder="Enter main content in markdown..."></textarea>
+                  <input type="hidden" id="main_content" name="main_content">
+                  <div id="main-preview" style="border:1px solid var(--terminal-green); padding:0.5rem; margin-top:0.5rem;">
+                    <!-- Live preview placeholder: Use marked.js to render main content here -->
+                  </div>
+                  <p class="help-text">Full-width markdown content for one-column layout (stored in main_content JSONB).</p>
+                </div>
+              </div>
+
+              <!-- Two-Column Editor (widgets above) -->
+              <div id="two-column-editor" class="edit-section" style="display: <%= profile.layout_type === 'two-column' ? 'block' : 'none' %>;">
+                <h3 class="section-header">MAIN ZONES (Two-Column)</h3>
+                <p>Use the widgets section above to add to left/right zones. Backend groups via profile_containers.zone.</p>
+                <input type="hidden" id="zones_config" name="main_content" value='<%= JSON.stringify({type: "zones", left: [], right: []}) %>'>
               </div>
 
               <div class="form-actions">

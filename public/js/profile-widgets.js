@@ -267,4 +267,220 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
     }
   }
+  // Enhancements for profile layout and widgets
+
+  // Parse groupedContainers on load
+  let groupedContainers = [];
+  if (window.profile && window.profile.groupedContainers) {
+    try {
+      groupedContainers = JSON.parse(window.profile.groupedContainers);
+    } catch (e) {
+      console.error('Error parsing groupedContainers:', e);
+    }
+  }
+
+  // Toggle editors based on layout_type
+  function toggleEditors() {
+    const layoutSelect = document.querySelector('select[name="layout_type"]');
+    if (!layoutSelect) return;
+    const layoutType = layoutSelect.value;
+    const oneColumnEditors = document.querySelectorAll('.one-column-editor');
+    const twoColumnEditors = document.querySelectorAll('.two-column-editor');
+    const mainContentInput = document.querySelector('input[name="main_content"], textarea[name="main_content"]');
+    oneColumnEditors.forEach(el => el.style.display = layoutType === 'one' ? 'block' : 'none');
+    twoColumnEditors.forEach(el => el.style.display = layoutType === 'two' ? 'block' : 'none');
+    if (mainContentInput && layoutType === 'one') {
+      // Serialize widgets to main_content JSON for one-column
+      mainContentInput.value = JSON.stringify({ widgets: widgets });
+    }
+  }
+
+  // Event listener for layout change
+  const layoutSelect = document.querySelector('select[name="layout_type"]');
+  if (layoutSelect) {
+    layoutSelect.addEventListener('change', toggleEditors);
+    toggleEditors(); // Initial call
+  }
+
+  // AddWidget function
+  function AddWidget(type, zone) {
+    const container = document.getElementById(`${zone}-widgets-container`) || document.querySelector(`.${zone} .widgets-container`);
+    if (!container) return;
+    const widgetId = `widget_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const widget = {
+      id: widgetId,
+      type: type,
+      title: getDefaultTitleForType(type),
+      content: '',
+      zone: zone
+    };
+    widgets.push(widget);
+    renderWidgets(); // Re-render to include new widget in zone
+    attachWidgetListeners(widgetId, zone);
+  }
+
+  // Enhanced attach listeners
+  function attachWidgetListeners(widgetId, zone) {
+    const widgetEl = document.querySelector(`[data-widget-id="${widgetId}"]`);
+    if (!widgetEl) return;
+    const deleteBtn = widgetEl.querySelector('.widget-delete');
+    if (deleteBtn) {
+      deleteBtn.addEventListener('click', () => deleteWidget(widgetId));
+    }
+    // Add zone-specific listeners
+    widgetEl.dataset.zone = zone;
+  }
+
+  // Serialize sidebar_config
+  function serializeSidebar() {
+    return widgets.filter(w => w.zone === 'sidebar').map(w => ({
+      id: w.id,
+      type: w.type,
+      title: w.title,
+      content: w.content,
+      settings: w.settings
+    }));
+  }
+
+  // Serialize main_content
+  function serializeMain() {
+    return {
+      left: widgets.filter(w => w.zone === 'main-left').map(w => ({ id: w.id, type: w.type, title: w.title, content: w.content, settings: w.settings })),
+      right: widgets.filter(w => w.zone === 'main-right').map(w => ({ id: w.id, type: w.type, title: w.title, content: w.content, settings: w.settings }))
+    };
+  }
+
+  // Update form submit to include configs
+  const profileForm = document.getElementById('profile-edit-form');
+  if (profileForm) {
+    profileForm.addEventListener('submit', function(e) {
+      const sidebarInput = this.querySelector('input[name="sidebar_config"]') || document.createElement('input');
+      if (!sidebarInput.name) {
+        sidebarInput.type = 'hidden';
+        sidebarInput.name = 'sidebar_config';
+        this.appendChild(sidebarInput);
+      }
+      sidebarInput.value = JSON.stringify(serializeSidebar());
+
+      const mainInput = this.querySelector('input[name="main_content"]') || document.createElement('input');
+      if (!mainInput.name) {
+        mainInput.type = 'hidden';
+        mainInput.name = 'main_content';
+        this.appendChild(mainInput);
+      }
+      mainInput.value = JSON.stringify(serializeMain());
+
+      // Existing widgets handling remains
+      const existingWidgetsInput = this.querySelector('input[name="widgets"]');
+      if (existingWidgetsInput) {
+        existingWidgetsInput.value = JSON.stringify(widgets);
+      }
+    });
+  }
+
+  // Basic drag and drop init
+  function dragDropInit() {
+    const widgets = document.querySelectorAll('.widget-item');
+    widgets.forEach(widget => {
+      widget.draggable = true;
+      widget.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', widget.dataset.widgetId);
+        widget.classList.add('dragging');
+      });
+      widget.addEventListener('dragend', () => widget.classList.remove('dragging'));
+    });
+
+    const zones = document.querySelectorAll('.drop-zone, .sidebar .widgets-container, .main-left .widgets-container, .main-right .widgets-container');
+    zones.forEach(zone => {
+      zone.addEventListener('dragover', e => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        zone.classList.add('drag-over');
+      });
+      zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+      zone.addEventListener('drop', e => {
+        e.preventDefault();
+        zone.classList.remove('drag-over');
+        const widgetId = e.dataTransfer.getData('text/plain');
+        const widget = document.querySelector(`[data-widget-id="${widgetId}"]`);
+        if (widget && zone.parentElement !== widget.parentElement) {
+          zone.appendChild(widget);
+          const newZone = zone.closest('.sidebar') ? 'sidebar' : zone.closest('.main-left') ? 'main-left' : 'main-right';
+          const widgetObj = widgets.find(w => w.id === widgetId);
+          if (widgetObj) widgetObj.zone = newZone;
+          widget.dataset.zone = newZone;
+          // Trigger serialize if form exists
+          if (profileForm) {
+            const submitEvent = new Event('submit');
+            profileForm.dispatchEvent(submitEvent);
+          }
+        }
+      });
+    });
+  }
+
+  // Markdown preview (simple)
+  function MarkdownPreview(textareaSelector) {
+    const textarea = typeof textareaSelector === 'string' ? document.querySelector(textareaSelector) : textareaSelector;
+    if (!textarea) return;
+    const preview = textarea.nextElementSibling && textarea.nextElementSibling.classList.contains('preview') ? textarea.nextElementSibling : null;
+    if (!preview) return;
+    textarea.addEventListener('input', () => {
+      let text = textarea.value;
+      text = text.replace(/\n/g, '<br>');
+      preview.innerHTML = text;
+    });
+  }
+
+  // Init previews for markdown textareas
+  document.querySelectorAll('.markdown-textarea').forEach(ta => MarkdownPreview(ta));
+
+  // Avatar upload
+  function AvatarUpload(formSelector) {
+    const form = document.querySelector(formSelector);
+    if (!form) return;
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      fetch('/profile/avatar', { method: 'POST', body: formData })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.url) {
+            const avatarImg = document.querySelector('.avatar-upload, #profile-avatar');
+            if (avatarImg) avatarImg.src = data.url;
+          } else {
+            console.error('Avatar upload failed:', data.error);
+          }
+        })
+        .catch(err => console.error('Upload error:', err));
+    });
+  }
+
+  // Init avatar upload if present
+  if (document.querySelector('#avatar-upload-form')) {
+    AvatarUpload('#avatar-upload-form');
+  }
+
+  // Theme apply hook (minimal extension to profile-themes.js)
+  function ThemeApply() {
+    const root = document.documentElement;
+    const primary = getComputedStyle(root).getPropertyValue('--terminal-green'); // Use existing theme var
+    document.querySelectorAll('.sidebar, .widget, .bio-render, .avatar-upload').forEach(el => {
+      if (el.classList.contains('sidebar')) el.style.backgroundColor = `var(--sidebar-bg, rgba(0,0,0,0.8))`;
+      if (el.classList.contains('widget')) el.style.borderColor = `var(--border, ${primary})`;
+      if (el.classList.contains('bio-render')) el.style.color = primary;
+      if (el.classList.contains('avatar-upload')) el.style.borderColor = primary;
+    });
+  }
+
+  // Listen for theme changes (assuming profile-themes.js dispatches event)
+  document.addEventListener('themeChanged', ThemeApply);
+  // Initial apply
+  ThemeApply();
+
+  // Init drag drop on edit pages
+  if (document.body.classList.contains('profile-edit') || document.querySelector('.profile-container')) {
+    dragDropInit();
+  }
+
 });

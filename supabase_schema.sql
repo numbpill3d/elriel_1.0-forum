@@ -191,3 +191,46 @@ ON CONFLICT (id) DO NOTHING;
 INSERT INTO public.announcements (id, title, content)
 VALUES (1, 'SYSTEM ALERT', 'Welcome to Elriel. This terminal has been compromised. Proceed with caution. The Numbpill Cell awaits your contribution.')
 ON CONFLICT (id) DO NOTHING;
+
+-- Profile Enhancements
+
+-- Create ENUM for layout_type
+CREATE TYPE IF NOT EXISTS profile_layout_type AS ENUM ('one-column', 'two-column');
+
+-- Add new columns to profiles table
+ALTER TABLE public.profiles
+ADD COLUMN IF NOT EXISTS avatar_url TEXT,
+ADD COLUMN IF NOT EXISTS bio TEXT,
+ADD COLUMN IF NOT EXISTS layout_type profile_layout_type DEFAULT 'two-column',
+ADD COLUMN IF NOT EXISTS sidebar_config JSONB DEFAULT '{}'::JSONB,
+ADD COLUMN IF NOT EXISTS main_content JSONB[] DEFAULT ARRAY[]::JSONB;
+
+-- Create ENUM for zone
+CREATE TYPE IF NOT EXISTS profile_zone AS ENUM ('sidebar', 'main-left', 'main-right');
+
+-- Create profile_containers table
+CREATE TABLE IF NOT EXISTS public.profile_containers (
+  id SERIAL PRIMARY KEY,
+  profile_id INTEGER NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  zone profile_zone NOT NULL,
+  container_type TEXT NOT NULL,
+  title TEXT,
+  content TEXT,
+  position INTEGER DEFAULT 0,
+  settings JSONB DEFAULT '{}'::JSONB,
+  created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Enable RLS on profile_containers table
+ALTER TABLE public.profile_containers ENABLE ROW LEVEL SECURITY;
+
+-- Policies for profile_containers
+CREATE POLICY "Allow public access to profile containers"
+  ON public.profile_containers FOR SELECT
+  USING (true);
+
+-- For development only - replace with proper auth later
+CREATE POLICY "Temporary allow all operations on profile containers"
+  ON public.profile_containers FOR ALL
+  USING (true);

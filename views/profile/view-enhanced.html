@@ -476,6 +476,10 @@
       </nav>
 
       <main class="main-content">
+        <% if (typeof flash !== 'undefined') { %>
+          <% if (flash.message) { %><div class="flash-message" style="color: var(--terminal-green); margin-bottom: 1rem;"><%= flash.message %></div><% } %>
+          <% if (flash.error) { %><div class="flash-error" style="color: var(--terminal-red); margin-bottom: 1rem;"><%= flash.error %></div><% } %>
+        <% } %>
         <section class="profile-view-panel">
           <div class="panel-header">
             <h2>USER PROFILE: <span id="profile-view-username"></span></h2>
@@ -502,8 +506,11 @@
             <!-- Profile info section with avatar and sigil -->
             <div class="profile-info-section">
               <div class="profile-view-avatar">
-                <!-- Placeholder for avatar -->
-                <div class="default-avatar"></div>
+                <% if (profile.avatar_url) { %>
+                  <img src="<%= profile.avatar_url %>" alt="Avatar" class="profile-avatar-img" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">
+                <% } else { %>
+                  <div class="default-avatar"></div>
+                <% } %>
               </div>
 
               <div class="profile-view-info">
@@ -534,6 +541,26 @@
               </div>
             </div>
 
+            <!-- Sidebar -->
+            <div class="profile-sidebar">
+              <img src="<%= profile.avatar_url || '/images/default-avatar.png' %>" alt="Avatar" class="sidebar-avatar" style="width:100px;height:100px;border-radius:50%;margin-bottom:1rem;">
+              <div class="sidebar-bio">
+                <%= (profile.bio || 'No bio set').replace(/\n/g, '<br>') %>
+                <!-- marked.js placeholder: document.querySelector('.sidebar-bio').innerHTML = marked('<%= profile.bio %>'); -->
+              </div>
+              <% if (groupedContainers && groupedContainers.sidebar && groupedContainers.sidebar.length > 0) { %>
+                <div class="sidebar-widget">
+                  <% groupedContainers.sidebar.forEach(function(container) { %>
+                    <div class="widget <%= container.container_type %>">
+                      <% if (container.container_type === 'text') { %><div class="widget-text"><%= container.content.replace(/\n/g, '<br>') %></div><% } %>
+                      <% if (container.container_type === 'iframe') { %><iframe src="<%= container.content %>" frameborder="0" style="width:100%;height:200px;"></iframe><% } %>
+                      <% if (container.container_type === 'image') { %><img src="<%= container.content %>" alt="Sidebar Image" style="width:100%;"><% } %>
+                    </div>
+                  <% }); %>
+                </div>
+              <% } %>
+            </div>
+
             <!-- Owner-only controls -->
             <div class="profile-controls profile-controls-margin" id="profile-controls">
               <div class="profile-control-left">
@@ -547,9 +574,46 @@
               </div>
             </div>
 
-            <!-- Profile containers -->
-            <div class="profile-containers" id="profile-containers">
-              <!-- Containers will be injected here -->
+            <!-- Main Content -->
+            <div class="profile-main">
+              <% if (profile.layout_type === 'one-column') { %>
+                <div class="main-one-column">
+                  <div class="main-markdown">
+                    <%= (profile.main_content && profile.main_content.length > 0 ? profile.main_content[0].content || '' : 'No content').replace(/\n/g, '<br>') %>
+                    <!-- marked.js placeholder: Use marked to render main_content markdown -->
+                  </div>
+                </div>
+              <% } else { %>
+                <div class="main-two-column">
+                  <div class="main-left">
+                    <% if (groupedContainers && groupedContainers.mainLeft && groupedContainers.mainLeft.length > 0) { %>
+                      <% groupedContainers.mainLeft.forEach(function(container) { %>
+                        <div class="widget <%= container.container_type %>">
+                          <% if (container.container_type === 'text') { %><div class="widget-text"><%= container.content.replace(/\n/g, '<br>') %></div><% } %>
+                          <% if (container.container_type === 'iframe') { %><iframe src="<%= container.content %>" frameborder="0"></iframe><% } %>
+                          <% if (container.container_type === 'image') { %><img src="<%= container.content %>" alt="Widget Image"><% } %>
+                        </div>
+                      <% }); %>
+                    <% } else { %><p>No left zone content</p><% } %>
+                  </div>
+                  <div class="main-right">
+                    <% if (groupedContainers && groupedContainers.mainRight && groupedContainers.mainRight.length > 0) { %>
+                      <% groupedContainers.mainRight.forEach(function(container) { %>
+                        <div class="widget <%= container.container_type %>">
+                          <% if (container.container_type === 'text') { %><div class="widget-text"><%= container.content.replace(/\n/g, '<br>') %></div><% } %>
+                          <% if (container.container_type === 'iframe') { %><iframe src="<%= container.content %>" frameborder="0"></iframe><% } %>
+                          <% if (container.container_type === 'image') { %><img src="<%= container.content %>" alt="Widget Image"><% } %>
+                        </div>
+                      <% }); %>
+                    <% } else { %><p>No right zone content</p><% } %>
+                  </div>
+                </div>
+              <% } %>
+            </div>
+
+            <!-- Legacy Profile containers (if needed) -->
+            <div class="profile-containers" id="profile-containers" style="display:none;">
+              <!-- Containers will be injected here if not using zones -->
             </div>
           </div>
         </section>

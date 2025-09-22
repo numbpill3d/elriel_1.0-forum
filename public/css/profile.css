@@ -1287,3 +1287,81 @@ input[type="range"]::-webkit-slider-thumb {
   0%, 49% { opacity: 1; }
   50%, 100% { opacity: 0; }
 }
+
+/* New Profile Layout and Widget Styles */
+.profile-container {
+  display: flex;
+}
+
+.sidebar {
+  width: 20%;
+  flex-shrink: 0;
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 1rem;
+  background: var(--sidebar-bg, rgba(0, 0, 0, 0.8));
+}
+
+.main-content {
+  margin-left: 20%;
+  padding: 1rem;
+  flex: 1;
+}
+
+.two-column {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.one-column {
+  width: 100%;
+}
+
+.widget {
+  border: 1px solid var(--border, #333);
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  border-radius: 4px;
+}
+
+.widget-text {
+  white-space: pre-wrap;
+}
+
+.widget-iframe {
+  width: 100%;
+  height: 300px;
+}
+
+.widget-image {
+  max-width: 100%;
+  height: auto;
+}
+
+.avatar-upload {
+  display: block;
+  max-width: 150px;
+  border-radius: 50%;
+}
+
+.bio-render {
+  line-height: 1.5;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+}
