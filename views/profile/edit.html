@@ -608,6 +608,10 @@
       document.getElementById('mainContent').value = JSON.stringify(mainContent);
 
       const formData = new FormData(e.target);
+      console.log('FormData entries:');
+      for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
       const messageEl = document.getElementById('message');
       const errorMessageEl = document.getElementById('error-message');
       messageEl.textContent = '';
@@ -622,8 +626,16 @@
           body: formData
         });
         console.log('Fetch response status:', response.status, response.statusText);
+        const responseText = await response.text();
+        console.log('Raw response text:', responseText);
 
-        const data = await response.json();
+        let data;
+        try {
+          data = JSON.parse(responseText);
+        } catch (parseErr) {
+          console.error('Failed to parse JSON response:', parseErr);
+          throw new Error('Invalid JSON from server: ' + responseText);
+        }
         console.log('Server response data:', data);
 
         if (data.success) {
@@ -635,7 +647,8 @@
         }
       } catch (error) {
         console.error('Profile update fetch error:', error);
-        errorMessageEl.textContent = 'System error. Could not connect to update server.';
+        console.error('Error details:', error.message);
+        errorMessageEl.textContent = 'System error. Could not connect to update server. Check console for details.';
       }
     });
 

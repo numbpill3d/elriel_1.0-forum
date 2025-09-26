@@ -545,12 +545,15 @@ router.post('/edit', isAuthenticated, upload.fields([
   try {
     console.log('Profile edit started for user ID:', req.session.user.id);
     console.log('Request body keys:', Object.keys(req.body));
+    console.log('Full request body:', req.body);
     console.log('Background file received:', req.files?.background?.[0]?.filename || 'None');
     console.log('Header file received:', req.files?.headerImage?.[0]?.filename || 'None');
     const {
       status, customCss, customHtml, themeTemplate, blogLayout, districtId, widgets,
-      bio, layoutType, sidebarConfig, mainContent
+      bio, layoutType, sidebarConfig, mainContent, backgroundType
     } = req.body;
+    console.log('Background type from form:', backgroundType);
+    console.log('Extracted form fields - status:', status, 'bio:', bio, 'layoutType:', layoutType, 'sidebarConfig raw:', sidebarConfig, 'mainContent raw:', mainContent);
 
     // Sanitize inputs
     const sanitizedStatus = status ? escapeHTML(status.slice(0, 100)) : null;
@@ -565,29 +568,39 @@ router.post('/edit', isAuthenticated, upload.fields([
       validatedLayout = layoutType;
     }
 
-    // Parse and store JSONB fields
-    let sidebarConfigData = null;
-    if (sidebarConfig) {
+    // Parse and store JSONB fields - handle empty/null gracefully
+    let sidebarConfigData = [];
+    if (sidebarConfig && sidebarConfig !== '[]' && sidebarConfig !== '{}') {
       try {
         sidebarConfigData = typeof sidebarConfig === 'string' ? JSON.parse(sidebarConfig) : sidebarConfig;
-        if (typeof sidebarConfigData === 'object' && sidebarConfigData !== null) {
-          updateData.sidebar_config = sidebarConfigData;
+        console.log('Parsed sidebarConfigData:', sidebarConfigData);
+        if (!Array.isArray(sidebarConfigData)) {
+          sidebarConfigData = [];
         }
       } catch (e) {
-        console.error('Error parsing sidebar_config:', e);
+        console.error('Error parsing sidebar_config:', e, 'Raw value:', sidebarConfig);
+        sidebarConfigData = [];
       }
     }
+    if (sidebarConfigData.length > 0) {
+      updateData.sidebar_config = sidebarConfigData;
+    }
 
-    let mainContentData = null;
-    if (mainContent) {
+    let mainContentData = { left: [], right: [] };
+    if (mainContent && mainContent !== '[]' && mainContent !== '{}') {
       try {
         mainContentData = typeof mainContent === 'string' ? JSON.parse(mainContent) : mainContent;
-        if (Array.isArray(mainContentData)) {
-          updateData.main_content = mainContentData;
+        console.log('Parsed mainContentData:', mainContentData);
+        if (typeof mainContentData !== 'object' || mainContentData === null) {
+          mainContentData = { left: [], right: [] };
         }
       } catch (e) {
-        console.error('Error parsing main_content:', e);
+        console.error('Error parsing main_content:', e, 'Raw value:', mainContent);
+        mainContentData = { left: [], right: [] };
       }
+    }
+    if (mainContentData.left.length > 0 || mainContentData.right.length > 0) {
+      updateData.main_content = mainContentData;
     }
 
     // Build update object
@@ -597,11 +610,16 @@ router.post('/edit', isAuthenticated, upload.fields([
     if (sanitizedHtml !== null) updateData.custom_html = sanitizedHtml;
     if (sanitizedBio !== null) updateData.bio = sanitizedBio;
     if (validatedLayout !== null) updateData.layout_type = validatedLayout;
-    if (sidebarConfigData !== null) updateData.sidebar_config = sidebarConfigData;
-    if (mainContentData !== null) updateData.main_content = mainContentData;
+    if (sidebarConfigData && sidebarConfigData.length > 0) updateData.sidebar_config = sidebarConfigData;
+    if (mainContentData && (mainContentData.left.length > 0 || mainContentData.right.length > 0)) updateData.main_content = mainContentData;
     if (themeTemplate) updateData.theme_template = themeTemplate;
     if (blogLayout) updateData.blog_layout = blogLayout;
     if (districtId) updateData.district_id = districtId;
+    if (backgroundType) {
+      updateData.profile_bg_type = backgroundType;
+      updateData.profile_bg_tile = backgroundType === 'tiled'; // Assume tile if type is tiled
+    }
+    console.log('Background options added to updateData:', { profile_bg_type: backgroundType, profile_bg_tile: backgroundType === 'tiled' });
 
     // Log this activity
     const activityDescription = 'Updated profile settings';
@@ -639,18 +657,20 @@ router.post('/edit', isAuthenticated, upload.fields([
     console.log('Final updateData before Supabase call:', updateData);
 
     // Execute the update
+    console.log('Executing Supabase update with data:', updateData);
     const { data: result, error } = await supabase
       .from('profiles')
       .update(updateData)
       .eq('user_id', req.session.user.id)
       .select()
       .single();
-    console.log('Supabase profile edit result:', result ? 'Success' : 'No result', 'Error:', error ? error.message : 'None');
+    console.log('Supabase profile edit result:', result ? 'Success, ID:' + result.id : 'No result', 'Error:', error ? error.message + ', Details:' + JSON.stringify(error) : 'None');
 
     // If sidebar_config or main_content provided, sync to profile_containers (upsert based on zone/position)
     if (sidebarConfigData || mainContentData) {
       try {
         const profileId = result.id;
+        console.log('Starting container sync for profile ID:', profileId);
         let allContainers = [];
 
         // Sidebar
@@ -671,42 +691,53 @@ router.post('/edit', isAuthenticated, upload.fields([
 
         // Main content (assume mainContentData is {left: [], right: []})
         if (mainContentData && typeof mainContentData === 'object') {
-          if (mainContentData.left && Array.isArray(mainContentData.left)) {
-            for (let i = 0; i < mainContentData.left.length; i++) {
-              const cont = mainContentData.left[i];
+          // Left zone
+          const leftData = Array.isArray(mainContentData.left) ? mainContentData.left : [];
+          for (let i = 0; i < leftData.length; i++) {
+            const cont = leftData[i];
+            if (cont && cont.type) { // Guard against invalid cont
               allContainers.push({
                 profile_id: profileId,
                 zone: 'main-left',
                 position: i,
                 container_type: cont.type,
-                title: cont.title,
-                content: cont.content,
+                title: cont.title || null,
+                content: cont.content || null,
                 settings: cont.settings || {}
               });
             }
           }
-          if (mainContentData.right && Array.isArray(mainContentData.right)) {
-            for (let i = 0; i < mainContentData.right.length; i++) {
-              const cont = mainContentData.right[i];
+          // Right zone
+          const rightData = Array.isArray(mainContentData.right) ? mainContentData.right : [];
+          for (let i = 0; i < rightData.length; i++) {
+            const cont = rightData[i];
+            if (cont && cont.type) { // Guard against invalid cont
               allContainers.push({
                 profile_id: profileId,
                 zone: 'main-right',
                 position: i,
                 container_type: cont.type,
-                title: cont.title,
-                content: cont.content,
+                title: cont.title || null,
+                content: cont.content || null,
                 settings: cont.settings || {}
               });
             }
           }
         }
 
+        console.log('Prepared containers for insert:', allContainers);
+
         // Delete existing containers for these zones
-        await supabase
+        const { error: deleteError } = await supabase
           .from('profile_containers')
           .delete()
           .eq('profile_id', profileId)
           .in('zone', ['sidebar', 'main-left', 'main-right']);
+        if (deleteError) {
+          console.error('Error deleting existing containers:', deleteError);
+        } else {
+          console.log('Existing containers deleted successfully');
+        }
 
         // Insert new ones
         if (allContainers.length > 0) {
@@ -718,6 +749,8 @@ router.post('/edit', isAuthenticated, upload.fields([
           } else {
             console.log('Containers synced successfully:', allContainers.length);
           }
+        } else {
+          console.log('No new containers to insert');
         }
       } catch (syncErr) {
         console.error('Container sync error:', syncErr);
@@ -725,9 +758,10 @@ router.post('/edit', isAuthenticated, upload.fields([
     }
 
     if (error || !result) {
-      return res.status(404).json({
-        error: 'Profile not found',
-        message: 'Terminal identity not found in the system.'
+      console.error('Profile update failed:', error);
+      return res.status(500).json({
+        error: 'Update failed',
+        message: error ? error.message : 'Terminal identity not found in the system.'
       });
     }
 
