@@ -448,3 +448,37 @@ CREATE POLICY "Allow public access to profile containers"
 CREATE POLICY "Temporary allow all operations on profile containers"
   ON public.profile_containers FOR ALL
   USING (true);
+-- Add missing columns for profile enhancements
+ALTER TABLE public.profiles
+ADD COLUMN IF NOT EXISTS header_image TEXT;
+
+ALTER TABLE public.profiles
+ADD COLUMN IF NOT EXISTS theme_template TEXT DEFAULT 'default';
+
+ALTER TABLE public.profiles
+ADD COLUMN IF NOT EXISTS glyph_3d BOOLEAN DEFAULT false;
+
+ALTER TABLE public.profiles
+ADD COLUMN IF NOT EXISTS glyph_rotation_speed INTEGER DEFAULT 3;
+
+ALTER TABLE public.profiles
+ADD COLUMN IF NOT EXISTS profile_bg_type TEXT DEFAULT 'single';
+
+ALTER TABLE public.profiles
+ADD COLUMN IF NOT EXISTS profile_bg_tile BOOLEAN DEFAULT false;
+
+-- Ensure updated_at trigger for profiles (if not exists)
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+CREATE TRIGGER update_profiles_updated_at BEFORE UPDATE
+    ON public.profiles FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
+
+-- Similar trigger for profile_containers if needed
+CREATE TRIGGER update_profile_containers_updated_at BEFORE UPDATE
+    ON public.profile_containers FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
