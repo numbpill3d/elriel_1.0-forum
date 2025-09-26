@@ -597,15 +597,24 @@
       rebuildWidgetArrays();
 
       // Serialize complex fields
-      const sidebarConfig = sidebarWidgets.length > 0 ? sidebarWidgets : null;
-      const mainContent = {
+      const sidebarConfig = sidebarWidgets.length > 0 ? sidebarWidgets : [];
+      const mainContentObj = {
         left: mainLeftWidgets,
         right: mainRightWidgets
       };
-
+  
+      // Handle one-column markdown if selected
+      const layoutType = document.getElementById('layout_type').value;
+      if (layoutType === 'one-column') {
+        const markdownContent = document.getElementById('main_content_markdown').value;
+        if (markdownContent) {
+          mainContentObj.markdown = markdownContent; // Backend can process this
+        }
+      }
+  
       // Set hidden inputs
-      document.getElementById('sidebarConfig').value = JSON.stringify(sidebarConfig || []);
-      document.getElementById('mainContent').value = JSON.stringify(mainContent);
+      document.getElementById('sidebarConfig').value = JSON.stringify(sidebarConfig);
+      document.getElementById('mainContent').value = JSON.stringify(mainContentObj);
 
       const formData = new FormData(e.target);
       console.log('FormData entries:');
@@ -707,6 +716,29 @@
     // Init previews
     updateMarkdownPreview('bio', 'bio-preview');
     updateMarkdownPreview('main_content_markdown', 'main-preview');
+
+    // Toggle one/two column editors based on layout select
+    const layoutSelect = document.getElementById('layout_type');
+    const oneColumnEditor = document.getElementById('one-column-editor');
+    const twoColumnEditor = document.getElementById('two-column-editor');
+    function toggleEditors() {
+      if (layoutSelect.value === 'one-column') {
+        oneColumnEditor.style.display = 'block';
+        twoColumnEditor.style.display = 'none';
+      } else {
+        oneColumnEditor.style.display = 'none';
+        twoColumnEditor.style.display = 'block';
+      }
+    }
+    toggleEditors();
+    layoutSelect.addEventListener('change', toggleEditors);
+
+    // Initial state
+    if (profile.layout_type === 'one-column') {
+      oneColumnEditor.style.display = 'block';
+      twoColumnEditor.style.display = 'none';
+      document.getElementById('main_content_markdown').value = profile.main_content ? profile.main_content[0]?.content || '' : '';
+    }
     
     // Override basic MarkdownPreview in profile-widgets.js if present
     if (typeof MarkdownPreview === 'function') {
